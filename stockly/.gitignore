@@ -1,0 +1,33 @@
+# Diretório do Backend
+/backend/venv/
+/backend/migrations/
+/backend/__pycache__/
+/backend/*.pyc
+/backend/*.pyo
+/backend/*.log
+/backend/*.sqlite3
+/backend/.env
+
+# Diretório do Frontend
+/frontend/Stockly/node_modules/
+/frontend/Stockly/.expo/
+/frontend/Stockly/dist/
+/frontend/Stockly/npm-debug.*
+/frontend/Stockly/*.jks
+/frontend/Stockly/*.p8
+/frontend/Stockly/*.p12
+/frontend/Stockly/*.key
+/frontend/Stockly/*.mobileprovision
+/frontend/Stockly/*.orig.*
+/frontend/Stockly/web-build/
+/frontend/.env
+
+# macOS
+/frontend/Stockly/.DS_Store
+
+# Arquivos de configuração e logs gerais
+*.log
+*.tmp
+
+# Arquivos gerados pelo expo-cli
+/frontend/Stockly/expo-env.d.ts
