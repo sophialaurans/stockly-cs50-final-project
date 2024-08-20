@@ -39,6 +39,8 @@ class Orders(db.Model):
     client_id = db.Column(db.Integer, db.ForeignKey('clients.client_id'))
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     status = db.Column(db.String(50), nullable=False, default='pending')
+    items = db.relationship('OrderItems', backref='order', lazy=True)
+    total_price = db.Column(db.Float, nullable=False, default=0.0)
 
 class OrderItems(db.Model):
     __tablename__ = 'order_items'
