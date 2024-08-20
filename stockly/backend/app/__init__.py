@@ -1,7 +1,7 @@
 from flask import Flask
 from .config import Config
 from .extensions import jwt, db, bcrypt, migrate
-from .routes import auth, dashboard
+from .routes import auth, dashboard, products
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
@@ -12,7 +12,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     
-    CORS(app, resources={r"/*": {"origins": "*"}})
+    CORS(app)
     
     jwt.init_app(app)
     db.init_app(app)
@@ -21,6 +21,7 @@ def create_app():
     
     app.register_blueprint(auth.bp)
     app.register_blueprint(dashboard.bp)
+    app.register_blueprint(products.bp)
     
     @app.after_request
     def after_request(response):
