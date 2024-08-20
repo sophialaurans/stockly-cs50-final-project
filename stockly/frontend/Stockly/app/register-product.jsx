@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useReducer, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const useForm = (initialState) => {
@@ -28,10 +28,7 @@ const FormField = ({ label, value, onChangeText, placeholder }) => (
 );
 
 const RegisterProduct = () => {
-  const navigation = useNavigation();
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const navigation = useNavigation();  
   const [formState, handleInputChange] = useForm({
     name: '',
     color: '',
@@ -42,45 +39,26 @@ const RegisterProduct = () => {
     quantity: '',
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = await AsyncStorage.getItem('access_token');
-          
-        if (!token) {
-          throw new Error('Token not found');
-        }
-
-        const response = await axios.get('http://127.0.0.1:5000/', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        setData(response.data);
-      } catch (error) {
-        setError('Error fetching data.');
-        console.error('Error:', error.response ? error.response.data : error.message);
-      } finally {
-        setLoading(false);
-      }            
-    };
-
-    fetchData();
-  }, []);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleRegister = async () => {
     const { name, color, size, dimensions, price, description, quantity } = formState;
 
-    if (!name || !size || !price || !quantity) {
+    if (!name || !price || !quantity) {
       Alert.alert('Validation Error', 'Please fill out all required fields.');
       return;
     }
 
+    setLoading(true);
+    setError(null);
+
     try {
       const token = await AsyncStorage.getItem('access_token');
-
+      
       if (!token) {
-        throw new Error('No token found. Please log in.');
+        Alert.alert('Error', 'No authentication token found.');
+        return;
       }
 
       const response = await axios.post(
@@ -96,23 +74,18 @@ const RegisterProduct = () => {
 
       if (response.status === 201) {
         Alert.alert('Success!', response.data.message);
-        navigation.replace('(tabs)/products');
+        navigation.replace('(tabs)');
       } else {
-        throw new Error('Unexpected response status');
+        Alert.alert('Error', 'Unexpected response status, please try again');
       }
     } catch (error) {
-      console.error('Error:', error.response ? error.response.data : error.message);
-      Alert.alert('Error', 'An unexpected error occurred');
+      console.log('Error:', error.message);
+      setError('An unexpected error occurred.');
+      Alert.alert('Error', 'An unexpected error occurred.');
+    } finally {
+      setLoading(false);
     }
   };
-
-  if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
-  }
-
-  if (error) {
-    return <Text>{error}</Text>;
-  }
 
   return (
     <View>
@@ -161,6 +134,8 @@ const RegisterProduct = () => {
       <TouchableOpacity onPress={handleRegister}>
         <Text>Register Product</Text>
       </TouchableOpacity>
+      {loading && <ActivityIndicator size="large" color="#0000ff" />}
+      {error && <Text>{error}</Text>}
     </View>
   );
 };
