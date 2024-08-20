@@ -19,9 +19,10 @@ const Dashboard = () => {
                     setError('Token not found');
                     setLoading(false);
                     navigation.replace('intro');
+                    return;
                 }
 
-                const response = await axios.get('http://192.168.18.3:5000/', {
+                const response = await axios.get('http://127.0.0.1:5000/', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

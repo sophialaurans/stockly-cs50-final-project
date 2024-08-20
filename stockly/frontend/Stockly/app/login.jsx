@@ -29,7 +29,7 @@ const LoginScreen = () => {
 
     try {
       const response = await axios.post(
-        'http://192.168.18.3:5000/login',
+        'http://127.0.0.1:5000/login',
         { email, password },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -37,7 +37,7 @@ const LoginScreen = () => {
       if (response.status === 200) {
         const { access_token } = response.data;
         await AsyncStorage.setItem('access_token', access_token);
-        navigation.replace('(tabs)/index');
+        navigation.replace('(tabs)');
       } else {
         console.log('Error', response.data.message || 'An error occurred');
       }
