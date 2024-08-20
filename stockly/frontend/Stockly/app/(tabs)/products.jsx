@@ -1,43 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, Text, ActivityIndicator, FlatList } from 'react-native';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import useAuthenticatedFetch from '../../hooks/useAuthenticatedFetch';
 
 const Products = () => {
-    const navigation = useNavigation();
-    const [products, setProducts] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const token = await AsyncStorage.getItem('access_token');
-                
-                if (!token) {
-                    setError('Token not found');
-                    setLoading(false);
-                    navigation.replace('intro');
-                    return;
-                }
-
-                const response = await axios.get('http://127.0.0.1:5000/products', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                setProducts(response.data);
-                setLoading(false);
-            } catch (error) {
-                setError('Error fetching data.');
-                setLoading(false);
-                console.error('Error:', error.response ? error.response.data : error.message);
-            }            
-        };
-
-        fetchProducts();
-    }, []);
+    const { data, loading, error } = useAuthenticatedFetch('products');
 
     if (loading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
@@ -49,9 +15,9 @@ const Products = () => {
 
     return (
         <View>
-            {products && products.length > 0 ? (
+            {data && data.length > 0 ? (
                 <FlatList
-                    data={products}
+                    data={data}
                     keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
                     renderItem={({ item }) => (
                         <View>
