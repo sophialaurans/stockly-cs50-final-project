@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, ActivityIndicator, FlatList } from 'react-native';
 import useAuthenticatedFetch from '../../hooks/useAuthenticatedFetch';
 
-const Products = () => {
+const Orders = () => {
     const { data, loading, error } = useAuthenticatedFetch('orders');
 
     if (loading) {
@@ -14,8 +14,34 @@ const Products = () => {
     }
 
     return (
-        <View></View>
+        <View>
+            {data && data.length > 0 ? (
+                <FlatList
+                    data={data}
+                    keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
+                    renderItem={({ item }) => (
+                        <View>
+                            <Text>Client: {item.client_id}</Text>
+                            <Text>Total price: R$ {item.total_price}</Text>
+                            <Text>Date: {item.date.slice(0, 10)}</Text>
+                            <Text>Status: {item.status}</Text>
+
+                            <Text>Items:</Text>
+                            {item.items.map((orderItem, index) => (
+                                <View key={index}>
+                                    <Text> - Product ID: {orderItem.product_id}</Text>
+                                    <Text> - Quantity: {orderItem.quantity}</Text>
+                                    <Text> - Price: R$ {orderItem.price}</Text>
+                                </View>
+                            ))}
+                        </View>
+                    )}
+                />
+            ) : (
+                <Text>No orders registered yet.</Text>
+            )}
+        </View>
     );
 };
 
-export default Products;
+export default Orders;
