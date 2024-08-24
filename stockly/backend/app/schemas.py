@@ -10,6 +10,13 @@ class ProductSchema(Schema):
     price = fields.Float(required=True)
     quantity = fields.Int(required=True)
 
+class ClientSchema(Schema):
+    client_id = fields.Int(dump_only=True)
+    user_id = fields.Int(dump_only=True)
+    name = fields.Str(required=True)
+    phone_number = fields.Int()
+    email = fields.Str()
+
 class OrderItemSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = OrderItems
