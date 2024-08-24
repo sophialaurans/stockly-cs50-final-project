@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import config from '../constants/config'
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -29,7 +30,7 @@ const LoginScreen = () => {
 
     try {
       const response = await axios.post(
-        'http://127.0.0.1:5000/login',
+        `${config.apiUrl}/login`,
         { email, password },
         { headers: { 'Content-Type': 'application/json' } }
       );

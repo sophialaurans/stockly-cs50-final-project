@@ -62,7 +62,7 @@ const RegisterProduct = () => {
       }
 
       const response = await axios.post(
-        'http://127.0.0.1:5000/register-product',
+        `http://127.0.0.1:5000/register-product`,
         { name, color, size, dimensions, price, description, quantity },
         {
           headers: {
@@ -74,7 +74,7 @@ const RegisterProduct = () => {
 
       if (response.status === 201) {
         Alert.alert('Success!', response.data.message);
-        navigation.replace('(tabs)');
+        navigation.replace('products');
       } else {
         Alert.alert('Error', 'Unexpected response status, please try again');
       }

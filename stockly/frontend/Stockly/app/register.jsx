@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
+import config from '../constants/config'
 
 const RegisterScreen = () => {
   const navigation = useNavigation();
@@ -35,7 +36,7 @@ const RegisterScreen = () => {
 
     try {
       const response = await axios.post(
-        'http://127.0.0.1:5000/register',
+        `${config.apiUrl}/register`,
         { name, email, password, confirm_password: confirmPassword },
         { headers: { 'Content-Type': 'application/json' } },
       );

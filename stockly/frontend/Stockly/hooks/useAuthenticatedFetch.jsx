@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import config from '../constants/config'
 
 const useAuthenticatedFetch = (endpoint) => {
     const navigation = useNavigation();
@@ -21,7 +22,7 @@ const useAuthenticatedFetch = (endpoint) => {
                     return;
                 }
 
-                const response = await axios.get(`http://127.0.0.1:5000/${endpoint}`, {
+                const response = await axios.get(`${config.apiUrl}/${endpoint}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
