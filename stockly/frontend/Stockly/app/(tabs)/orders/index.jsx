@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, Text, ActivityIndicator, FlatList } from 'react-native';
-import useAuthenticatedFetch from '../../hooks/useAuthenticatedFetch';
+import { View, Text, ActivityIndicator, FlatList, Button } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import useAuthenticatedFetch from '../../../hooks/useAuthenticatedFetch';
 
 const Orders = () => {
+    const navigation = useNavigation();
     const { data, loading, error } = useAuthenticatedFetch('orders');
 
     if (loading) {
@@ -40,6 +42,10 @@ const Orders = () => {
             ) : (
                 <Text>No orders registered yet.</Text>
             )}
+            <Button
+                title="New Order"
+                onPress={() => navigation.navigate('new-order')}>
+            </Button>
         </View>
     );
 };

@@ -4,7 +4,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
-import config from '../constants/config'
+import config from '../../../constants/config'
 
 const NewOrder = () => {
   const navigation = useNavigation();
@@ -27,7 +27,7 @@ const NewOrder = () => {
 
         if (!token) {
           Alert.alert('Error', 'No authentication token found.');
-          navigation.replace('../login');
+          navigation.replace('../../login');
           return;
         }
 
@@ -141,7 +141,7 @@ const NewOrder = () => {
         setItems([]);
         setTotalPrice(0);
         handleInputChange('selectedClient', '');
-        navigation.replace('(tabs)');
+        navigation.replace('index');
       } else {
         Alert.alert('Error', 'Unexpected response status, please try again');
       }

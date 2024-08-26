@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } fro
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import config from '../../../constants/config'
 
 const useForm = (initialState) => {
   const [formState, setFormState] = useReducer((state, action) => {
@@ -27,25 +28,21 @@ const FormField = ({ label, value, onChangeText, placeholder }) => (
   </View>
 );
 
-const RegisterProduct = () => {
+const RegisterClient = () => {
   const navigation = useNavigation();  
   const [formState, handleInputChange] = useForm({
     name: '',
-    color: '',
-    size: '',
-    dimensions: '',
-    price: '',
-    description: '',
-    quantity: '',
+    phone_number: '',
+    email: ''
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleRegister = async () => {
-    const { name, color, size, dimensions, price, description, quantity } = formState;
+    const { name, phone_number, email } = formState;
 
-    if (!name || !price || !quantity) {
+    if (!name) {
       Alert.alert('Validation Error', 'Please fill out all required fields.');
       return;
     }
@@ -62,8 +59,8 @@ const RegisterProduct = () => {
       }
 
       const response = await axios.post(
-        `http://127.0.0.1:5000/register-product`,
-        { name, color, size, dimensions, price, description, quantity },
+        `${config.apiUrl}/register-client`,
+        { name, phone_number, email },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -74,7 +71,7 @@ const RegisterProduct = () => {
 
       if (response.status === 201) {
         Alert.alert('Success!', response.data.message);
-        navigation.replace('products');
+        navigation.replace('index');
       } else {
         Alert.alert('Error', 'Unexpected response status, please try again');
       }
@@ -90,49 +87,25 @@ const RegisterProduct = () => {
   return (
     <View>
       <FormField
-        label="Name of the product"
+        label="Name"
         placeholder="Name"
         value={formState.name}
         onChangeText={text => handleInputChange('name', text)}
       />
       <FormField
-        label="Color"
-        placeholder="Color"
+        label="Phone number"
+        placeholder="Phone number"
         value={formState.color}
-        onChangeText={text => handleInputChange('color', text)}
+        onChangeText={text => handleInputChange('phone_number', text)}
       />
       <FormField
-        label="Size"
-        placeholder="Size"
+        label="Email"
+        placeholder="Email"
         value={formState.size}
-        onChangeText={text => handleInputChange('size', text)}
-      />
-      <FormField
-        label="Dimensions"
-        placeholder="Dimensions"
-        value={formState.dimensions}
-        onChangeText={text => handleInputChange('dimensions', text)}
-      />
-      <FormField
-        label="Price"
-        placeholder="Price"
-        value={formState.price}
-        onChangeText={text => handleInputChange('price', text)}
-      />
-      <FormField
-        label="Description"
-        placeholder="Description"
-        value={formState.description}
-        onChangeText={text => handleInputChange('description', text)}
-      />
-      <FormField
-        label="Quantity"
-        placeholder="Quantity"
-        value={formState.quantity}
-        onChangeText={text => handleInputChange('quantity', text)}
+        onChangeText={text => handleInputChange('email', text)}
       />
       <TouchableOpacity onPress={handleRegister}>
-        <Text>Register Product</Text>
+        <Text>Register Client</Text>
       </TouchableOpacity>
       {loading && <ActivityIndicator size="large" color="#0000ff" />}
       {error && <Text>{error}</Text>}
@@ -140,4 +113,4 @@ const RegisterProduct = () => {
   );
 };
 
-export default RegisterProduct;
+export default RegisterClient;

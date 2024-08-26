@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, Text, ActivityIndicator, FlatList } from 'react-native';
-import useAuthenticatedFetch from '../../hooks/useAuthenticatedFetch';
+import { View, Text, ActivityIndicator, FlatList, Button } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; 
+import useAuthenticatedFetch from '../../../hooks/useAuthenticatedFetch';
 
 const Products = () => {
+    const navigation = useNavigation();  
     const { data, loading, error } = useAuthenticatedFetch('products');
 
     if (loading) {
@@ -32,6 +34,10 @@ const Products = () => {
             ) : (
                 <Text>No products registered yet.</Text>
             )}
+            <Button
+                title="New Product"
+                onPress={() => navigation.navigate('register-product')}>
+            </Button>
         </View>
     );
 };
