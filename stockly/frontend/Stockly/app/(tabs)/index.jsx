@@ -18,7 +18,7 @@ const Dashboard = () => {
             <Text>Total Products: {data.totalProducts}</Text>
             <Text>Total Stock: {data.totalStock}</Text>
             <Text>Orders in Progress: {data.pendingOrders}</Text>
-            <Text>Revenue Last Month: {data.lastMonthRevenue}</Text>
+            <Text>Revenue Last Month: R$ {data.lastMonthRevenue.toFixed(2)}</Text>
             <Text>Total Clients: {data.totalClients}</Text>
         </View>
     );
