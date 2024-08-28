@@ -24,7 +24,7 @@ const Orders = () => {
                     renderItem={({ item }) => (
                         <View>
                             <Text>Client: {item.client_id}</Text>
-                            <Text>Total price: R$ {item.total_price}</Text>
+                            <Text>Total price: R$ {item.total_price?.toFixed(2)}</Text>
                             <Text>Date: {item.date.slice(0, 10)}</Text>
                             <Text>Status: {item.status}</Text>
 

@@ -4,7 +4,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
-import config from '../../../constants/config'
+import config from '../../../constants/config';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 const NewOrder = () => {
   const navigation = useNavigation();
@@ -69,59 +70,81 @@ const NewOrder = () => {
     const product = products.find(p => p.product_id.toString() === selectedProduct.toString());
   
     if (product) {
-      const newItem = {
-        product_id: selectedProduct,
-        quantity: parseInt(quantity, 10),
-        price: product.price,
-        total: product.price * parseInt(quantity, 10),
-        name: product.name,
-      };
+      const existingItemIndex = items.findIndex(item => item.product_id === selectedProduct);
+      
+      if (existingItemIndex !== -1) {
+        const updatedItems = [...items];
+        const existingItem = updatedItems[existingItemIndex];
+        const newQuantity = existingItem.quantity + parseInt(quantity, 10);
+        const newTotal = existingItem.price * newQuantity;
   
-      setItems(prevItems => {
-        const updatedItems = [...prevItems, newItem];
-        return updatedItems;
-      });
+        updatedItems[existingItemIndex] = {
+          ...existingItem,
+          quantity: newQuantity,
+          total: newTotal,
+        };
   
-      setTotalPrice(prevTotal => prevTotal + newItem.total);
+        setItems(updatedItems);
+        setTotalPrice(prevTotal => prevTotal + existingItem.price * parseInt(quantity, 10));
+      } else {
+        const newItem = {
+          product_id: selectedProduct,
+          quantity: parseInt(quantity, 10),
+          price: product.price,
+          total: product.price * parseInt(quantity, 10),
+          name: product.name,
+          size: product.size,
+        };
+  
+        setItems(prevItems => [...prevItems, newItem]);
+        setTotalPrice(prevTotal => prevTotal + newItem.total);
+      }
+  
       handleInputChange('quantity', '');
     } else {
       Alert.alert('Product Error', 'Selected product is not valid.');
     }
+  };  
+
+  const handleDeleteItem = (product_id) => {
+    setItems(prevItems => {
+      const updatedItems = prevItems.filter(item => item.product_id !== product_id);
+      const deletedItem = prevItems.find(item => item.product_id === product_id);
+      if (deletedItem) {
+        setTotalPrice(prevTotal => prevTotal - deletedItem.total);
+      }
+      return updatedItems;
+    });
   };
-    
 
   const handleSubmitOrder = async () => {
     const { selectedClient } = formState;
-  
+
     if (!selectedClient || items.length === 0) {
       Alert.alert('Validation Error', 'Please select a client and add at least one item.');
       return;
     }
-  
+
     setLoading(true);
     setError(null);
-  
+
     try {
       const token = await AsyncStorage.getItem('access_token');
-      const userId = await AsyncStorage.getItem('user_id');
-  
-      console.log('Token:', token);
-      console.log('User ID:', userId);
-      console.log('Selected Client:', selectedClient);
-      console.log('Items:', items);
-      console.log('Total Price:', totalPrice);
-  
-      if (!token || !userId) {
-        Alert.alert('Error', 'No authentication token or user ID found.');
+
+      if (!token) {
+        Alert.alert('Error', 'No authentication token found.');
         return;
       }
-  
+
       const response = await axios.post(
         `${config.apiUrl}/new-order`,
         {
-          user_id: userId,
           client_id: selectedClient,
-          items: items,
+          items: items.map(item => ({
+            product_id: item.product_id,
+            quantity: item.quantity,
+            price: item.price
+          })),
           status: 'pending',
           total_price: totalPrice
         },
@@ -132,10 +155,7 @@ const NewOrder = () => {
           },
         }
       );
-  
-      console.log('Response Status:', response.status);
-      console.log('Response Data:', response.data);
-  
+
       if (response.status === 201) {
         Alert.alert('Success!', 'Order placed successfully');
         setItems([]);
@@ -204,9 +224,12 @@ const NewOrder = () => {
           keyExtractor={(item) => item.product_id.toString()}
           renderItem={({ item }) => (
             <View style={styles.item}>
-              <Text>{item.name}</Text>
-              <Text>{item.quantity} x ${item.price}</Text>
-              <Text>${item.total.toFixed(2)}</Text>
+              <Text>{item.name} {item.size}</Text>
+              <Text>{item.quantity} x R${item.price}</Text>
+              <Text>R${item.total.toFixed(2)}</Text>
+              <TouchableOpacity onPress={() => handleDeleteItem(item.product_id)} style={styles.deleteButton}>
+                <FontAwesome name="trash" size={24} color="black" />
+              </TouchableOpacity>
             </View>
           )}
         />
@@ -214,7 +237,7 @@ const NewOrder = () => {
         <Text>No items added yet.</Text>
       )}
 
-      <Text>Total Price: ${totalPrice.toFixed(2)}</Text>
+      <Text>Total Price: R${totalPrice.toFixed(2)}</Text>
 
       <TouchableOpacity onPress={handleSubmitOrder} style={styles.button}>
         <Text>Place Order</Text>
@@ -248,9 +271,15 @@ const styles = StyleSheet.create({
     marginBottom: 16
   },
   item: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd'
+  },
+  deleteButton: {
+    marginRight: 10,
   }
 });
 
