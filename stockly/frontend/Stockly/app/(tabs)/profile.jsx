@@ -1,114 +1,123 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, Alert } from 'react-native';
+import { View, Text, TextInput, Button, Alert, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native'; 
 import config from '../../constants/config';
 
-const EditProfileScreen = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+const ProfileScreen = () => {
+  const navigation = useNavigation();
+
+  const [profile, setProfile] = useState({ name: '', email: '', phone: '' });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    const loadProfileData = async () => {
+    const fetchProfile = async () => {
       try {
         const token = await AsyncStorage.getItem('access_token');
-        if (!token) {
-          Alert.alert('Error', 'No token found');
-          return;
-        }
-
         const response = await axios.get(`${config.apiUrl}/profile`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` }
         });
-
-        if (response.status === 200) {
-          const profile = response.data;
-          setName(profile.name || '');
-          setEmail(profile.email || '');
-          setPhone(profile.phone || '');
-        } else {
-          Alert.alert('Error', 'Failed to load profile');
-        }
+        setProfile(response.data);
+        setIsLoading(false);
       } catch (error) {
-        Alert.alert('Error', 'An error occurred');
-        console.error(error);
+        Alert.alert('Error', 'Failed to load profile');
+        setIsLoading(false);
       }
     };
 
-    loadProfileData();
+    fetchProfile();
   }, []);
 
-  const handleSubmit = async () => {
+  const handleSave = async () => {
     try {
       const token = await AsyncStorage.getItem('access_token');
-
-      if (!token) {
-        Alert.alert('Error', 'No token found');
-        return;
-      }
-
-      const response = await axios.post(`${config.apiUrl}/edit-profile`, {
-        name,
-        email,
-        phone
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
+      const response = await axios.put(`${config.apiUrl}/edit-profile`, profile, {
+        headers: { Authorization: `Bearer ${token}` }
       });
-
-      if (response.status === 200) {
-        Alert.alert('Success', 'Profile updated successfully');
-      } else {
-        Alert.alert('Error', 'Failed to update profile');
-      }
+      Alert.alert('Success', response.data.message);
+      setIsEditing(false);
     } catch (error) {
-      Alert.alert('Error', 'An error occurred');
-      console.error(error);
+      Alert.alert('Error', 'Failed to update profile');
     }
   };
 
   const handleLogout = async () => {
     try {
+      const token = await AsyncStorage.getItem('access_token');
+      if (!token) {
+        Alert.alert('Error', 'No token found');
+        return;
+      }
+  
       await AsyncStorage.removeItem('access_token');
-      Alert.alert('Success', 'Logged out successfully');
-      // Navega para a tela de login aqui
+      Alert.alert('Logged out', 'You have been logged out successfully.');
+      
+      navigation.replace('login');
     } catch (error) {
-      Alert.alert('Error', 'Failed to logout');
-      console.error(error);
+      console.error('Logout Error:', error);
+      Alert.alert('Error', 'Failed to log out');
     }
   };
+  
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
-    <View>
-      <Text>Name</Text>
+    <View style={{ padding: 20 }}>
+      <Text>Name:</Text>
       <TextInput
-        placeholder="Enter Name"
-        value={name}
-        onChangeText={setName}
+        value={profile.name}
+        editable={isEditing}
+        onChangeText={(text) => setProfile({ ...profile, name: text })}
+        style={{
+          borderBottomWidth: 1,
+          marginBottom: 20,
+          borderColor: isEditing ? '#000' : '#ccc',
+          color: isEditing ? '#000' : '#888'
+        }}
       />
-      <Text>Email</Text>
+      <Text>Email:</Text>
       <TextInput
-        placeholder="Enter Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
+        value={profile.email}
+        editable={isEditing}
+        onChangeText={(text) => setProfile({ ...profile, email: text })}
+        style={{
+          borderBottomWidth: 1,
+          marginBottom: 20,
+          borderColor: isEditing ? '#000' : '#ccc',
+          color: isEditing ? '#000' : '#888'
+        }}
       />
-      <Text>Phone</Text>
+      <Text>Phone:</Text>
       <TextInput
-        placeholder="Enter Phone"
-        value={phone}
-        onChangeText={setPhone}
-        keyboardType="phone-pad"
+        value={profile.phone}
+        editable={isEditing}
+        onChangeText={(text) => setProfile({ ...profile, phone: text })}
+        style={{
+          borderBottomWidth: 1,
+          marginBottom: 20,
+          borderColor: isEditing ? '#000' : '#ccc',
+          color: isEditing ? '#000' : '#888'
+        }}
       />
-      <Button title="Submit" onPress={handleSubmit} />
-      <Button title="Logout" onPress={handleLogout} color="red" />
+      {isEditing ? (
+        <Button title="Save" onPress={handleSave} />
+      ) : (
+        <Button title="Edit Profile" onPress={() => setIsEditing(true)} />
+      )}
+      <View style={{ marginTop: 20 }}>
+        <Button title="Logout" color="red" onPress={handleLogout} />
+      </View>
     </View>
   );
 };
 
-export default EditProfileScreen;
+export default ProfileScreen;
