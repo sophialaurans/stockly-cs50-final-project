@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } fro
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import config from '../../../constants/config'
 
 const useForm = (initialState) => {
   const [formState, setFormState] = useReducer((state, action) => {
@@ -62,7 +63,7 @@ const RegisterProduct = () => {
       }
 
       const response = await axios.post(
-        `http://127.0.0.1:5000/register-product`,
+        `${config.apiUrl}/register-product`,
         { name, color, size, dimensions, price, description, quantity },
         {
           headers: {

@@ -20,7 +20,7 @@ def profile():
         'phone': current_user_phone
     })
 
-@bp.route('/edit-profile', methods=['POST'])
+@bp.route('/edit-profile', methods=['PUT'])
 @jwt_required()
 def edit_profile():
     current_user = get_jwt_identity()

@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, ActivityIndicator, FlatList, Button } from 'react-native';
+import { View, TouchableOpacity, Text, ActivityIndicator, FlatList, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; 
 import useAuthenticatedFetch from '../../../hooks/useAuthenticatedFetch';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 const Products = () => {
     const navigation = useNavigation();  
@@ -20,7 +21,7 @@ const Products = () => {
             {data && data.length > 0 ? (
                 <FlatList
                     data={data}
-                    keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
+                    keyExtractor={(item) => item.product_id ? item.product_id.toString() : Math.random().toString()}
                     renderItem={({ item }) => (
                         <View>
                             <Text>Name: {item.name}</Text>
@@ -28,6 +29,9 @@ const Products = () => {
                             <Text>Color: {item.color}</Text>
                             <Text>Price: R$ {item.price?.toFixed(2)}</Text>
                             <Text>Quantity: {item.quantity}</Text>
+                            <TouchableOpacity onPress={() => { navigation.navigate('product-details', { product: item })}}>
+                                <FontAwesome5 name="edit" size={24} color="black" />
+                            </TouchableOpacity>
                         </View>
                     )}
                 />
@@ -36,8 +40,8 @@ const Products = () => {
             )}
             <Button
                 title="New Product"
-                onPress={() => navigation.navigate('register-product')}>
-            </Button>
+                onPress={() => navigation.navigate('register-product')}
+            />
         </View>
     );
 };

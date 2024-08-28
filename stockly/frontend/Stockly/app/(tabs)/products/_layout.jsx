@@ -18,6 +18,7 @@ export default function ProductsLayout() {
         }}
       />
       <Stack.Screen name="register-product" options={{ title: 'New Product' }} />
+      <Stack.Screen name="product-details" options={{ title: 'Details'}} />
     </Stack>
   );
 }
