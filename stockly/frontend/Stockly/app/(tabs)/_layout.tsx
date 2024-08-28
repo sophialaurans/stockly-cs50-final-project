@@ -15,7 +15,7 @@ export default function TabLayout() {
         options={{
           title: 'Dashboard',
           headerRight: () => (
-            <TouchableOpacity onPress={() => navigation.navigate('profile')} style={{ marginRight: 10 }}>
+            <TouchableOpacity onPress={() => navigation.navigate('profile')} style={{ marginRight: 25 }}>
               <FontAwesome name="user" size={24} />
             </TouchableOpacity>
           ),
