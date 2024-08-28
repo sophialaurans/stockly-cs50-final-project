@@ -25,7 +25,7 @@ def register_client():
 
     data = request.get_json()
     name = data['name']
-    phone_number = data['phone-number']
+    phone_number = data['phone_number']
     email = data['email']
 
     new_client = Clients(

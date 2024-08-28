@@ -77,8 +77,7 @@ const RegisterClient = () => {
       }
     } catch (error) {
       console.log('Error:', error.message);
-      setError('An unexpected error occurred.');
-      Alert.alert('Error', 'An unexpected error occurred.');
+      Alert.alert('Error', error.message);
     } finally {
       setLoading(false);
     }
@@ -95,13 +94,13 @@ const RegisterClient = () => {
       <FormField
         label="Phone number"
         placeholder="Phone number"
-        value={formState.color}
+        value={formState.phone_number}
         onChangeText={text => handleInputChange('phone_number', text)}
       />
       <FormField
         label="Email"
         placeholder="Email"
-        value={formState.size}
+        value={formState.email}
         onChangeText={text => handleInputChange('email', text)}
       />
       <TouchableOpacity onPress={handleRegister}>
