@@ -8,7 +8,7 @@ import config from '../../constants/config';
 const ProfileScreen = () => {
   const navigation = useNavigation();
 
-  const [profile, setProfile] = useState({ name: '', email: '', phone: '' });
+  const [profile, setProfile] = useState({ name: '', email: '', phone_number: '' });
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -96,11 +96,11 @@ const ProfileScreen = () => {
           color: isEditing ? '#000' : '#888'
         }}
       />
-      <Text>Phone:</Text>
+      <Text>Phone number:</Text>
       <TextInput
-        value={profile.phone}
+        value={profile.phone_number || ""}
         editable={isEditing}
-        onChangeText={(text) => setProfile({ ...profile, phone: text })}
+        onChangeText={(text) => setProfile({ ...profile, phone_number: text })}
         style={{
           borderBottomWidth: 1,
           marginBottom: 20,
