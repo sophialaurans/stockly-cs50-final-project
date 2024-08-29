@@ -18,6 +18,7 @@ export default function ClientsLayout() {
         }}
       />
       <Stack.Screen name="register-client" options={{ title: 'New Client' }} />
+      <Stack.Screen name="client-details" options={{ title: 'Details' }} />
     </Stack>
   );
 }

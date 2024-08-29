@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, ActivityIndicator, FlatList, Button } from 'react-native';
+import { View, Text, ActivityIndicator, FlatList, Button, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import useAuthenticatedFetch from '../../../hooks/useAuthenticatedFetch';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 const Orders = () => {
     const navigation = useNavigation();
@@ -36,6 +37,9 @@ const Orders = () => {
                                     <Text> - Price: R$ {orderItem.price}</Text>
                                 </View>
                             ))}
+                            <TouchableOpacity onPress={() => { navigation.navigate('order-details', { order: item })}}>
+                                <FontAwesome5 name="edit" size={24} color="black" />
+                            </TouchableOpacity>
                         </View>
                     )}
                 />

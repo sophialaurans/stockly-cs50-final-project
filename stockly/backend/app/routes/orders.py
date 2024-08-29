@@ -23,7 +23,6 @@ def get_orders():
 @jwt_required()
 def new_order():
     current_user = get_jwt_identity()
-
     order_data = request.json
 
     order = Orders(
@@ -31,7 +30,7 @@ def new_order():
         client_id=order_data.get('client_id'),
         status=order_data.get('status', 'pending')
     )
-    
+
     total_price = 0
     for item_data in order_data.get('items', []):
         product = Products.query.get(item_data['product_id'])
@@ -39,16 +38,16 @@ def new_order():
             return jsonify({'error': f'Product with ID {item_data["product_id"]} not found'}), 404
 
         item = OrderItems(
-            user_id = current_user,
+            user_id=current_user,
             product_id=item_data['product_id'],
             quantity=item_data['quantity'],
             price=product.price,
-            order=order
+            name=product.name
         )
-        
+
         total_price += item.quantity * item.price
         order.items.append(item)
-    
+
     order.total_price = total_price
 
     db.session.add(order)
@@ -56,3 +55,42 @@ def new_order():
 
     order_schema = OrderSchema()
     return jsonify(order_schema.dump(order)), 201
+
+@bp.route('/orders/<int:order_id>', methods=['PUT'])
+@jwt_required()
+def update_order(order_id):
+    current_user = get_jwt_identity()
+
+    order = Orders.query.filter_by(order_id=order_id, user_id=current_user).first()
+
+    if not order:
+        return jsonify(message="Order not found"), 404
+
+    data = request.get_json()
+
+    order.client_id = data.get('client_id', order.client_id)
+    order.status = data.get('status', order.status)
+
+    db.session.query(OrderItems).filter_by(order_id=order.order_id).delete()
+
+    total_price = 0
+    for item_data in data.get('items', []):
+        product = Products.query.get(item_data['product_id'])
+        if not product:
+            return jsonify({'error': f'Product with ID {item_data["product_id"]} not found'}), 404
+
+        item = OrderItems(
+            user_id=current_user,
+            product_id=item_data['product_id'],
+            quantity=item_data['quantity'],
+            price=product.price
+        )
+        
+        total_price += item.quantity * item.price
+        order.items.append(item)
+    
+    order.total_price = total_price
+
+    db.session.commit()
+
+    return jsonify(message="Order updated successfully"), 200

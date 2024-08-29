@@ -38,3 +38,23 @@ def register_client():
     db.session.commit()
 
     return jsonify(message="The client has been registered"), 201
+
+@bp.route('/clients/<int:client_id>', methods=['PUT'])
+@jwt_required()
+def update_client(client_id):
+    current_user = get_jwt_identity()
+
+    client = Clients.query.filter_by(client_id=client_id, user_id=current_user).first()
+
+    if not client:
+        return jsonify(message="Client not found"), 404
+
+    data = request.get_json()
+
+    client.name = data.get('name', client.name)
+    client.phone_number = data.get('phone_number', client.phone_number)
+    client.email = data.get('email', client.email)
+
+    db.session.commit()
+
+    return jsonify(message="Client details updated successfully"), 200

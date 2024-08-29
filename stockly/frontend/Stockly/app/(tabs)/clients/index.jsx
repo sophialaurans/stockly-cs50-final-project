@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, ActivityIndicator, FlatList, Button } from 'react-native';
+import { View, Text, ActivityIndicator, FlatList, Button, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import useAuthenticatedFetch from '../../../hooks/useAuthenticatedFetch';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 const Clients = () => {
     const navigation = useNavigation();
@@ -26,6 +27,10 @@ const Clients = () => {
                             <Text>Name: {item.name}</Text>
                             <Text>Phone number: {item.phone_number}</Text>
                             <Text>Email: {item.email}</Text>
+                            
+                            <TouchableOpacity onPress={() => { navigation.navigate('client-details', { client: item })}}>
+                                <FontAwesome5 name="edit" size={24} color="black" />
+                            </TouchableOpacity>
                         </View>
                     )}
                 />
