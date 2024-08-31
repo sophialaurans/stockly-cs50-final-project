@@ -47,7 +47,7 @@ def register_product():
 
     return jsonify(message="The product has been registered"), 201
 
-@bp.route('/products/<int:product_id>', methods=['PUT'])
+@bp.route('/products/details/<int:product_id>', methods=['PUT'])
 @jwt_required()
 def update_product(product_id):
     current_user = get_jwt_identity()
@@ -70,3 +70,16 @@ def update_product(product_id):
     db.session.commit()
 
     return jsonify(message="Product updated successfully"), 200
+
+
+@bp.route('/products/<int:product_id>', methods=['DELETE'])
+@jwt_required()
+def delete_product(product_id):
+    current_user = get_jwt_identity()
+
+    product = Products.query.filter_by(product_id=product_id, user_id=current_user).first()
+
+    db.session.delete(product)
+    db.session.commit()
+
+    return jsonify(message="Product deleted successfully"), 200

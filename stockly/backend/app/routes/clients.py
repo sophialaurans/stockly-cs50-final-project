@@ -39,7 +39,7 @@ def register_client():
 
     return jsonify(message="The client has been registered"), 201
 
-@bp.route('/clients/<int:client_id>', methods=['PUT'])
+@bp.route('/clients/details/<int:client_id>', methods=['PUT'])
 @jwt_required()
 def update_client(client_id):
     current_user = get_jwt_identity()
@@ -58,3 +58,15 @@ def update_client(client_id):
     db.session.commit()
 
     return jsonify(message="Client details updated successfully"), 200
+
+@bp.route('/clients/<int:client_id>', methods=['DELETE'])
+@jwt_required()
+def delete_client(client_id):
+    current_user = get_jwt_identity()
+
+    client = Clients.query.filter_by(client_id=client_id, user_id=current_user).first()
+
+    db.session.delete(client)
+    db.session.commit()
+
+    return jsonify(message="Client deleted successfully"), 200

@@ -18,7 +18,7 @@ def dashboard():
     last_month_revenue = db.session.query(db.func.coalesce(db.func.sum(OrderItems.price * OrderItems.quantity), 0)).join(Orders).filter(
         Orders.user_id == current_user,
         Orders.date >= last_month_start,
-        Orders.status == 'complete'
+        Orders.status == 'completed'
     ).scalar()
     total_clients = Clients.query.filter_by(user_id=current_user).count()
 

@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from marshmallow import ValidationError
-from ..models import Orders, OrderItems, Products
+from ..models import Orders, OrderItems, Products, Clients
 from ..extensions import db
 from ..schemas import OrderSchema, OrderItemSchema
 
@@ -25,9 +25,17 @@ def new_order():
     current_user = get_jwt_identity()
     order_data = request.json
 
+    client_id = order_data.get('client_id')
+
+    client = Clients.query.get(client_id)
+
+    if not client:
+        return jsonify({"error": "Client not found"}), 404
+
     order = Orders(
         user_id=current_user,
-        client_id=order_data.get('client_id'),
+        client_id=client_id,
+        client_name=client.name,
         status=order_data.get('status', 'pending')
     )
 
@@ -40,9 +48,11 @@ def new_order():
         item = OrderItems(
             user_id=current_user,
             product_id=item_data['product_id'],
+            product_name=product.name,
+            product_size=product.size,
+            product_color=product.color,
             quantity=item_data['quantity'],
             price=product.price,
-            name=product.name
         )
 
         total_price += item.quantity * item.price
@@ -56,7 +66,7 @@ def new_order():
     order_schema = OrderSchema()
     return jsonify(order_schema.dump(order)), 201
 
-@bp.route('/orders/<int:order_id>', methods=['PUT'])
+@bp.route('/orders/details/<int:order_id>', methods=['PUT'])
 @jwt_required()
 def update_order(order_id):
     current_user = get_jwt_identity()
@@ -82,6 +92,8 @@ def update_order(order_id):
         item = OrderItems(
             user_id=current_user,
             product_id=item_data['product_id'],
+            product_name=product.name,
+            product_size=product.size,
             quantity=item_data['quantity'],
             price=product.price
         )
@@ -94,3 +106,41 @@ def update_order(order_id):
     db.session.commit()
 
     return jsonify(message="Order updated successfully"), 200
+
+@bp.route('/orders/<int:order_id>', methods=['DELETE'])
+@jwt_required()
+def delete_order(order_id):
+    current_user = get_jwt_identity()
+
+    order = Orders.query.filter_by(order_id=order_id, user_id=current_user).first()
+
+    db.session.delete(order)
+    db.session.commit()
+
+    return jsonify(message="Order deleted successfully"), 200
+
+@bp.route('/orders/<int:order_id>/status', methods=['PUT'])
+@jwt_required()
+def update_order_status(order_id):
+    current_user = get_jwt_identity()
+
+    order = Orders.query.filter_by(order_id=order_id, user_id=current_user).first()
+    if not order:
+        return jsonify({"error": "Order not found"}), 404
+
+    data = request.json
+    new_status = data.get('status')
+
+    if new_status not in ['pending', 'completed', 'shipped']:
+        return jsonify({"error": "Invalid status"}), 400
+
+    order.status = new_status
+    db.session.commit()
+
+    return jsonify({"message": "Order status updated successfully", "order": {
+        "order_id": order.order_id,
+        "client_name": order.client_name,
+        "total_price": order.total_price,
+        "date": order.date,
+        "status": order.status
+    }}), 200

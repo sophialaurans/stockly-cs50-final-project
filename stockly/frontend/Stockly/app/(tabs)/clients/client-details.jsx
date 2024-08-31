@@ -26,7 +26,7 @@ const ClientDetails = () => {
             }
 
             const response = await axios.put(
-                `${config.apiUrl}/clients/${client.client_id}`,
+                `${config.apiUrl}/clients/details/${client.client_id}`,
                 { name, phone_number, email },
                 {
                     headers: {

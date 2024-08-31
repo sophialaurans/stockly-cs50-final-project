@@ -29,7 +29,7 @@ const ProductDetails = () => {
             }
 
             const response = await axios.put(
-                `${config.apiUrl}/products/${product.product_id}`,
+                `${config.apiUrl}/products/details/${product.product_id}`,
                 { name, size, color, dimensions, price, description, quantity },
                 {
                     headers: {

@@ -145,7 +145,7 @@ const OrderDetails = () => {
             }
 
             const response = await axios.put(
-                `${config.apiUrl}/orders/${order.order_id}`,
+                `${config.apiUrl}/orders/details/${order.order_id}`,
                 {
                     client_id: selectedClient,
                     items: items.map(item => ({
@@ -232,7 +232,7 @@ const OrderDetails = () => {
                     keyExtractor={(item) => item.product_id.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.item}>
-                            <Text>{getProductDetailsById(item.product_id)}</Text>
+                            <Text>{item.product_name} {item.product_size}</Text>
                             <Text>{item.quantity} x R${item.price}</Text>
                             <Text>R${(item.quantity * item.price).toFixed(2)}</Text>
                             <TouchableOpacity onPress={() => handleDeleteItem(item.product_id)}>

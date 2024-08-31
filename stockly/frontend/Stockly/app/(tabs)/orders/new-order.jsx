@@ -107,14 +107,27 @@ const NewOrder = () => {
   };  
 
   const handleDeleteItem = (product_id) => {
-    setItems(prevItems => {
-      const updatedItems = prevItems.filter(item => item.product_id !== product_id);
-      const deletedItem = prevItems.find(item => item.product_id === product_id);
-      if (deletedItem) {
-        setTotalPrice(prevTotal => prevTotal - deletedItem.total);
-      }
-      return updatedItems;
-    });
+    Alert.alert(
+        'Delete Confirmation',
+        'Are you sure you want to delete this item?',
+        [
+            { text: 'Cancel', style: 'cancel' },
+            {
+                text: 'Delete',
+                onPress: () => {
+                    setItems(prevItems => {
+                        const updatedItems = prevItems.filter(item => item.product_id !== product_id);
+                        const deletedItem = prevItems.find(item => item.product_id === product_id);
+                        if (deletedItem) {
+                            setTotalPrice(prevTotal => prevTotal - deletedItem.total);
+                        }
+                        return updatedItems;
+                    });
+                },
+                style: 'destructive',
+            },
+        ]
+    );
   };
 
   const handleSubmitOrder = async () => {
