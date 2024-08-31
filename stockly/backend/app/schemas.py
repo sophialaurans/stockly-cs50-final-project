@@ -26,6 +26,9 @@ class OrderItemSchema(SQLAlchemyAutoSchema):
     order_id = fields.Int(dump_only=True)
     user_id = fields.Int(required=True)
     product_id = fields.Int(required=True)
+    product_name = fields.Str(required=True)
+    product_size = fields.Str()
+    product_color = fields.Str()
     quantity = fields.Int(required=True, validate=validate.Range(min=1))
     price = fields.Float(dump_only=True)
 
@@ -37,6 +40,7 @@ class OrderSchema(SQLAlchemyAutoSchema):
 
     client_id = fields.Int(required=True)
     user_id = fields.Int(required=True)
+    client_name = fields.Str(required=True)
     date = fields.DateTime(dump_only=True)
     status = fields.Str(validate=validate.OneOf(['pending', 'completed', 'shipped']))
     items = fields.List(fields.Nested(OrderItemSchema), many=True)
