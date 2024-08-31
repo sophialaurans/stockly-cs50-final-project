@@ -32,3 +32,5 @@
 
 # Arquivos gerados pelo expo-cli
 /frontend/Stockly/expo-env.d.ts
+
+config.js
