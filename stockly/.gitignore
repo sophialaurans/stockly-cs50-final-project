@@ -21,6 +21,7 @@
 /frontend/Stockly/*.orig.*
 /frontend/Stockly/web-build/
 /frontend/.env
+/frontend/Stockly/constants/config.js
 
 # macOS
 /frontend/Stockly/.DS_Store
