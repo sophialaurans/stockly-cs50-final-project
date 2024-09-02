@@ -1,107 +1,69 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import config from '../../../constants/config';
+import React from 'react';
+import { View, Text, Button, ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import useProduct from '../../../hooks/useProduct';
+import FormField from '../../../components/FormField';
 
 const ProductDetails = () => {
-    const route = useRoute();
     const navigation = useNavigation();
-    const { product } = route.params;
-
-    const [name, setName] = useState(product.name);
-    const [size, setSize] = useState(product.size);
-    const [color, setColor] = useState(product.color);
-    const [dimensions, setDimensions] = useState(product.dimensions);
-    const [price, setPrice] = useState(product.price.toFixed(2));
-    const [description, setDescription] = useState(product.description);
-    const [quantity, setQuantity] = useState(product.quantity);
-
-    const handleSave = async () => {
-        try {
-            const token = await AsyncStorage.getItem('access_token');
-    
-            if (!token) {
-                Alert.alert('Error', 'No authentication token found.');
-                navigation.replace('../../login');
-                return;
-            }
-
-            const response = await axios.put(
-                `${config.apiUrl}/products/details/${product.product_id}`,
-                { name, size, color, dimensions, price, description, quantity },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                }
-            );
-    
-            if (response.status === 200) {
-                Alert.alert('Success', 'Product updated successfully');
-                navigation.goBack();
-            } else {
-                console.log('Error response:', response.data);
-                Alert.alert('Error', 'Failed to update product');
-            }
-        } catch (error) {
-            console.log('Catch Error:', error.response ? error.response.data : error.message);
-            Alert.alert('Error', 'An unexpected error occurred.');
-        }
-    };    
+    const {
+        formState: { name, color, size, dimensions, price, description, quantity },
+        handleInputChange,
+        handleSave,
+        loading,
+        error,
+    } = useProduct();
 
     return (
         <View>
-            <Text>Name:</Text>
-            <TextInput
+            <FormField
                 placeholder="Name"
+                label="Name"
                 value={name}
-                onChangeText={setName}
+                onChangeText={(text) => handleInputChange('name', text)}
             />
-            <Text>Size:</Text>
-            <TextInput
+            <FormField
                 placeholder="Size"
+                label="Size"
                 value={size}
-                onChangeText={setSize}
+                onChangeText={(text) => handleInputChange('size', text)}
             />
-            <Text>Color:</Text>
-            <TextInput
+            <FormField
                 placeholder="Color"
+                label="Color"
                 value={color}
-                onChangeText={setColor}
+                onChangeText={(text) => handleInputChange('color', text)}
             />
-            <Text>Dimensions:</Text>
-            <TextInput
+            <FormField
                 placeholder="Dimensions"
+                label="Dimensions"
                 value={dimensions}
-                onChangeText={setDimensions}
+                onChangeText={(text) => handleInputChange('dimensions', text)}
             />
-            <Text>Price:</Text>
-            <TextInput
+            <FormField
                 placeholder="Price"
+                label="Price"
                 value={price}
-                keyboardType="numeric"
-                onChangeText={text => setPrice(parseFloat(text).toFixed(2))}
+                onChangeText={(text) => handleInputChange('price', text)}
             />
-            <Text>Description:</Text>
-            <TextInput
+            <FormField
                 placeholder="Description"
+                label="Description"
                 value={description}
-                onChangeText={setDescription}
+                onChangeText={(text) => handleInputChange('description', text)}
             />
-            <Text>Quantity in Stock:</Text>
-            <TextInput
+            <FormField
                 placeholder="Quantity"
-                value={quantity.toString()}
-                keyboardType="numeric"
-                onChangeText={text => setQuantity(parseInt(text, 10))}
+                label="Quantity"
+                value={quantity}
+                onChangeText={(text) => handleInputChange('quantity', text)}
             />
             <Button
                 title="Save"
-                onPress={handleSave}
+                onPress={() => handleSave(navigation)}
             />
+            {loading && <ActivityIndicator size="large" color="#0000ff" />}
+            {error && <Text>{error}</Text>}
         </View>
     );
 };

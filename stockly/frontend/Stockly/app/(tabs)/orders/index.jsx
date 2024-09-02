@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Text, ActivityIndicator, FlatList, Button, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useAuthenticatedFetch from '../../../hooks/useAuthenticatedFetch';
@@ -11,9 +11,17 @@ import config from '../../../constants/config'
 
 const Orders = () => {
     const navigation = useNavigation();
-    const { data, loading, error } = useAuthenticatedFetch('orders');
+    const isFocused = useIsFocused();
+    
+    const { data, loading, error, refetch } = useAuthenticatedFetch('orders');
 
     const [orders, setOrders] = useState(data);
+
+    useEffect(() => {
+        if (isFocused) {
+            refetch();
+        }
+    }, [isFocused, refetch]);
 
     useEffect(() => {
         if (data) {

@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import config from '../constants/config'
+import config from '../constants/config';
 
 const useAuthenticatedFetch = (endpoint) => {
     const navigation = useNavigation();
@@ -10,36 +10,39 @@ const useAuthenticatedFetch = (endpoint) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const token = await AsyncStorage.getItem('access_token');
-                
-                if (!token) {
-                    setError('Token not found');
-                    setLoading(false);
-                    navigation.replace('intro');
-                    return;
+    const fetchData = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const token = await AsyncStorage.getItem('access_token');
+            
+            if (!token) {
+                setError('Token not found');
+                setLoading(false);
+                navigation.replace('intro');
+                return;
+            }
+
+            const response = await axios.get(`${config.apiUrl}/${endpoint}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
                 }
+            });
 
-                const response = await axios.get(`${config.apiUrl}/${endpoint}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                setData(response.data);
-                setLoading(false);
-            } catch (error) {
-                setError('Error fetching data.');
-                setLoading(false);
-                console.error('Error:', error.response ? error.response.data : error.message);
-            }            
-        };
+            setData(response.data);
+        } catch (error) {
+            setError('Error fetching data.');
+            console.error('Error:', error.response ? error.response.data : error.message);
+        } finally {
+            setLoading(false);
+        }
+    }, [endpoint, navigation]);
 
+    useEffect(() => {
         fetchData();
-    }, [endpoint]);
+    }, [fetchData]);
 
-    return { data, loading, error };
+    return { data, loading, error, refetch: fetchData };
 };
 
 export default useAuthenticatedFetch;

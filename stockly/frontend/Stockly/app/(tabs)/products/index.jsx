@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Text, ActivityIndicator, FlatList, Button, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useAuthenticatedFetch from '../../../hooks/useAuthenticatedFetch';
@@ -9,16 +9,24 @@ import { FontAwesome } from '@expo/vector-icons';
 import config from '../../../constants/config'
 
 const Products = () => {
-    const navigation = useNavigation();  
-    const { data, loading, error } = useAuthenticatedFetch('products');
+    const navigation = useNavigation();
+    const isFocused = useIsFocused();
+
+    const { data, loading, error, refetch } = useAuthenticatedFetch('products');
     
     const [products, setProducts] = useState(data);
+
+    useEffect(() => {
+        if (isFocused) {
+            refetch();
+        }
+    }, [isFocused, refetch]);
 
     useEffect(() => {
         if (data) {
             setProducts(data);
         }
-    }, [data])
+    }, [data]);
 
     if (loading) {
         return <ActivityIndicator size="large" color="#0000ff" />;

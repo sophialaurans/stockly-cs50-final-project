@@ -1,78 +1,45 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import config from '../../../constants/config';
+import React from 'react';
+import { View, Text, Button, ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import useClient from '../../../hooks/useClient';
+import FormField from '../../../components/FormField';
 
 const ClientDetails = () => {
-    const route = useRoute();
     const navigation = useNavigation();
-    const { client } = route.params;
-    console.log('Route params:', route.params);
-
-    const [name, setName] = useState(client.name);
-    const [phone_number, setPhoneNumber] = useState(client.phone_number);
-    const [email, setEmail] = useState(client.color);
-
-    const handleSave = async () => {
-        try {
-            const token = await AsyncStorage.getItem('access_token');
-    
-            if (!token) {
-                Alert.alert('Error', 'No authentication token found.');
-                navigation.replace('login');
-                return;
-            }
-
-            const response = await axios.put(
-                `${config.apiUrl}/clients/details/${client.client_id}`,
-                { name, phone_number, email },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                }
-            );
-    
-            if (response.status === 200) {
-                Alert.alert('Success', 'Client details updated successfully');
-                navigation.goBack();
-            } else {
-                console.log('Error response:', response.data);
-                Alert.alert('Error', 'Failed to update client details');
-            }
-        } catch (error) {
-            console.log('Catch Error:', error.response ? error.response.data : error.message);
-            Alert.alert('Error', 'An unexpected error occurred.');
-        }
-    };    
+    const {
+        formState: { name, phone_number, email },
+        handleInputChange,
+        handleSave,
+        loading,
+        error,
+    } = useClient();
 
     return (
         <View>
-            <Text>Name:</Text>
-            <TextInput
+            <FormField
                 placeholder="Name"
+                label="Name"
                 value={name}
-                onChangeText={setName}
+                onChangeText={(text) => handleInputChange('name', text)}
             />
-            <Text>Phone number:</Text>
-            <TextInput
+            <FormField
                 placeholder="Phone number"
+                label="Phone number"
                 value={phone_number}
-                onChangeText={setPhoneNumber}
+                onChangeText={(text) => handleInputChange('phone_number', text)}
             />
-            <Text>Email:</Text>
-            <TextInput
+            <FormField
                 placeholder="Email"
+                label="Email"
                 value={email}
-                onChangeText={setEmail}
+                onChangeText={(text) => handleInputChange('email', text)}
             />
             <Button
                 title="Save"
-                onPress={handleSave}
+                onPress={() => handleSave(navigation)}
             />
+            {loading && <ActivityIndicator size="large" color="#0000ff" />}
+            {error && <Text>{error}</Text>}
         </View>
     );
 };
