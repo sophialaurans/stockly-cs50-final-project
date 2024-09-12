@@ -28,6 +28,9 @@ def register_client():
     phone_number = data['phone_number']
     email = data['email']
 
+    if not name:
+        return jsonify(message="Please enter the client's name")
+
     new_client = Clients(
         user_id=current_user,
         name=name,
@@ -54,6 +57,9 @@ def update_client(client_id):
     client.name = data.get('name', client.name)
     client.phone_number = data.get('phone_number', client.phone_number)
     client.email = data.get('email', client.email)
+
+    if not client.name:
+        return jsonify(message="Please enter the client's name")
 
     db.session.commit()
 

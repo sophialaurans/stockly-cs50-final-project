@@ -32,6 +32,9 @@ def register_product():
     description = data['description']
     quantity = data['quantity']
 
+    if not name or not price or not quantity:
+        return jsonify(message="Product name, price, and quantity are required"), 400
+
     new_product = Products(
         user_id=current_user,
         name=name,
@@ -66,6 +69,9 @@ def update_product(product_id):
     product.price = data.get('price', product.price)
     product.description = data.get('description', product.description)
     product.quantity = data.get('quantity', product.quantity)
+
+    if not product.name or not product.price or not product.quantity:
+        return jsonify(message="Product name, price, and quantity are required"), 400
 
     db.session.commit()
 
