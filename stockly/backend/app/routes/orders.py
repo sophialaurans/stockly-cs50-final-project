@@ -1,9 +1,11 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from marshmallow import ValidationError
-from ..models import Orders, OrderItems, Products, Clients
+from ..models import Orders, OrderItems, Products, Clients, MonthlyRevenue
 from ..extensions import db
 from ..schemas import OrderSchema, OrderItemSchema
+from datetime import datetime
+from decimal import Decimal
 
 bp = Blueprint('orders', __name__)
 
@@ -43,7 +45,10 @@ def new_order():
     for item_data in order_data.get('items', []):
         product = Products.query.get(item_data['product_id'])
         if not product:
-            return jsonify({'error': f'Product with ID {item_data["product_id"]} not found'}), 404
+            return jsonify({'error': f'Product not found'}), 404
+        
+        if not item_data['quantity']:
+            return jsonify(message="Quantity is required"), 400
 
         item = OrderItems(
             user_id=current_user,
@@ -59,6 +64,9 @@ def new_order():
         order.items.append(item)
 
     order.total_price = total_price
+
+    if not order.items:
+        return jsonify(message="The order must have at least one item"), 400
 
     db.session.add(order)
     db.session.commit()
@@ -87,7 +95,10 @@ def update_order(order_id):
     for item_data in data.get('items', []):
         product = Products.query.get(item_data['product_id'])
         if not product:
-            return jsonify({'error': f'Product with ID {item_data["product_id"]} not found'}), 404
+            return jsonify({'error': f'Product not found'}), 404
+        
+        if not item_data['quantity']:
+            return jsonify(message="Quantity is required"), 400
 
         item = OrderItems(
             user_id=current_user,
@@ -102,6 +113,9 @@ def update_order(order_id):
         order.items.append(item)
     
     order.total_price = total_price
+
+    if not order.items:
+        return jsonify(message="The order must have at least one item"), 400
 
     db.session.commit()
 
@@ -122,25 +136,62 @@ def delete_order(order_id):
 @bp.route('/orders/<int:order_id>/status', methods=['PUT'])
 @jwt_required()
 def update_order_status(order_id):
-    current_user = get_jwt_identity()
+    try:
+        current_user = get_jwt_identity()
 
-    order = Orders.query.filter_by(order_id=order_id, user_id=current_user).first()
-    if not order:
-        return jsonify({"error": "Order not found"}), 404
+        order = Orders.query.filter_by(order_id=order_id, user_id=current_user).first()
+        if not order:
+            return jsonify({"error": "Order not found"}), 404
 
-    data = request.json
-    new_status = data.get('status')
+        data = request.json
+        new_status = data.get('status')
 
-    if new_status not in ['pending', 'completed', 'shipped']:
-        return jsonify({"error": "Invalid status"}), 400
+        if new_status not in ['pending', 'completed', 'shipped']:
+            return jsonify({"error": "Invalid status"}), 400
 
-    order.status = new_status
-    db.session.commit()
+        old_status = order.status
+        order.status = new_status
+        db.session.commit()
 
-    return jsonify({"message": "Order status updated successfully", "order": {
-        "order_id": order.order_id,
-        "client_name": order.client_name,
-        "total_price": order.total_price,
-        "date": order.date,
-        "status": order.status
-    }}), 200
+        now = datetime.utcnow()
+        current_year = now.year
+        current_month = now.month
+
+        if old_status == 'completed':
+            completed_order_revenue = db.session.query(db.func.coalesce(db.func.sum(OrderItems.price * OrderItems.quantity), 0)).join(Orders).filter(
+                Orders.order_id == order_id
+            ).scalar()
+
+            existing_revenue = MonthlyRevenue.query.filter_by(user_id=current_user, year=current_year, month=current_month).first()
+            if existing_revenue:
+                existing_revenue.revenue -= Decimal(completed_order_revenue)
+                if existing_revenue.revenue < 0:
+                    existing_revenue.revenue = Decimal(0)
+            else:
+                return jsonify({"error": "Revenue record not found for current month."}), 404
+
+        if new_status == 'completed':
+            completed_order_revenue = db.session.query(db.func.coalesce(db.func.sum(OrderItems.price * OrderItems.quantity), 0)).join(Orders).filter(
+                Orders.order_id == order_id
+            ).scalar()
+
+            existing_revenue = MonthlyRevenue.query.filter_by(user_id=current_user, year=current_year, month=current_month).first()
+            if existing_revenue:
+                existing_revenue.revenue += Decimal(completed_order_revenue)
+            else:
+                new_revenue = MonthlyRevenue(user_id=current_user, year=current_year, month=current_month, revenue=Decimal(completed_order_revenue))
+                db.session.add(new_revenue)
+
+        db.session.commit()
+
+        return jsonify({"message": "Order status updated successfully", "order": {
+            "order_id": order.order_id,
+            "client_name": order.client_name,
+            "total_price": order.total_price,
+            "date": order.date,
+            "status": order.status
+        }}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
