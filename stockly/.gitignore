@@ -22,6 +22,7 @@
 /frontend/Stockly/web-build/
 /frontend/.env
 /frontend/Stockly/constants/config.js
+/frontend/Stockly/.prettierrc
 
 # macOS
 /frontend/Stockly/.DS_Store
