@@ -10,19 +10,11 @@ export const globalStyles = StyleSheet.create({
 	flatlistItem: {
 		flex: 1,
 		alignSelf: "center",
-		padding: 10,
-		marginBottom: 10,
-		backgroundColor: colors.lightGrey,
-		width: "95%",
-		shadowColor: colors.black,
-		shadowOffset: {
-			width: 0,
-			height: 1,
-		},
-		shadowOpacity: 0.2,
-		shadowRadius: 1.41,
-		elevation: 2,
-		borderRadius: 6,
+		width: "100%",
+		borderBottomWidth: 1,
+		borderColor: colors.darkGrey,
+		paddingBottom: 20,
+		marginBottom: 20,
 	},
 	orderHeaderContainer: {
 		flex: 1,
@@ -31,7 +23,8 @@ export const globalStyles = StyleSheet.create({
 		flexDirection: "row",
 		flexWrap: "nowrap",
 		justifyContent: "space-between",
-		flex: 5,
+		flex: 1,
+		gap: 10,
 	},
 	orderItemsContainer: {
 		flex: 1,
@@ -44,7 +37,7 @@ export const globalStyles = StyleSheet.create({
 		flexWrap: "wrap",
 	},
 	flatlistItemDetailsLabel: {
-		fontWeight: "bold",
+		fontWeight: "500",
 	},
 	flatlistItemDetailsValue: {},
 	flatlistItemButtons: {
@@ -74,5 +67,57 @@ export const globalStyles = StyleSheet.create({
 	},
 	picker: {
 		marginBottom: 5,
+		borderWidth: 0.8,
+		borderColor: colors.darkGrey,
+		borderRadius: 8,
+	},
+	item: {
+        flex: 1,
+		flexDirection: "row",
+        flexWrap: "nowrap",
+		justifyContent: "space-between",
+		padding: 8,
+		borderBottomWidth: 1,
+	},
+    itemData: {
+        flex: 2,
+        textAlign: "center",
+    },
+    itemDataName: {
+        flex: 3,
+    },
+	addItemButtonContainer: {
+		width: "100%",
+		alignItems: "flex-end",
+		marginTop: 5,
+		marginBottom: 7,
+	},
+	addItemButton: {
+		borderWidth: 1,
+		borderColor: colors.tertiary,
+		borderRadius: 8,
+		height: 40,
+		width: 100,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	addItemButtonText: {
+		color: colors.tertiary,
+		fontWeight: "bold",
+	},
+	deleteButton: {
+		padding: 5,
+	},
+	totalPrice: {
+		flexDirection: "row",
+		flexWrap: "nowrap",
+		justifyContent: "space-between",
+		alignItems: "baseline",
+	},
+	totalPriceLabel: {
+		color: colors.text,
+	},
+	totalPriceValue: {
+		fontSize: 16,
 	},
 });

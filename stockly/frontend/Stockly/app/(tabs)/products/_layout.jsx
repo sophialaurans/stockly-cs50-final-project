@@ -6,20 +6,22 @@ import colors from "../../../constants/colors";
 export default function ProductsLayout() {
 	const navigation = useNavigation();
 	return (
-		<Stack>
+		<Stack
+			screenOptions={{
+				headerStyle: {
+					backgroundColor: colors.primary,
+				},
+				statusBarStyle: "light",
+				statusBarColor: colors.primary,
+			}}>
 			<Stack.Screen
 				name="index"
 				options={{
 					title: "Products",
-					headerStyle: {
-						backgroundColor: colors.primary,
-					},
+					headerShadowVisible: false,
 					headerTintColor: "white",
 					headerRight: () => (
-						<TouchableOpacity
-							onPress={() => navigation.navigate("profile")}
-							style={{ marginRight: 10 }}
-						>
+						<TouchableOpacity onPress={() => navigation.navigate("profile")} style={{ marginRight: 10 }}>
 							<FontAwesome name="user" size={24} color="white" />
 						</TouchableOpacity>
 					),
@@ -27,11 +29,17 @@ export default function ProductsLayout() {
 			/>
 			<Stack.Screen
 				name="register-product"
-				options={{ title: "New Product" }}
+				options={{
+					title: "New Product",
+					headerTintColor: "white",
+				}}
 			/>
 			<Stack.Screen
 				name="product-details"
-				options={{ title: "Details" }}
+				options={{
+					title: "Details",
+					headerTintColor: "white",
+				}}
 			/>
 		</Stack>
 	);

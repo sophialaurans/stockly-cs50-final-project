@@ -8,6 +8,7 @@ import {
 	FlatList,
 	Alert,
 	Platform,
+	Modal,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
@@ -21,15 +22,18 @@ import config from "../../../constants/config";
 import { AnimatedFAB } from "react-native-paper";
 import { globalStyles } from "../styles";
 import colors from "../../../constants/colors";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import usePrintAndSave from "../../../hooks/usePrintAndSave";
+import useDelete from "../../../hooks/useDelete";
 
 const Orders = ({ visible, animateFrom, style }) => {
-	const [isExtended, setIsExtended] = React.useState(true);
+	const [showAllItems, setShowAllItems] = useState(false);
+	const [isExtended, setIsExtended] = useState(true);
 
 	const isIOS = Platform.OS === "ios";
 
 	const onScroll = ({ nativeEvent }) => {
-		const currentScrollPosition =
-			Math.floor(nativeEvent?.contentOffset?.y) ?? 0;
+		const currentScrollPosition = Math.floor(nativeEvent?.contentOffset?.y) ?? 0;
 		setIsExtended(currentScrollPosition <= 0);
 	};
 
@@ -37,10 +41,17 @@ const Orders = ({ visible, animateFrom, style }) => {
 
 	const navigation = useNavigation();
 	const isFocused = useIsFocused();
-
 	const { data, loading, error, refetch } = useAuthenticatedFetch("orders");
 
 	const [orders, setOrders] = useState(data);
+
+	useEffect(() => {
+		if (data) {
+			setOrders(data);
+		}
+	}, [data]);
+
+    const { handleDelete } = useDelete(setOrders, refetch);
 
 	useEffect(() => {
 		if (isFocused) {
@@ -48,11 +59,8 @@ const Orders = ({ visible, animateFrom, style }) => {
 		}
 	}, [isFocused, refetch]);
 
-	useEffect(() => {
-		if (data) {
-			setOrders(data);
-		}
-	}, [data]);
+	const { printReceipt, printToFile, selectPrinter, selectedPrinter, loadingPrint, setLoadingPrint } =
+		usePrintAndSave();
 
 	if (loading) {
 		return <ActivityIndicator size="large" color={colors.primary} />;
@@ -68,7 +76,7 @@ const Orders = ({ visible, animateFrom, style }) => {
 
 			if (!token) {
 				Alert.alert("Error", "No authentication token found.");
-				navigation.replace("login");
+				navigation.replace("(auth)");
 				return;
 			}
 
@@ -85,86 +93,38 @@ const Orders = ({ visible, animateFrom, style }) => {
 
 			if (response.status === 200) {
 				const updatedOrders = orders.map((order) =>
-					order.order_id === order_id
-						? { ...order, status: newStatus }
-						: order
+					order.order_id === order_id ? { ...order, status: newStatus } : order
 				);
 				setOrders(updatedOrders);
 			} else {
 				Alert.alert("Error", "Failed to update order status");
 			}
 		} catch (error) {
-			console.log(
-				"Catch Error:",
-				error.response ? error.response.data : error.message
-			);
+			console.log("Catch Error:", error.response ? error.response.data : error.message);
 			Alert.alert("Error", "An unexpected error occurred.");
 		}
 	};
 
-	const handleDelete = async (order_id) => {
-		Alert.alert(
-			"Delete Confirmation",
-			"Are you sure you want to delete this order?",
-			[
-				{ text: "Cancel", style: "cancel" },
-				{
-					text: "Delete",
-					onPress: async () => {
-						try {
-							const token = await AsyncStorage.getItem(
-								"access_token"
-							);
+	const handlePrintReceipt = async (order_id) => {
+		setLoadingPrint(true);
+		try {
+			await printReceipt(order_id);
+		} catch (error) {
+			Alert.alert("Error", "Error printing receipt");
+		} finally {
+			setLoadingPrint(false);
+		}
+	};
 
-							if (!token) {
-								Alert.alert(
-									"Error",
-									"No authentication token found."
-								);
-								navigation.replace("login");
-								return;
-							}
-
-							const response = await axios.delete(
-								`${config.apiUrl}/orders/${order_id}`,
-								{
-									headers: {
-										"Content-Type": "application/json",
-										Authorization: `Bearer ${token}`,
-									},
-								}
-							);
-
-							if (response.status === 200) {
-								const updatedOrders = orders.filter(
-									(item) => item.order_id !== order_id
-								);
-								setOrders(updatedOrders);
-								Alert.alert(
-									"Success",
-									"Order deleted successfully"
-								);
-							} else {
-								console.log("Error response:", response.data);
-								Alert.alert("Error", "Failed to delete order");
-							}
-						} catch (error) {
-							console.log(
-								"Catch Error:",
-								error.response
-									? error.response.data
-									: error.message
-							);
-							Alert.alert(
-								"Error",
-								"An unexpected error occurred."
-							);
-						}
-					},
-					style: "destructive",
-				},
-			]
-		);
+	const handlePrintToFile = async (order_id) => {
+		setLoadingPrint(true);
+		try {
+			await printToFile(order_id);
+		} catch (error) {
+			Alert.alert("Error", "Error saving to file");
+		} finally {
+			setLoadingPrint(false);
+		}
 	};
 
 	return (
@@ -173,146 +133,115 @@ const Orders = ({ visible, animateFrom, style }) => {
 				<FlatList
 					style={globalStyles.flatlist}
 					data={orders}
-					keyExtractor={(item) =>
-						item.id ? item.id.toString() : Math.random().toString()
-					}
-					renderItem={({ item }) => (
-						<View style={globalStyles.flatlistItem}>
+					keyExtractor={(item) => item.order_id.toString()}
+					renderItem={({ item, index }) => (
+						<View
+							style={[
+								globalStyles.flatlistItem,
+								index === orders.length - 1 ? { borderBottomWidth: 0 } : {},
+							]}>
 							<View style={styles.orderHeaderContainer}>
-								<Text style={styles.orderHeaderText}>
-									Order from {item.client_name}
-								</Text>
-								<Text style={styles.orderHeaderText}>
-									Total: R$ {item.total_price?.toFixed(2)}
-								</Text>
+								<Text style={styles.orderHeaderName}>Order from {item.client_name}</Text>
+								<Text style={styles.orderHeaderPrice}>Total: $ {item.total_price?.toFixed(2)}</Text>
 							</View>
 							<View style={globalStyles.flatlistItemContent}>
 								<View style={globalStyles.flatlistItemData}>
 									<View style={styles.orderDateContainer}>
-										<Text style={styles.orderDateText}>
-											Created on {item.date.slice(0, 10)}
-										</Text>
+										<Text style={styles.orderDateText}>Created on {item.date.slice(0, 10)}</Text>
 									</View>
 									<View style={styles.orderItemsContainer}>
-										{item.items.map((orderItem, index) => (
-											<View
-												key={index}
-												style={styles.orderItems}
-											>
-												<Text
-													style={
-														styles.orderItemsTextShort
-													}
-												>
-													{orderItem.quantity}x
-												</Text>
-												<Text
-													style={
-														styles.orderItemsTextLong
-													}
-												>
-													{orderItem.product_name}
-												</Text>
-												{orderItem.product_size ? (
-													<Text
-														style={
-															styles.orderItemsTextShort
-														}
-													>
-														{orderItem.product_size}
+										{item.items
+											.slice(0, showAllItems ? item.items.length : 5)
+											.map((orderItem, index) => (
+												<View key={index} style={styles.orderItems}>
+													<Text style={styles.orderItemsTextShort}>{orderItem.quantity}</Text>
+													<Text style={styles.orderItemsTextName}>
+														{orderItem.product_name}
+														{orderItem.product_size ? ` ${orderItem.product_size}` : ""}
+														{orderItem.product_color ? ` ${orderItem.product_color}` : ""}
 													</Text>
-												) : null}
-												{orderItem.product_color ? (
-													<Text
-														style={
-															styles.orderItemsTextShort
-														}
-													>
-														{
-															orderItem.product_color
-														}
+													<Text style={styles.orderItemsTextPrice}>
+														$
+														{orderItem.price?.toFixed(2)} each
 													</Text>
-												) : null}
-												<Text
-													style={
-														styles.orderItemsTextLong
-													}
-												>
-													R$
-													{orderItem.price?.toFixed(
-														2
-													)}{" "}
-													each
-												</Text>
-											</View>
-										))}
+												</View>
+											))}
+										{item.items.length > 5 && !showAllItems && (
+											<TouchableOpacity
+												onPress={() => setShowAllItems(true)}
+												style={styles.seeMoreLessButton}>
+												<AntDesign name="down" size={11} color={colors.primary} />
+												<Text style={styles.seeMoreLessButtonText}>See more...</Text>
+											</TouchableOpacity>
+										)}
+										{showAllItems && item.items.length > 5 && (
+											<TouchableOpacity
+												onPress={() => setShowAllItems(false)}
+												style={styles.seeMoreLessButton}>
+												<AntDesign name="up" size={11} color={colors.primary} />
+												<Text style={styles.seeMoreLessButtonText}>See less</Text>
+											</TouchableOpacity>
+										)}
 									</View>
+
 									<View style={styles.pickerContainer}>
-										<Text
-											style={
-												globalStyles.flatlistItemDetailsLabel
-											}
-										>
-											Status:{" "}
-										</Text>
+										<Text style={globalStyles.flatlistItemDetailsLabel}>Status: </Text>
 										<Picker
 											style={styles.orderStatusPicker}
 											selectedValue={item.status}
-											onValueChange={(newStatus) =>
-												handleStatusChange(
-													item.order_id,
-													newStatus
-												)
-											}
-										>
-											<Picker.Item
-												label="Pending"
-												value="pending"
-											/>
-											<Picker.Item
-												label="Completed"
-												value="completed"
-											/>
-											<Picker.Item
-												label="Shipped"
-												value="shipped"
-											/>
+											onValueChange={(newStatus) => handleStatusChange(item.order_id, newStatus)}>
+											<Picker.Item label="Pending" value="pending" />
+											<Picker.Item label="Completed" value="completed" />
+											<Picker.Item label="Shipped" value="shipped" />
 										</Picker>
 									</View>
 								</View>
 								<View style={globalStyles.flatlistItemButtons}>
 									<TouchableOpacity
 										onPress={() => {
-											navigation.navigate(
-												"order-details",
-												{ order: item }
-											);
-										}}
-									>
-										<FontAwesome5
-											name="edit"
-											size={24}
-											color={colors.text}
-										/>
+											navigation.navigate("order-details", { order: item });
+										}}>
+										<FontAwesome5 name="edit" size={24} color={colors.text} />
 									</TouchableOpacity>
 									<TouchableOpacity
 										onPress={() => {
-											handleDelete(item.order_id);
-										}}
-									>
-										<FontAwesome
-											name="trash"
-											size={24}
-											color={colors.text}
-										/>
+											handleDelete(item.order_id, "Order", "orders");
+										}}>
+										<FontAwesome name="trash" size={24} color={colors.text} />
 									</TouchableOpacity>
-									<TouchableOpacity>
-										<MaterialCommunityIcons
-											name="printer"
-											size={24}
-											color={colors.text}
-										/>
+									<TouchableOpacity
+										onPress={() => {
+											handlePrintReceipt(item.order_id);
+										}}>
+										<MaterialCommunityIcons name="printer" size={24} color={colors.text} />
 									</TouchableOpacity>
+									<TouchableOpacity
+										onPress={() => {
+											handlePrintToFile(item.order_id);
+										}}>
+										<FontAwesome5 name="file-download" size={20} color={colors.text} />
+										{Platform.OS === "ios" && (
+											<>
+												<View style={styles.spacer} />
+												<Button title="Select printer" onPress={selectPrinter} />
+												<View style={styles.spacer} />
+												{selectedPrinter ? (
+													<Text
+														style={
+															styles.printer
+														}>{`Selected printer: ${selectedPrinter.name}`}</Text>
+												) : undefined}
+											</>
+										)}
+									</TouchableOpacity>
+									<Modal visible={loadingPrint} transparent={true} animationType="fade">
+										<View style={styles.modalBackground}>
+											<View style={styles.modalContent}>
+												<ActivityIndicator size="large" color="white" />
+												<Text style={styles.modalText}>Processing request...</Text>
+											</View>
+										</View>
+									</Modal>
 								</View>
 							</View>
 						</View>
@@ -348,12 +277,20 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		width: "100%",
-		borderBottomWidth: 1,
+		borderBottomWidth: 0.7,
 		borderColor: colors.grey,
 		paddingBottom: 3,
 		marginBottom: 3,
 	},
-	orderHeaderText: {
+	orderHeaderName: {
+		flex: 2,
+		fontSize: 15,
+		fontWeight: "bold",
+		color: colors.tertiary,
+	},
+	orderHeaderPrice: {
+		flex: 1,
+		textAlign: "right",
 		fontWeight: "bold",
 		color: colors.tertiary,
 	},
@@ -362,6 +299,7 @@ const styles = StyleSheet.create({
 	},
 	orderDateText: {
 		fontSize: 11,
+		fontWeight: "300",
 		color: colors.darkGrey,
 	},
 	orderItemsContainer: {
@@ -371,17 +309,62 @@ const styles = StyleSheet.create({
 	orderItems: {
 		flexDirection: "row",
 		flexWrap: "wrap",
+		gap: 5,
+		padding: 3,
 		flex: 1,
 	},
-	orderItemsTextLong: {
-		flex: 5,
+	orderItemsTextName: {
+		flex: 8,
+		fontSize: 12,
+		lineHeight: 12,
+		fontWeight: "300",
 	},
 	orderItemsTextShort: {
+		fontSize: 12,
+		lineHeight: 12,
 		flex: 1,
+		fontWeight: "300",
+	},
+	orderItemsTextPrice: {
+		fontSize: 12,
+		lineHeight: 12,
+		flex: 4,
+		flexDirection: "row",
+		flexWrap: "wrap",
+		gap: 3,
+		fontWeight: "300",
+		textAlign: "right",
+	},
+	seeMoreLessButton: {
+		flexDirection: "row",
+		flexWrap: "nowrap",
+		gap: 5,
+		paddingVertical: 5,
+		alignSelf: "flex-end",
+		alignItems: "baseline",
+	},
+	seeMoreLessButtonText: {
+		fontSize: 11,
+		color: colors.secondary,
+		textAlignVertical: "top",
 	},
 	pickerContainer: {
 		flexDirection: "row",
 		flexWrap: "nowrap",
 		alignItems: "center",
+	},
+	modalBackground: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "rgba(0, 0, 0, 0.5)",
+	},
+	modalContent: {
+		width: 200,
+		padding: 20,
+		alignItems: "center",
+	},
+	modalText: {
+		color: "white",
 	},
 });

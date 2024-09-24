@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { PaperProvider } from "react-native-paper";
-import {
-	View,
-	Text,
-	ActivityIndicator,
-	ScrollView,
-	StyleSheet,
-	Dimensions,
-} from "react-native";
+import { View, Text, ActivityIndicator, ScrollView, StyleSheet, Dimensions } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import useAuthenticatedFetch from "../../hooks/useAuthenticatedFetch";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -78,99 +71,48 @@ const Dashboard = () => {
 		<PaperProvider style={styles.container}>
 			<ScrollView contentContainerStyle={styles.contentContainer}>
 				<View style={styles.cardPack}>
-					<LinearGradient
-						colors={["transparent", colors.darkBlue]}
-						style={styles.card}
-					>
+					<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
 						<View style={styles.cardHeader}>
 							<Text style={styles.cardTitle}>Products</Text>
-							<FontAwesome6
-								name="boxes-stacked"
-								size={20}
-								color="white"
-							/>
+							<FontAwesome6 name="boxes-stacked" size={20} color="white" />
 						</View>
-						<Text style={styles.cardValue}>
-							{data.totalProducts}
-						</Text>
+						<Text style={styles.cardValue}>{data.totalProducts}</Text>
 					</LinearGradient>
-					<LinearGradient
-						colors={["transparent", colors.darkBlue]}
-						style={styles.card}
-					>
+					<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
 						<View style={styles.cardHeader}>
 							<Text style={styles.cardTitle}>Items in Stock</Text>
-							<MaterialIcons
-								name="inventory"
-								size={20}
-								color="white"
-							/>
+							<MaterialIcons name="inventory" size={20} color="white" />
 						</View>
 						<Text style={styles.cardValue}>{data.totalStock}</Text>
 					</LinearGradient>
 				</View>
 				<View style={styles.cardPack}>
-					<LinearGradient
-						colors={["transparent", colors.darkBlue]}
-						style={styles.card}
-					>
+					<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
 						<View style={styles.cardHeader}>
-							<Text style={styles.cardTitle}>
-								Orders in Progress
-							</Text>
-							<FontAwesome6
-								name="boxes-packing"
-								size={20}
-								color="white"
-							/>
+							<Text style={styles.cardTitle}>Orders in Progress</Text>
+							<FontAwesome6 name="boxes-packing" size={20} color="white" />
 						</View>
-						<Text style={styles.cardValue}>
-							{data.pendingOrders}
-						</Text>
+						<Text style={styles.cardValue}>{data.pendingOrders}</Text>
 					</LinearGradient>
-					<LinearGradient
-						colors={["transparent", colors.darkBlue]}
-						style={styles.card}
-					>
+					<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
 						<View style={styles.cardHeader}>
 							<Text style={styles.cardTitle}>Clients</Text>
-							<MaterialCommunityIcons
-								name="folder-account"
-								size={20}
-								color="white"
-							/>
+							<MaterialCommunityIcons name="folder-account" size={20} color="white" />
 						</View>
-						<Text style={styles.cardValue}>
-							{data.totalClients}
-						</Text>
+						<Text style={styles.cardValue}>{data.totalClients}</Text>
 					</LinearGradient>
 				</View>
-				<LinearGradient
-					colors={["transparent", colors.darkBlue]}
-					style={styles.cardChart}
-				>
+				<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.cardChart}>
 					<View style={styles.cardHeader}>
 						<Text style={styles.cardTitle}>Monthly Revenue</Text>
-						<FontAwesome6
-							name="hand-holding-dollar"
-							size={20}
-							color="white"
-						/>
+						<FontAwesome6 name="hand-holding-dollar" size={20} color="white" />
 					</View>
 					<View style={styles.dotDataContainer}>
-						<Octicons
-							name="dot-fill"
-							size={24}
-							color={colors.turquoise}
-						/>
+						<Octicons name="dot-fill" size={24} color={colors.turquoise} />
 						<Text style={styles.dotData}>
 							{selectedMonth !== null
-								? `${
-										monthNames[selectedMonth]
-								  }: R$ ${selectedData.toFixed(2)}`
-								: `Current month: R$ ${Number(
-										data.currentMonthRevenue
-								  ).toFixed(2)}`}
+								? `${monthNames[selectedMonth]}: $ ${selectedData.toFixed(2)}`
+								: `Current month: $ ${Number(data.currentMonthRevenue).toFixed(2)}`}
 						</Text>
 					</View>
 					<LineChart
@@ -179,14 +121,12 @@ const Dashboard = () => {
 						height={230}
 						verticalLabelRotation={30}
 						chartConfig={{
-							backgroundColor: colors.primary,
+							backgroundColor: colors.tertiary,
 							backgroundGradientFromOpacity: 0,
 							backgroundGradientToOpacity: 0,
 							decimalPlaces: 2,
-							color: (opacity = 1) =>
-								`rgba(255, 255, 255, ${opacity})`,
-							labelColor: (opacity = 1) =>
-								`rgba(255, 255, 255, ${opacity})`,
+							color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+							labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
 							style: {
 								borderRadius: 16,
 							},
@@ -195,10 +135,7 @@ const Dashboard = () => {
 							return {
 								r: "6",
 								strokeWidth: "2",
-								stroke:
-									index === selectedMonth
-										? "white"
-										: "transparent",
+								stroke: index === selectedMonth ? "white" : "transparent",
 							};
 						}}
 						bezier
@@ -233,7 +170,7 @@ const styles = StyleSheet.create({
 		padding: 20,
 		width: "48%",
 		minHeight: 130,
-		backgroundColor: colors.primary,
+		backgroundColor: colors.tertiary,
 		borderRadius: 5,
 		justifyContent: "space-between",
 		shadowColor: colors.black,
@@ -273,7 +210,7 @@ const styles = StyleSheet.create({
 		padding: 20,
 		height: 370,
 		width: "100%",
-		backgroundColor: colors.primary,
+		backgroundColor: colors.tertiary,
 		borderRadius: 5,
 		shadowColor: colors.black,
 		shadowOffset: {

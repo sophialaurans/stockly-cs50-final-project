@@ -6,27 +6,41 @@ import colors from "../../../constants/colors";
 export default function OrdersLayout() {
 	const navigation = useNavigation();
 	return (
-		<Stack>
+		<Stack
+			screenOptions={{
+				headerStyle: {
+					backgroundColor: colors.primary,
+				},
+				statusBarStyle: "light",
+				statusBarColor: colors.primary,
+			}}>
 			<Stack.Screen
 				name="index"
 				options={{
 					title: "Orders",
-					headerStyle: {
-						backgroundColor: colors.primary,
-					},
+					headerShadowVisible: false,
 					headerTintColor: "white",
 					headerRight: () => (
-						<TouchableOpacity
-							onPress={() => navigation.navigate("profile")}
-							style={{ marginRight: 10 }}
-						>
+						<TouchableOpacity onPress={() => navigation.navigate("profile")} style={{ marginRight: 10 }}>
 							<FontAwesome name="user" size={24} color="white" />
 						</TouchableOpacity>
 					),
 				}}
 			/>
-			<Stack.Screen name="new-order" options={{ title: "New Order" }} />
-			<Stack.Screen name="order-details" options={{ title: "Details" }} />
+			<Stack.Screen
+				name="new-order"
+				options={{
+					title: "New Order",
+					headerTintColor: "white",
+				}}
+			/>
+			<Stack.Screen
+				name="order-details"
+				options={{
+					title: "Details",
+					headerTintColor: "white",
+				}}
+			/>
 		</Stack>
 	);
 }
