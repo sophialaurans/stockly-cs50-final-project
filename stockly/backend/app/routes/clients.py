@@ -42,7 +42,7 @@ def register_client():
 
     return jsonify(message="The client has been registered"), 201
 
-@bp.route('/clients/details/<int:client_id>', methods=['PUT'])
+@bp.route('/clients/details/<int:client_id>', methods=['GET', 'PUT'])
 @jwt_required()
 def update_client(client_id):
     current_user = get_jwt_identity()
@@ -52,6 +52,14 @@ def update_client(client_id):
     if not client:
         return jsonify(message="Client not found"), 404
 
+    if request.method == 'GET':
+        client_data = {
+            "name": client.name,
+            "phone_number": client.phone_number,
+            "email": client.email
+        }
+        return jsonify(client_data), 200
+
     data = request.get_json()
 
     client.name = data.get('name', client.name)
@@ -59,7 +67,7 @@ def update_client(client_id):
     client.email = data.get('email', client.email)
 
     if not client.name:
-        return jsonify(message="Please enter the client's name")
+        return jsonify(message="Please enter the client's name"), 400
 
     db.session.commit()
 

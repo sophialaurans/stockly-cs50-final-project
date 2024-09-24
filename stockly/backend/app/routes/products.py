@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..models import Products
+from ..models import Products, OrderItems
 from ..extensions import db
 from ..schemas import ProductSchema
 
@@ -50,7 +50,7 @@ def register_product():
 
     return jsonify(message="The product has been registered"), 201
 
-@bp.route('/products/details/<int:product_id>', methods=['PUT'])
+@bp.route('/products/details/<int:product_id>', methods=['GET', 'PUT'])
 @jwt_required()
 def update_product(product_id):
     current_user = get_jwt_identity()
@@ -59,6 +59,18 @@ def update_product(product_id):
 
     if not product:
         return jsonify(message="Product not found"), 404
+
+    if request.method == 'GET':
+        product_data = {
+            "name": product.name,
+            "color": product.color,
+            "size": product.size,
+            "dimensions": product.dimensions,
+            "price": product.price,
+            "description": product.description,
+            "quantity": product.quantity
+        }
+        return jsonify(product_data), 200
 
     data = request.get_json()
 
@@ -84,8 +96,15 @@ def delete_product(product_id):
     current_user = get_jwt_identity()
 
     product = Products.query.filter_by(product_id=product_id, user_id=current_user).first()
+    
+    if not product:
+        return jsonify(message="Product not found"), 404
 
-    db.session.delete(product)
-    db.session.commit()
+    try:
+        db.session.delete(product)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(message=f"An error occurred: {str(e)}"), 500
 
     return jsonify(message="Product deleted successfully"), 200
