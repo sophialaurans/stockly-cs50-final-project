@@ -1,56 +1,62 @@
 import { useState, useEffect } from "react";
-import { Alert } from "react-native";
 import { useRoute } from "@react-navigation/native";
+import useAuthenticatedFetch from "./useAuthenticatedFetch";
+import { useRegister } from "./useRegister";
+import { useSave } from "./useSave";
+import useNotAuthenticatedWarning from "./useNotAuthenticatedWarning";
 import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import config from "../constants/config";
+import { getToken } from "./useAuth";
 
 const useClient = (client_id = null) => {
 	const route = useRoute();
 	const { client } = route.params || {};
 
+	if (client) {
+		client_id = client.client_id;
+	}
+
 	const initialFormState = {
 		name: client?.name || "",
 		phone_number: client?.phone_number || "",
-		email: client?.email || "",
+		email: client?.email || ""
 	};
 
 	const [formState, setFormState] = useState(initialFormState);
+    const [isFormInitialized, setIsFormInitialized] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
-	useEffect(() => {
-		const fetchClients = async () => {
-			if (client_id) {
-				try {
-					const token = await AsyncStorage.getItem("access_token");
-					if (!token) {
-						Alert.alert("Error", "No authentication token found.");
-						return;
-					}
+	const { checkAuthentication } = useNotAuthenticatedWarning();
 
-					const response = await axios.get(
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const token = await getToken();
+				
+				if (client_id && !isFormInitialized) {
+                    const data = await axios.get(
 						`${config.apiUrl}/clients/details/${client_id}`,
 						{
-							headers: {
-								Authorization: `Bearer ${token}`,
-							},
+							headers: { Authorization: `Bearer ${token}` },
 						}
 					);
-
-					if (response.status === 200) {
-						setFormState(response.data);
-					} else {
-						Alert.alert("Error", "Failed to fetch client data");
-					}
-				} catch (error) {
-					console.error("Error fetching client:", error.message);
-					Alert.alert("Error", "An unexpected error occurred.");
+                    setFormState(data);
+                    setIsFormInitialized(true);
+				} else if (!client_id) {
+					checkAuthentication();
+				}
+			} catch (error) {
+				if (error.message === "Token not found" || error.message === "Error retrieving token") {
+					navigation.replace("(auth)");
+				} else {
+					console.error("Error fetching data:", error.message);
+					setError("An unexpected error occurred while fetching data.");
 				}
 			}
 		};
 
-		fetchClients();
+		fetchData();
 	}, [client_id]);
 
 	const handleInputChange = (name, value) => {
@@ -58,91 +64,18 @@ const useClient = (client_id = null) => {
 	};
 
 	const handleRegister = async (navigation) => {
-		const { name, phone_number, email } = formState;
-
-		if (!name) {
-			Alert.alert(
-				"Validation Error",
-				"Please fill out all required fields."
-			);
-			return;
-		}
-
-		setLoading(true);
-		setError(null);
-
 		try {
-			const token = await AsyncStorage.getItem("access_token");
-			if (!token) {
-				Alert.alert("Error", "No authentication token found.");
-				return;
-			}
-
-			const response = await axios.post(
-				`${config.apiUrl}/register-client`,
-				{ name, phone_number, email },
-				{
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`,
-					},
-				}
-			);
-
-			if (response.status === 201) {
-				Alert.alert("Success!", response.data.message);
-				navigation.goBack();
-			} else {
-				Alert.alert(
-					"Error",
-					"Unexpected response status, please try again"
-				);
-			}
+			await useRegister("client", formState, navigation, setLoading, setError);
 		} catch (error) {
-			console.log("Error:", error.message);
-			setError("An unexpected error occurred.");
-			Alert.alert("Error", "An unexpected error occurred.");
-		} finally {
-			setLoading(false);
+			console.error("Error during registration:", error);
 		}
 	};
 
 	const handleSave = async (navigation) => {
 		try {
-			const token = await AsyncStorage.getItem("access_token");
-
-			if (!token) {
-				Alert.alert("Error", "No authentication token found.");
-				navigation.replace("login");
-				return;
-			}
-
-			const response = await axios.put(
-				`${config.apiUrl}/clients/details/${
-					client_id || client.client_id
-				}`,
-				formState,
-				{
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`,
-					},
-				}
-			);
-
-			if (response.status === 200) {
-				Alert.alert("Success", "Client updated successfully");
-				navigation.goBack();
-			} else {
-				console.log("Error response:", response.data);
-				Alert.alert("Error", "Failed to update client");
-			}
+			await useSave("Client", "clients", client_id, formState, navigation, setLoading, setError);
 		} catch (error) {
-			console.log(
-				"Catch Error:",
-				error.response ? error.response.data : error.message
-			);
-			Alert.alert("Error", "An unexpected error occurred.");
+			console.error("Error during save:", error);
 		}
 	};
 

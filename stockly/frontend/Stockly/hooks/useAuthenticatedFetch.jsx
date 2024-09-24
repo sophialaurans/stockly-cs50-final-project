@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import config from "../constants/config";
+import { getToken } from "./useAuth";
 
 const useAuthenticatedFetch = (endpoint) => {
 	const navigation = useNavigation();
@@ -14,15 +14,7 @@ const useAuthenticatedFetch = (endpoint) => {
 		setLoading(true);
 		setError(null);
 		try {
-			const token = await AsyncStorage.getItem("access_token");
-
-			if (!token) {
-				setError("Token not found");
-				setLoading(false);
-				navigation.replace("login");
-				return;
-			}
-
+			const token = await getToken();
 			const response = await axios.get(`${config.apiUrl}/${endpoint}`, {
 				headers: {
 					Authorization: `Bearer ${token}`,
@@ -31,11 +23,12 @@ const useAuthenticatedFetch = (endpoint) => {
 
 			setData(response.data);
 		} catch (error) {
-			setError("Error fetching data.");
-			console.error(
-				"Error:",
-				error.response ? error.response.data : error.message
-			);
+            if (error.message === "Token not found" || error.message === "Error retrieving token") {
+                navigation.replace("(auth)");
+            } else {
+                setError("Error fetching data.");
+			    console.error("Error:", error.response ? error.response.data : error.message);
+            }
 		} finally {
 			setLoading(false);
 		}
