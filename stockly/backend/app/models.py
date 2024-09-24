@@ -16,6 +16,7 @@ class Products(db.Model):
     __tablename__ = 'products'
     product_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    user = db.relationship('Users', backref='products')
     name = db.Column(db.String(120), nullable=False)
     color = db.Column(db.String(50), nullable=True)
     size = db.Column(db.String(20), nullable=True)
@@ -23,11 +24,13 @@ class Products(db.Model):
     price = db.Column(db.Float, nullable=False)
     description = db.Column(db.Text, nullable=True)
     quantity = db.Column(db.Integer, nullable=False, default=0)
+    order_items = db.relationship('OrderItems', back_populates='product', cascade='all, delete-orphan')
 
 class Clients(db.Model):
     __tablename__ = 'clients'
     client_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    user = db.relationship('Users', backref='clients')
     name = db.Column(db.String(120), nullable=True)
     phone_number = db.Column(db.String(50), nullable=True)
     email = db.Column(db.String(100), nullable=True)
@@ -37,10 +40,11 @@ class Orders(db.Model):
     order_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     client_id = db.Column(db.Integer, db.ForeignKey('clients.client_id'))
-    client_name = db.Column(db.String(120), nullable=True)
+    user = db.relationship('Users', backref='orders')
+    client = db.relationship('Clients', backref='orders')
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     status = db.Column(db.String(50), nullable=False, default='pending')
-    items = db.relationship('OrderItems', backref='order', lazy=True)
+    items = db.relationship('OrderItems', backref='orders', lazy=True)
     total_price = db.Column(db.Float, nullable=False, default=0.0)
 
 class OrderItems(db.Model):
@@ -49,9 +53,8 @@ class OrderItems(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     order_id = db.Column(db.Integer, db.ForeignKey('orders.order_id'))
     product_id = db.Column(db.Integer, db.ForeignKey('products.product_id'))
-    product_name = db.Column(db.String(120), nullable=False)
-    product_size = db.Column(db.String(20), nullable=True)
-    product_color = db.Column(db.String(50), nullable=True)
+    user = db.relationship('Users', backref='order_items')
+    product = db.relationship('Products', back_populates='order_items')
     quantity = db.Column(db.Integer, nullable=False, default=1)
     price = db.Column(db.Float, nullable=False)
 
@@ -59,6 +62,7 @@ class MonthlyRevenue(db.Model):
     __tablename__ = 'monthly_revenue'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    user = db.relationship('Users', backref='monthly_revenues')
     year = db.Column(db.Integer, nullable=False)
     month = db.Column(db.Integer, nullable=False)
     revenue = db.Column(db.Numeric, nullable=False)
