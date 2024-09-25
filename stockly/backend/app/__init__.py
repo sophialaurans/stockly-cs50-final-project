@@ -29,7 +29,7 @@ def create_app():
     app.register_blueprint(clients.bp)
     app.register_blueprint(profile.bp)
     
-    # set response headers to prevent caching
+    # recommended by ChatGPT: Use after_request to disable caching for security reasons
     @app.after_request
     def after_request(response):
         response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
