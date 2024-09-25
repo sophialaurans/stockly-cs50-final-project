@@ -4,12 +4,13 @@ import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import config from "../../constants/config";
 import { TextInput } from "react-native-paper";
-import { globalStyles } from "./styles";
+import { authStyles } from "./styles";
 import colors from "../../constants/colors";
 
 const RegisterScreen = () => {
 	const navigation = useNavigation();
 
+	// State to manage the form input values
 	const [formState, setFormState] = useState({
 		name: "",
 		email: "",
@@ -17,9 +18,11 @@ const RegisterScreen = () => {
 		confirmPassword: "",
 	});
 
-	const [errorMessage, setErrorMessage] = useState("");
-	const [invalidEmailError, setInvalidEmailError] = useState("");
+	// State to manage error messages
+	const [errorMessage, setErrorMessage] = useState(""); // State to store error messages
+	const [invalidEmailError, setInvalidEmailError] = useState(""); // State
 
+	// Function to handle input changes and update state
 	const handleInputChange = (key, value) => {
 		setFormState((prevState) => ({
 			...prevState,
@@ -27,19 +30,23 @@ const RegisterScreen = () => {
 		}));
 	};
 
+	// Function to handle registration logic
 	const handleRegister = async () => {
 		const { name, email, password, confirmPassword } = formState;
 
+		// Check if passwords match
 		if (password !== confirmPassword) {
 			setErrorMessage("Passwords do not match");
 			return;
 		}
 
+		// Check for empty fields
 		if (!name || !email || !password || !confirmPassword) {
 			setErrorMessage("All fields are required");
 			return;
 		}
 
+		// Attempt to register the user
 		try {
 			const response = await axios.post(
 				`${config.apiUrl}/register`,
@@ -47,6 +54,7 @@ const RegisterScreen = () => {
 				{ headers: { "Content-Type": "application/json" } }
 			);
 
+			// Handle different response statuses
 			if (response.status === 201) {
 				navigation.replace("(auth)");
 			} else if (response.status === 400) {
@@ -55,6 +63,7 @@ const RegisterScreen = () => {
 				Alert.alert("Error", "Unexpected response status, please try again");
 			}
 		} catch (error) {
+			// Handle specific error responses
 			if (error.response && error.response.status === 400) {
 				setInvalidEmailError(error.response.data.message);
 				console.log("Error", error.response.data.message || "Bad Request");
@@ -67,11 +76,11 @@ const RegisterScreen = () => {
 	return (
 		<>
 			<StatusBar barStyle="dark-content" backgroundColor="transparent" />
-			<ScrollView contentContainerStyle={globalStyles.contentContainer}>
-				<Image style={globalStyles.logo} source={require("../../assets/images/stockly-logo.png")} />
+			<ScrollView contentContainerStyle={authStyles.contentContainer}>
+				<Image style={authStyles.logo} source={require("../../assets/images/stockly-logo.png")} />
 				<TextInput
-					style={globalStyles.input}
-					outlineStyle={globalStyles.input}
+					style={authStyles.input}
+					outlineStyle={authStyles.input}
 					outlineColor={colors.lightGrey}
 					activeOutlineColor={colors.tertiary}
 					label="Name"
@@ -80,8 +89,8 @@ const RegisterScreen = () => {
 					onChangeText={(text) => handleInputChange("name", text)}
 				/>
 				<TextInput
-					style={globalStyles.input}
-					outlineStyle={globalStyles.input}
+					style={authStyles.input}
+					outlineStyle={authStyles.input}
 					outlineColor={colors.lightGrey}
 					activeOutlineColor={colors.tertiary}
 					label="Email"
@@ -90,10 +99,13 @@ const RegisterScreen = () => {
 					onChangeText={(text) => handleInputChange("email", text)}
 					keyboardType="email-address"
 				/>
-				{invalidEmailError ? <Text style={globalStyles.error}>{invalidEmailError}</Text> : null}
+
+				{/* Display invalid email error if exists */}
+				{invalidEmailError ? <Text style={authStyles.error}>{invalidEmailError}</Text> : null}
+
 				<TextInput
-					style={globalStyles.input}
-					outlineStyle={globalStyles.input}
+					style={authStyles.input}
+					outlineStyle={authStyles.input}
 					outlineColor={colors.lightGrey}
 					activeOutlineColor={colors.tertiary}
 					label="Create a password"
@@ -103,8 +115,8 @@ const RegisterScreen = () => {
 					onChangeText={(text) => handleInputChange("password", text)}
 				/>
 				<TextInput
-					style={globalStyles.input}
-					outlineStyle={globalStyles.input}
+					style={authStyles.input}
+					outlineStyle={authStyles.input}
 					outlineColor={colors.lightGrey}
 					activeOutlineColor={colors.tertiary}
 					label="Confirm your password"
@@ -113,16 +125,21 @@ const RegisterScreen = () => {
 					value={formState.confirmPassword}
 					onChangeText={(text) => handleInputChange("confirmPassword", text)}
 				/>
+
+				{/* Display general error message if exists */}
 				{errorMessage ? (
-					<View style={globalStyles.errorContainer}>
-						<Text style={globalStyles.error}>{errorMessage}</Text>
+					<View style={authStyles.errorContainer}>
+						<Text style={authStyles.error}>{errorMessage}</Text>
 					</View>
 				) : null}
-				<TouchableOpacity style={globalStyles.authButton} onPress={handleRegister}>
-					<Text style={globalStyles.authButtonText}>REGISTER</Text>
+
+				<TouchableOpacity style={authStyles.authButton} onPress={handleRegister}>
+					<Text style={authStyles.authButtonText}>REGISTER</Text>
 				</TouchableOpacity>
+
+				{/* Link to sign in if already registered */}
 				<TouchableOpacity
-					style={globalStyles.singButton}
+					style={authStyles.singButton}
 					onPress={() => {
 						navigation.navigate("login");
 					}}>

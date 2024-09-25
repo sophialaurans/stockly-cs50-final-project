@@ -6,13 +6,15 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import colors from "../../constants/colors";
 
+/* Tab layout for the main screens */
 export default function TabLayout() {
 	return (
 		<Tabs
 			screenOptions={{
 				headerStyle: {
-					backgroundColor: colors.primary,
+					backgroundColor: colors.primary, // Set stack header color to the app's primary color
 				},
+				// Set the tab bar style with app's primary color and no shadow
 				tabBarStyle: {
 					backgroundColor: colors.primary,
 					paddingTop: 10,
@@ -22,19 +24,18 @@ export default function TabLayout() {
 					shadowOpacity: 0,
 					borderTopWidth: 0,
 				},
-				tabBarActiveTintColor: "white",
-				tabBarInactiveTintColor: colors.grey,
+				tabBarActiveTintColor: "white", // Set the tab icon color to white when is active
+				tabBarInactiveTintColor: colors.grey, // Set the tab icon color to grey when is not active
+				tabBarHideOnKeyboard: true, // Hide tab bar when keyboard is visible
 			}}>
 			<Tabs.Screen
 				name="index"
 				options={{
 					title: "Dashboard",
-					headerStyle: {
-						backgroundColor: colors.primary,
-					},
-					headerShadowVisible: false,
-					headerTintColor: "white",
+					headerShadowVisible: false, // Hide the tab header shadow
+					headerTintColor: "white", // Set the header text color to white
 					headerRight: () => (
+						// Button to navigate to profile screeen
 						<TouchableOpacity onPress={() => router.navigate("/profile")} style={{ marginRight: 25 }}>
 							<FontAwesome name="user" size={24} color="white" />
 						</TouchableOpacity>
@@ -46,12 +47,12 @@ export default function TabLayout() {
 				name="products"
 				options={{
 					title: "Products",
-					headerShown: false,
+					headerShown: false, // Hide the tab header because the screen's local stack header is already visible
 					tabBarIcon: ({ color }) => <FontAwesome5 name="box-open" size={24} color={color} />,
 				}}
 				listeners={{
 					tabPress: () => {
-						router.replace("/products");
+						router.replace("/products"); // Navigate to products index sreeen
 					},
 				}}
 			/>
@@ -59,12 +60,12 @@ export default function TabLayout() {
 				name="orders"
 				options={{
 					title: "Orders",
-					headerShown: false,
+					headerShown: false, // Hide the tab header because the screen's local stack header is already visible
 					tabBarIcon: ({ color }) => <Ionicons name="receipt" size={24} color={color} />,
 				}}
 				listeners={{
 					tabPress: () => {
-						router.replace("/orders");
+						router.replace("/orders"); // Navigate to orders index sreeen
 					},
 				}}
 			/>
@@ -72,12 +73,12 @@ export default function TabLayout() {
 				name="clients"
 				options={{
 					title: "Clients",
-					headerShown: false,
+					headerShown: false, // Hide the tab header because the screen's local stack header is already visible
 					tabBarIcon: ({ color }) => <FontAwesome size={28} name="address-book" color={color} />,
 				}}
 				listeners={{
 					tabPress: () => {
-						router.replace("/clients");
+						router.replace("/clients"); // Navigate to clients index sreeen
 					},
 				}}
 			/>
@@ -85,11 +86,8 @@ export default function TabLayout() {
 				name="profile"
 				options={{
 					title: "Profile",
-					headerStyle: {
-						backgroundColor: colors.primary,
-					},
 					headerTintColor: "white",
-					tabBarButton: () => null,
+					tabBarButton: () => null, // Hide the profile button from the tab bar
 				}}
 			/>
 		</Tabs>

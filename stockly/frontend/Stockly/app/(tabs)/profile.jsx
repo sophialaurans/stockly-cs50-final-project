@@ -16,29 +16,42 @@ import { useNavigation, useIsFocused } from "@react-navigation/native";
 import config from "../../constants/config";
 import { globalStyles } from "./styles";
 import colors from "../../constants/colors";
-import { StatusBar } from "expo-status-bar";
+import useNotAuthenticatedWarning from "../../hooks/useNotAuthenticatedWarning";
 
 const ProfileScreen = () => {
 	const navigation = useNavigation();
+
+	// Hook to check if the screen is focused
 	const isFocused = useIsFocused();
 
+	// Custom hook to fetch user profile data
 	const { data, loading, error, refetch } = useAuthenticatedFetch("profile");
 
+	// State to hold profile information
 	const [profile, setProfile] = useState({
 		user_id: "",
 		name: "",
 		email: "",
 		phone_number: "",
 	});
+
+	// State to track if the profile is being edited
 	const [isEditing, setIsEditing] = useState(false);
+
+	// State to keep the original profile data for cancellation
 	const [originalProfile, setOriginalProfile] = useState({});
 
+	// Custom hook to handle not authenticated warning
+	const { checkAuthentication } = useNotAuthenticatedWarning();
+
+	// Effect to refetch profile data when the screen is focused
 	useEffect(() => {
 		if (isFocused) {
 			refetch();
 		}
 	}, [isFocused, refetch]);
 
+	// Effect to update the profile state when new data is fetched
 	useEffect(() => {
 		if (data) {
 			setProfile(data);
@@ -46,23 +59,29 @@ const ProfileScreen = () => {
 		}
 	}, [data]);
 
+	// Show loading indicator while data is being fetched
 	if (loading) {
 		return <ActivityIndicator size="large" color={colors.primary} />;
 	}
 
+	// Display error message if there was an error fetching data
 	if (error) {
 		return <Text>{error}</Text>;
 	}
 
+	// Function to handle canceling the edit operation
 	const handleCancel = () => {
 		setProfile(originalProfile);
 		setIsEditing(false);
 	};
 
+	// Function to handle saving the updated profile
 	const handleSave = async () => {
 		try {
 			const token = await AsyncStorage.getItem("access_token");
+			checkAuthentication();
 
+			// Send a PUT request to update the profile
 			const response = await axios.put(`${config.apiUrl}/edit-profile`, profile, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
@@ -74,14 +93,12 @@ const ProfileScreen = () => {
 		}
 	};
 
+	// Function to handle user logout
 	const handleLogout = async () => {
 		try {
-			const token = await AsyncStorage.getItem("access_token");
-			if (!token) {
-				Alert.alert("Error", "No token found");
-				return;
-			}
+			checkAuthentication();
 
+			// Remove token from storage and navigate to authentication screen
 			await AsyncStorage.removeItem("access_token");
 
 			navigation.replace("(auth)");
@@ -91,7 +108,9 @@ const ProfileScreen = () => {
 		}
 	};
 
+	// Function to handle account deletion
 	const handleDeleteAccount = async (user_id) => {
+		// Confirm deletion with the user
 		Alert.alert(
 			"Delete Account",
 			"Are you sure you want to delete your account? This action cannot be undone.",
@@ -102,20 +121,16 @@ const ProfileScreen = () => {
 					onPress: async () => {
 						try {
 							const token = await AsyncStorage.getItem("access_token");
+							checkAuthentication();
 
-							if (!token) {
-								Alert.alert("Error", "No authentication token found.");
-								navigation.replace("(auth)");
-								return;
-							}
-
+							// Send a DELETE request to remove the account
 							const response = await axios.delete(`${config.apiUrl}/profile/${user_id}`, {
 								headers: {
 									"Content-Type": "application/json",
 									Authorization: `Bearer ${token}`,
 								},
 							});
-
+							// Check for successful deletion
 							if (response.status === 200) {
 								await AsyncStorage.removeItem("access_token");
 								Alert.alert("Account Deleted", "Your account has been deleted.");
@@ -128,16 +143,16 @@ const ProfileScreen = () => {
 							Alert.alert("Error", "An unexpected error occurred.");
 						}
 					},
-					style: "destructive",
+					style: "destructive", // Style for the delete button
 				},
 			],
-			{ cancelable: true }
+			{ cancelable: true } // Allow cancellation of the alert
 		);
 	};
 
 	return (
 		<ScrollView contentContainerStyle={globalStyles.container}>
-			<StatusBar style="dark" backgroundColor={colors.background} />
+			{/* Input of the user's name */}
 			<Text style={styles.inputTitle}>Name</Text>
 			<TextInput
 				value={profile.name}
@@ -145,12 +160,15 @@ const ProfileScreen = () => {
 				onChangeText={(text) => setProfile({ ...profile, name: text })}
 				style={[
 					{
+						/* Change input style if the profile is being edited */
 						borderColor: isEditing ? colors.text : colors.grey,
 						color: isEditing ? colors.text : colors.darkGrey,
 					},
 					styles.input,
 				]}
 			/>
+
+			{/* Input of the user's email */}
 			<Text style={styles.inputTitle}>Email</Text>
 			<TextInput
 				value={profile.email}
@@ -158,12 +176,15 @@ const ProfileScreen = () => {
 				onChangeText={(text) => setProfile({ ...profile, email: text })}
 				style={[
 					{
+						/* Change input style if the profile is being edited */
 						borderColor: isEditing ? colors.text : colors.grey,
 						color: isEditing ? colors.text : colors.darkGrey,
 					},
 					styles.input,
 				]}
 			/>
+
+			{/* Input of the user's phone number */}
 			<Text style={styles.inputTitle}>Phone number</Text>
 			<TextInput
 				value={profile.phone_number || ""}
@@ -171,13 +192,16 @@ const ProfileScreen = () => {
 				onChangeText={(text) => setProfile({ ...profile, phone_number: text })}
 				style={[
 					{
+						/* Change input style if the profile is being edited */
 						borderColor: isEditing ? colors.text : colors.grey,
 						color: isEditing ? colors.text : colors.darkGrey,
 					},
 					styles.input,
 				]}
 			/>
+
 			<View>
+				{/* Buttons to cancel or save changes if profile is being edited */}
 				{isEditing ? (
 					<View style={styles.buttonPack}>
 						<TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
@@ -188,12 +212,14 @@ const ProfileScreen = () => {
 						</TouchableOpacity>
 					</View>
 				) : (
+					/* Button to start editing profile */
 					<TouchableOpacity style={globalStyles.submitButton} onPress={() => setIsEditing(true)}>
 						<Text style={globalStyles.submitButtonText}>Edit Profile</Text>
 					</TouchableOpacity>
 				)}
 			</View>
 			{isEditing ? null : (
+				/* Buttons to sign out or delete user account */
 				<View style={styles.redContainer}>
 					<TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
 						<Text style={styles.logoutButtonText}>Sign out</Text>
@@ -209,6 +235,7 @@ const ProfileScreen = () => {
 
 export default ProfileScreen;
 
+// Styles for the profile screen
 const styles = StyleSheet.create({
 	input: {
 		borderBottomWidth: 1,

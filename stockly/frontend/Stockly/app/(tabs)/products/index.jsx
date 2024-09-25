@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, TouchableOpacity, Text, ActivityIndicator, FlatList, Alert, Platform } from "react-native";
+import { View, TouchableOpacity, Text, ActivityIndicator, FlatList } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import useAuthenticatedFetch from "../../../hooks/useAuthenticatedFetch";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
@@ -10,42 +10,48 @@ import colors from "../../../constants/colors";
 import useDelete from "../../../hooks/useDelete";
 
 const Products = ({ visible, animateFrom, style }) => {
-	const [isExtended, setIsExtended] = React.useState(true);
-
-	const isIOS = Platform.OS === "ios";
-
+	// Handles scroll events to collapse or expand FAB based on scroll position
+	const [isExtended, setIsExtended] = useState(true);
 	const onScroll = ({ nativeEvent }) => {
 		const currentScrollPosition = Math.floor(nativeEvent?.contentOffset?.y) ?? 0;
 		setIsExtended(currentScrollPosition <= 0);
 	};
-
+	// FAB styling to control its position based on the "animateFrom" prop
 	const fabStyle = { [animateFrom]: 16 };
 
+	// Hooks to navigate and check if the screen is currently focused
 	const navigation = useNavigation();
 	const isFocused = useIsFocused();
 
+	// Fetches the products data
 	const { data, loading, error, refetch } = useAuthenticatedFetch("products");
 
+	// Local state for products list
 	const [products, setProducts] = useState(data);
 
-    const { handleDelete } = useDelete(setProducts, refetch);
+	// Custom delete hook that removes product and refetches the data
+	const { handleDelete } = useDelete(setProducts, refetch);
 
+	// Refetch data whenever the screen is focused
 	useEffect(() => {
 		if (isFocused) {
 			refetch();
 		}
 	}, [isFocused, refetch]);
 
+	// Update local products state when new data is fetched
 	useEffect(() => {
 		if (data) {
 			setProducts(data);
 		}
 	}, [data]);
 
+	// Show loading spinner while fetching data
 	if (loading) {
 		return <ActivityIndicator size="large" color={colors.primary} />;
 	}
 
+	// Display error message if the fetch fails
 	if (error) {
 		return <Text>{error}</Text>;
 	}
@@ -53,8 +59,8 @@ const Products = ({ visible, animateFrom, style }) => {
 	return (
 		<View style={globalStyles.container}>
 			{data && data.length > 0 ? (
+				// FlatList to render a list of products
 				<FlatList
-					style={globalStyles.flatlist}
 					data={products}
 					keyExtractor={(item) => (item.product_id ? item.product_id.toString() : Math.random().toString())}
 					renderItem={({ item, index }) => (
@@ -65,7 +71,7 @@ const Products = ({ visible, animateFrom, style }) => {
 							]}>
 							<View style={globalStyles.flatlistItemContent}>
 								<View style={globalStyles.flatlistItemData}>
-									<Text style={styles.flatlistItemTitle}>{item.name}</Text>
+									<Text style={globalStyles.flatlistItemTitle}>{item.name}</Text>
 									<View>
 										{item.size ? (
 											<View style={globalStyles.flatlistItemDetails}>
@@ -91,6 +97,8 @@ const Products = ({ visible, animateFrom, style }) => {
 										</View>
 									</View>
 								</View>
+
+								{/* Edit and delete buttons */}
 								<View style={globalStyles.flatlistItemButtons}>
 									<TouchableOpacity
 										onPress={() => {
@@ -114,6 +122,7 @@ const Products = ({ visible, animateFrom, style }) => {
 				<Text>No products registered yet.</Text>
 			)}
 
+			{/* FAB button to navigate to the product registration screen */}
 			<AnimatedFAB
 				icon={"plus"}
 				label={"Add Product"}
@@ -130,11 +139,3 @@ const Products = ({ visible, animateFrom, style }) => {
 };
 
 export default Products;
-
-const styles = StyleSheet.create({
-	flatlistItemTitle: {
-		fontSize: 15,
-		fontWeight: "bold",
-		color: colors.tertiary,
-	},
-});

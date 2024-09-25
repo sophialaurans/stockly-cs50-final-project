@@ -13,7 +13,6 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import useAuthenticatedFetch from "../../../hooks/useAuthenticatedFetch";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { FontAwesome } from "@expo/vector-icons";
@@ -25,61 +24,73 @@ import colors from "../../../constants/colors";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import usePrintAndSave from "../../../hooks/usePrintAndSave";
 import useDelete from "../../../hooks/useDelete";
+import useNotAuthenticatedWarning from "../../../hooks/useNotAuthenticatedWarning";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Orders = ({ visible, animateFrom, style }) => {
+	// State to toggle displaying all items in an order
 	const [showAllItems, setShowAllItems] = useState(false);
+
+	// Handles scroll events to collapse or expand FAB based on scroll position
 	const [isExtended, setIsExtended] = useState(true);
-
-	const isIOS = Platform.OS === "ios";
-
 	const onScroll = ({ nativeEvent }) => {
 		const currentScrollPosition = Math.floor(nativeEvent?.contentOffset?.y) ?? 0;
 		setIsExtended(currentScrollPosition <= 0);
 	};
-
+	// FAB styling to control its position based on the "animateFrom" prop
 	const fabStyle = { [animateFrom]: 16 };
 
+	// Hooks to navigate and check if the screen is currently focused
 	const navigation = useNavigation();
 	const isFocused = useIsFocused();
+
+	// Fetches the orders data
 	const { data, loading, error, refetch } = useAuthenticatedFetch("orders");
 
+	// Local state for orders list
 	const [orders, setOrders] = useState(data);
 
+	// Custom delete hook that removes order and refetches the data
+	const { handleDelete } = useDelete(setOrders, refetch);
+
+	// Hooks for printing and saving receipts
+	const { printReceipt, printToFile, selectPrinter, selectedPrinter, loadingPrint, setLoadingPrint } =
+		usePrintAndSave();
+
+	// Custom hook to handle not authenticated warning
+	const { checkAuthentication } = useNotAuthenticatedWarning();
+
+	// Refetch data whenever the screen is focused
 	useEffect(() => {
 		if (data) {
 			setOrders(data);
 		}
 	}, [data]);
 
-    const { handleDelete } = useDelete(setOrders, refetch);
-
+	// Update local orders state when new data is fetched
 	useEffect(() => {
 		if (isFocused) {
 			refetch();
 		}
 	}, [isFocused, refetch]);
 
-	const { printReceipt, printToFile, selectPrinter, selectedPrinter, loadingPrint, setLoadingPrint } =
-		usePrintAndSave();
-
+	// Show loading spinner while fetching data
 	if (loading) {
 		return <ActivityIndicator size="large" color={colors.primary} />;
 	}
 
+	// Display error message if the fetch fails
 	if (error) {
 		return <Text>{error}</Text>;
 	}
 
+	// Handle status change for an order
 	const handleStatusChange = async (order_id, newStatus) => {
 		try {
 			const token = await AsyncStorage.getItem("access_token");
+			checkAuthentication();
 
-			if (!token) {
-				Alert.alert("Error", "No authentication token found.");
-				navigation.replace("(auth)");
-				return;
-			}
-
+			// Update the order status via API
 			const response = await axios.put(
 				`${config.apiUrl}/orders/${order_id}/status`,
 				{ status: newStatus },
@@ -92,6 +103,7 @@ const Orders = ({ visible, animateFrom, style }) => {
 			);
 
 			if (response.status === 200) {
+				// Update the local orders state with the new status
 				const updatedOrders = orders.map((order) =>
 					order.order_id === order_id ? { ...order, status: newStatus } : order
 				);
@@ -105,6 +117,7 @@ const Orders = ({ visible, animateFrom, style }) => {
 		}
 	};
 
+	// Print the receipt for an order
 	const handlePrintReceipt = async (order_id) => {
 		setLoadingPrint(true);
 		try {
@@ -116,6 +129,7 @@ const Orders = ({ visible, animateFrom, style }) => {
 		}
 	};
 
+	// Save the order receipt to a file
 	const handlePrintToFile = async (order_id) => {
 		setLoadingPrint(true);
 		try {
@@ -130,11 +144,12 @@ const Orders = ({ visible, animateFrom, style }) => {
 	return (
 		<View style={globalStyles.container}>
 			{data && data.length > 0 ? (
+				// Render a list of orders
 				<FlatList
-					style={globalStyles.flatlist}
 					data={orders}
 					keyExtractor={(item) => item.order_id.toString()}
 					renderItem={({ item, index }) => (
+						// Render each order item
 						<View
 							style={[
 								globalStyles.flatlistItem,
@@ -151,6 +166,7 @@ const Orders = ({ visible, animateFrom, style }) => {
 									</View>
 									<View style={styles.orderItemsContainer}>
 										{item.items
+											// Display a limited number of items and allow toggling to see more
 											.slice(0, showAllItems ? item.items.length : 5)
 											.map((orderItem, index) => (
 												<View key={index} style={styles.orderItems}>
@@ -161,8 +177,7 @@ const Orders = ({ visible, animateFrom, style }) => {
 														{orderItem.product_color ? ` ${orderItem.product_color}` : ""}
 													</Text>
 													<Text style={styles.orderItemsTextPrice}>
-														$
-														{orderItem.price?.toFixed(2)} each
+														${orderItem.price?.toFixed(2)} each
 													</Text>
 												</View>
 											))}
@@ -184,6 +199,7 @@ const Orders = ({ visible, animateFrom, style }) => {
 										)}
 									</View>
 
+									{/* Picker to change the status of an order */}
 									<View style={styles.pickerContainer}>
 										<Text style={globalStyles.flatlistItemDetailsLabel}>Status: </Text>
 										<Picker
@@ -196,6 +212,8 @@ const Orders = ({ visible, animateFrom, style }) => {
 										</Picker>
 									</View>
 								</View>
+
+								{/* Buttons for order actions: Edit, Delete, Print Receipt, and Print to File */}
 								<View style={globalStyles.flatlistItemButtons}>
 									<TouchableOpacity
 										onPress={() => {
@@ -234,6 +252,8 @@ const Orders = ({ visible, animateFrom, style }) => {
 											</>
 										)}
 									</TouchableOpacity>
+
+									{/* Show loading spinner in a modal while processing print or file request */}
 									<Modal visible={loadingPrint} transparent={true} animationType="fade">
 										<View style={styles.modalBackground}>
 											<View style={styles.modalContent}>
@@ -251,6 +271,8 @@ const Orders = ({ visible, animateFrom, style }) => {
 			) : (
 				<Text>No orders registered yet.</Text>
 			)}
+
+			{/* Floating action button to create a new order */}
 			<AnimatedFAB
 				icon={"plus"}
 				label={"New Order  "}
@@ -284,12 +306,13 @@ const styles = StyleSheet.create({
 	},
 	orderHeaderName: {
 		flex: 2,
-		fontSize: 15,
+		fontSize: 17,
 		fontWeight: "bold",
 		color: colors.tertiary,
 	},
 	orderHeaderPrice: {
 		flex: 1,
+		fontSize: 17,
 		textAlign: "right",
 		fontWeight: "bold",
 		color: colors.tertiary,
@@ -298,7 +321,7 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	orderDateText: {
-		fontSize: 11,
+		fontSize: 12,
 		fontWeight: "300",
 		color: colors.darkGrey,
 	},
@@ -315,19 +338,19 @@ const styles = StyleSheet.create({
 	},
 	orderItemsTextName: {
 		flex: 8,
-		fontSize: 12,
-		lineHeight: 12,
+		fontSize: 13,
+		lineHeight: 13,
 		fontWeight: "300",
 	},
 	orderItemsTextShort: {
-		fontSize: 12,
-		lineHeight: 12,
+		fontSize: 13,
+		lineHeight: 13,
 		flex: 1,
 		fontWeight: "300",
 	},
 	orderItemsTextPrice: {
-		fontSize: 12,
-		lineHeight: 12,
+		fontSize: 13,
+		lineHeight: 13,
 		flex: 4,
 		flexDirection: "row",
 		flexWrap: "wrap",
@@ -344,7 +367,7 @@ const styles = StyleSheet.create({
 		alignItems: "baseline",
 	},
 	seeMoreLessButtonText: {
-		fontSize: 11,
+		fontSize: 12,
 		color: colors.secondary,
 		textAlignVertical: "top",
 	},

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { PaperProvider } from "react-native-paper";
 import { View, Text, ActivityIndicator, ScrollView, StyleSheet, Dimensions } from "react-native";
-import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 import useAuthenticatedFetch from "../../hooks/useAuthenticatedFetch";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -12,16 +12,21 @@ import { LinearGradient } from "expo-linear-gradient";
 import colors from "../../constants/colors";
 
 const Dashboard = () => {
+	// Get screen width for responsive design
 	const screenWidth = Dimensions.get("window").width;
-	const navigation = useNavigation();
+
+	// Check if the screen is currently focused
 	const isFocused = useIsFocused();
 
+	// Fetch data using a custom authenticated fetch hook
 	const { data, loading, error, refetch } = useAuthenticatedFetch("");
 
+	// State to hold dashboard data and selected month/data for revenue
 	const [dashboard, setDashboard] = useState(data);
 	const [selectedData, setSelectedData] = useState(null);
 	const [selectedMonth, setSelectedMonth] = useState(null);
 
+	// Array of month names for display purposes
 	const monthNames = [
 		"January",
 		"February",
@@ -37,32 +42,37 @@ const Dashboard = () => {
 		"December",
 	];
 
+	// Data structure for the revenue chart
 	const revenue = {
 		labels: dashboard?.labels || [],
 		datasets: [
 			{
 				data: dashboard?.revenueData || [],
-				color: (opacity = 1) => `rgba(39, 185, 185, ${opacity})`,
+				color: (opacity = 1) => `rgba(39, 185, 185, ${opacity})`, // Set color (app's secondary color) to the chart's data button
 			},
 		],
 	};
 
+	// Effect to refetch data when the screen is focused
 	useEffect(() => {
 		if (isFocused) {
 			refetch();
 		}
 	}, [isFocused, refetch]);
 
+	// Effect to update the dashboard state when new data is received
 	useEffect(() => {
 		if (data) {
 			setDashboard(data);
 		}
 	}, [data]);
 
+	// Show loading indicator while data is being fetched
 	if (loading) {
 		return <ActivityIndicator size="large" color={colors.primary} />;
 	}
 
+	// Show error message if there was an error fetching data
 	if (error) {
 		return <Text>{error}</Text>;
 	}
@@ -70,6 +80,7 @@ const Dashboard = () => {
 	return (
 		<PaperProvider style={styles.container}>
 			<ScrollView contentContainerStyle={styles.contentContainer}>
+				{/* Cards for displaying product and stock information */}
 				<View style={styles.cardPack}>
 					<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
 						<View style={styles.cardHeader}>
@@ -86,6 +97,8 @@ const Dashboard = () => {
 						<Text style={styles.cardValue}>{data.totalStock}</Text>
 					</LinearGradient>
 				</View>
+
+				{/* Cards for displaying orders and clients information */}
 				<View style={styles.cardPack}>
 					<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
 						<View style={styles.cardHeader}>
@@ -102,6 +115,8 @@ const Dashboard = () => {
 						<Text style={styles.cardValue}>{data.totalClients}</Text>
 					</LinearGradient>
 				</View>
+
+				{/* Card for displaying monthly revenue chart */}
 				<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.cardChart}>
 					<View style={styles.cardHeader}>
 						<Text style={styles.cardTitle}>Monthly Revenue</Text>
@@ -152,6 +167,7 @@ const Dashboard = () => {
 
 export default Dashboard;
 
+// Styles for the index screen
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -180,7 +196,6 @@ const styles = StyleSheet.create({
 		},
 		shadowOpacity: 0.27,
 		shadowRadius: 4.65,
-
 		elevation: 6,
 	},
 	cardHeader: {
@@ -219,7 +234,6 @@ const styles = StyleSheet.create({
 		},
 		shadowOpacity: 0.27,
 		shadowRadius: 4.65,
-
 		elevation: 6,
 	},
 });

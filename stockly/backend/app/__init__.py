@@ -6,19 +6,22 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 
+# load environment variables from the .env file
 load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(Config)
+    app.config.from_object(Config) # load configuration from the Config class
     
-    CORS(app)
+    CORS(app) # enable Cross-Origin Resource Sharing (CORS)
     
+    # initialize extensions
     jwt.init_app(app)
     db.init_app(app)
     bcrypt.init_app(app)
     migrate.init_app(app, db)
     
+    # register blueprints for routing
     app.register_blueprint(auth.bp)
     app.register_blueprint(dashboard.bp)
     app.register_blueprint(products.bp)
@@ -26,6 +29,7 @@ def create_app():
     app.register_blueprint(clients.bp)
     app.register_blueprint(profile.bp)
     
+    # set response headers to prevent caching
     @app.after_request
     def after_request(response):
         response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"

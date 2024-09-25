@@ -6,7 +6,7 @@ const colors = {
 	text: "#141414",
 	lightGrey: "#f8f8f8",
 	darkGrey: "#888",
-    darkerGrey: "#444",
+	darkerGrey: "#444",
 	grey: "#d4d4d4",
 	black: "#000",
 	turquoise: "#48d6d6",

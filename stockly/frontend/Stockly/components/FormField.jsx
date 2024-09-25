@@ -4,11 +4,14 @@ import { Picker } from "@react-native-picker/picker";
 import { TextInput } from "react-native-paper";
 import colors from "../constants/colors";
 
+// Reusable form field component that handles both text input and picker dropdowns
 const FormField = ({ label, value, onChangeText, placeholder, pickerOptions, keyboardType }) => {
+	// Check if the field is "Description" to set multiline input
 	const isMultiline = label === "Description";
 
 	return (
 		<View style={styles.formContainer}>
+			{/* If pickerOptions are provided, render a Picker component */}
 			{pickerOptions ? (
 				<Picker selectedValue={value} onValueChange={onChangeText} style={styles.picker}>
 					<Picker.Item label={placeholder} value="" />
@@ -17,6 +20,7 @@ const FormField = ({ label, value, onChangeText, placeholder, pickerOptions, key
 					))}
 				</Picker>
 			) : (
+				/* Render a TextInput field if pickerOptions are not provided */
 				<TextInput
 					style={styles.input}
 					outlineStyle={styles.input}
@@ -37,6 +41,7 @@ const FormField = ({ label, value, onChangeText, placeholder, pickerOptions, key
 
 export default FormField;
 
+// Styles for the component
 const styles = StyleSheet.create({
 	formContainer: {
 		flexDirection: "row",
