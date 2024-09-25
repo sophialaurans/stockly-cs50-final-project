@@ -8,6 +8,8 @@ import colors from "../../../constants/colors";
 
 const ProductDetails = () => {
 	const navigation = useNavigation();
+
+	// Destructure state and functions from the custom useProduct hook
 	const {
 		formState: { name, color, size, dimensions, price, description, quantity },
 		handleInputChange,
@@ -17,6 +19,7 @@ const ProductDetails = () => {
 	} = useProduct();
 
 	return (
+		// Adjust keyboard behavior for iOS/Android when form is active
 		<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={globalStyles.container}>
 			<ScrollView>
 				<FormField
@@ -46,7 +49,7 @@ const ProductDetails = () => {
 				<FormField
 					placeholder="Price"
 					label="Price"
-					value={price}
+					value={price.toString()}
 					onChangeText={(text) => handleInputChange("price", text)}
 					keyboardType="numeric"
 				/>
@@ -59,14 +62,18 @@ const ProductDetails = () => {
 				<FormField
 					placeholder="Quantity in Stock"
 					label="Quantity in Stock"
-					value={quantity}
+					value={quantity.toString()}
 					onChangeText={(text) => handleInputChange("quantity", text)}
-					keyboardType="numeric"
 				/>
+
 				<TouchableOpacity style={globalStyles.submitButton} onPress={() => handleSave(navigation)}>
 					<Text style={globalStyles.submitButtonText}>Save Product</Text>
 				</TouchableOpacity>
+
+				{/* Show a loading spinner while save is in progress */}
 				{loading && <ActivityIndicator size="large" color={colors.primary} />}
+
+				{/* Display an error message if there's an error */}
 				{error && <Text>{error}</Text>}
 			</ScrollView>
 		</KeyboardAvoidingView>
