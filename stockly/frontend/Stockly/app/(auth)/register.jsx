@@ -56,6 +56,7 @@ const RegisterScreen = () => {
 
 			// Handle different response statuses
 			if (response.status === 201) {
+                Alert.alert(null, "Registration successful! You can now sign in.")
 				navigation.replace("(auth)");
 			} else if (response.status === 400) {
 				setErrorMessage("Error:", response.data.message);
@@ -101,7 +102,11 @@ const RegisterScreen = () => {
 				/>
 
 				{/* Display invalid email error if exists */}
-				{invalidEmailError ? <Text style={authStyles.error}>{invalidEmailError}</Text> : null}
+				{invalidEmailError ? (
+					<View style={authStyles.errorContainer}>
+						<Text style={authStyles.error}>{invalidEmailError}</Text>
+					</View>
+				) : null}
 
 				<TextInput
 					style={authStyles.input}

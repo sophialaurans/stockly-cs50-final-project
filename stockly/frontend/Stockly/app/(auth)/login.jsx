@@ -87,10 +87,10 @@ const LoginScreen = () => {
 					secureTextEntry
 				/>
 
-				{/* Display general error message if exists */}
+				{/* Display error message if exists */}
 				{errorMessage ? (
 					<View style={authStyles.errorContainer}>
-						<Text style={authStyles.error}>{errorMessage}</Text> {/* Display error message if exists */}
+						<Text style={authStyles.error}>{errorMessage}</Text>
 					</View>
 				) : null}
 

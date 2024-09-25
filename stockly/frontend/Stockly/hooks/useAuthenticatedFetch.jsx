@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import config from "../constants/config";
-import useNotAuthenticatedWarning from "./useNotAuthenticatedWarning";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Custom hook for authenticated API fetching
@@ -12,16 +11,16 @@ const useAuthenticatedFetch = (endpoint) => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
-	// Custom hook to handle not authenticated warning
-	const { checkAuthentication } = useNotAuthenticatedWarning();
-
 	// Function to fetch data from the API
 	const fetchData = useCallback(async () => {
 		setLoading(true);
 		setError(null);
 		try {
 			const token = await AsyncStorage.getItem("access_token");
-			checkAuthentication();
+			if (!token) {
+				navigation.replace("(auth)");
+                return;
+			}
 
 			// Make the API request using Axios with the retrieved token
 			const response = await axios.get(`${config.apiUrl}/${endpoint}`, {

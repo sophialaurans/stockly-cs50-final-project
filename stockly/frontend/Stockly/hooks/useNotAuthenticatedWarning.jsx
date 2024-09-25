@@ -11,6 +11,7 @@ const useNotAuthenticatedWarning = () => {
 	const notAuthenticated = () => {
 		Alert.alert("Disconnected", "Your account has been disconnected. Please sign in again.");
 		navigation.replace("(auth)");
+        return;
 	};
 
 	// Function to check if the user is authenticated
