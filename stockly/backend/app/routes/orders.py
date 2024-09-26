@@ -30,11 +30,11 @@ def new_order():
     current_user = get_jwt_identity()
     order_data = request.json
 
-    client_id = order_data.get('client_id') # Extract client ID from order data
+    client_id = order_data.get('client_id') # extract client ID from order data
 
-    client = Clients.query.get(client_id) # Retrieve the client object
+    client = Clients.query.get(client_id) # retrieve the client object
 
-    # Check if the client exists
+    # check if the client exists
     if not client:
         return jsonify({"error": "Client not found"}), 404
 
@@ -109,7 +109,6 @@ def update_order(order_id):
 
     # update order details with new data
     order.client_id = data.get('client_id', order.client_id)
-    order.status = data.get('status', order.status)
 
     # clear existing order items
     db.session.query(OrderItems).filter_by(order_id=order.order_id).delete()
@@ -153,6 +152,12 @@ def delete_order(order_id):
 
     if not order:
         return jsonify({"error": "Order not found"}), 404
+    
+    # check if there's a corresponding MonthlyRevenue record for this order
+    monthly_revenue = MonthlyRevenue.query.filter_by(order_id=order_id).first()
+    if monthly_revenue:
+        # remove the revenue record
+        db.session.delete(monthly_revenue)
     
     # delete order items associated with the order
     order_items = OrderItems.query.filter_by(order_id=order_id, user_id=current_user).all()
@@ -202,31 +207,35 @@ def update_order_status(order_id):
                 Orders.order_id == order_id
             ).scalar() # calculate the revenue from the completed order
 
-            # check if there is already a revenue record for the current month
-            existing_revenue = MonthlyRevenue.query.filter_by(user_id=current_user, year=current_year, month=current_month).first()
+            # check if there is already a revenue record for this order
+            existing_revenue = MonthlyRevenue.query.filter_by(user_id=current_user, order_id=order_id).first()
             if existing_revenue:
-                existing_revenue.revenue -= Decimal(completed_order_revenue) # subtract the revenue from the completed order
+                existing_revenue.revenue -= Decimal(completed_order_revenue)  # subtract the revenue from the completed order
                 if existing_revenue.revenue < 0:
-                    existing_revenue.revenue = Decimal(0) # ensure the revenue does not go negative
+                    existing_revenue.revenue = Decimal(0)  # ensure the revenue does not go negative
             else:
-                return jsonify({"error": "Revenue record not found for current month."}), 404
+                return jsonify({"error": "Revenue record not found."}), 404
+
+        # check if both old and new statuses are 'completed', and do nothing if they are
+        if old_status == 'completed' and new_status == 'completed':
+            return jsonify({"message": "No changes needed, status remains 'completed'."}), 200
 
         # if the new status is 'completed', adjust the monthly revenue
         if new_status == 'completed':
             completed_order_revenue = db.session.query(db.func.coalesce(db.func.sum(OrderItems.price * OrderItems.quantity), 0)).join(Orders).filter(
                 Orders.order_id == order_id
-            ).scalar() # calculate the revenue from the order being completed
+            ).scalar()  # calculate the revenue from the order being completed
 
             # check if there is already a revenue record for the current month
             existing_revenue = MonthlyRevenue.query.filter_by(user_id=current_user, year=current_year, month=current_month).first()
             if existing_revenue:
-                existing_revenue.revenue += Decimal(completed_order_revenue) # add the revenue from the completed order
+                existing_revenue.revenue += Decimal(completed_order_revenue)  # add the revenue from the completed order
             else:
                 # create a new revenue record for the current month if it doesn't exist
-                new_revenue = MonthlyRevenue(user_id=current_user, year=current_year, month=current_month, revenue=Decimal(completed_order_revenue))
+                new_revenue = MonthlyRevenue(user_id=current_user, order_id=order_id, year=current_year, month=current_month, revenue=Decimal(completed_order_revenue))
                 db.session.add(new_revenue)
 
-        db.session.commit() # save changes to the database
+        db.session.commit()  # save changes to the database
 
         return jsonify({
             "message": "Order status updated successfully",
