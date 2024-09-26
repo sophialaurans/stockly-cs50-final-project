@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Alert, ScrollView, Image, StatusBar } from "react-native";
+import { View, Text, TouchableOpacity, Alert, ScrollView, Image } from "react-native";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import config from "../../constants/config";
@@ -56,7 +56,7 @@ const RegisterScreen = () => {
 
 			// Handle different response statuses
 			if (response.status === 201) {
-                Alert.alert(null, "Registration successful! You can now sign in.")
+				Alert.alert("Success!", "Registration successful! You can now sign in.");
 				navigation.replace("(auth)");
 			} else if (response.status === 400) {
 				setErrorMessage("Error:", response.data.message);
@@ -75,83 +75,80 @@ const RegisterScreen = () => {
 	};
 
 	return (
-		<>
-			<StatusBar barStyle="dark-content" backgroundColor="transparent" />
-			<ScrollView contentContainerStyle={authStyles.contentContainer}>
-				<Image style={authStyles.logo} source={require("../../assets/images/stockly-logo.png")} />
-				<TextInput
-					style={authStyles.input}
-					outlineStyle={authStyles.input}
-					outlineColor={colors.lightGrey}
-					activeOutlineColor={colors.tertiary}
-					label="Name"
-					mode="outlined"
-					value={formState.name}
-					onChangeText={(text) => handleInputChange("name", text)}
-				/>
-				<TextInput
-					style={authStyles.input}
-					outlineStyle={authStyles.input}
-					outlineColor={colors.lightGrey}
-					activeOutlineColor={colors.tertiary}
-					label="Email"
-					mode="outlined"
-					value={formState.email}
-					onChangeText={(text) => handleInputChange("email", text)}
-					keyboardType="email-address"
-				/>
+		<ScrollView contentContainerStyle={authStyles.contentContainer}>
+			<Image style={authStyles.logo} source={require("../../assets/images/stockly-logo.png")} />
+			<TextInput
+				style={authStyles.input}
+				outlineStyle={authStyles.input}
+				outlineColor={colors.lightGrey}
+				activeOutlineColor={colors.tertiary}
+				label="Name"
+				mode="outlined"
+				value={formState.name}
+				onChangeText={(text) => handleInputChange("name", text)}
+			/>
+			<TextInput
+				style={authStyles.input}
+				outlineStyle={authStyles.input}
+				outlineColor={colors.lightGrey}
+				activeOutlineColor={colors.tertiary}
+				label="Email"
+				mode="outlined"
+				value={formState.email}
+				onChangeText={(text) => handleInputChange("email", text)}
+				keyboardType="email-address"
+			/>
 
-				{/* Display invalid email error if exists */}
-				{invalidEmailError ? (
-					<View style={authStyles.errorContainer}>
-						<Text style={authStyles.error}>{invalidEmailError}</Text>
-					</View>
-				) : null}
+			{/* Display invalid email error if exists */}
+			{invalidEmailError ? (
+				<View style={authStyles.errorContainer}>
+					<Text style={authStyles.error}>{invalidEmailError}</Text>
+				</View>
+			) : null}
 
-				<TextInput
-					style={authStyles.input}
-					outlineStyle={authStyles.input}
-					outlineColor={colors.lightGrey}
-					activeOutlineColor={colors.tertiary}
-					label="Create a password"
-					mode="outlined"
-					secureTextEntry
-					value={formState.password}
-					onChangeText={(text) => handleInputChange("password", text)}
-				/>
-				<TextInput
-					style={authStyles.input}
-					outlineStyle={authStyles.input}
-					outlineColor={colors.lightGrey}
-					activeOutlineColor={colors.tertiary}
-					label="Confirm your password"
-					mode="outlined"
-					secureTextEntry
-					value={formState.confirmPassword}
-					onChangeText={(text) => handleInputChange("confirmPassword", text)}
-				/>
+			<TextInput
+				style={authStyles.input}
+				outlineStyle={authStyles.input}
+				outlineColor={colors.lightGrey}
+				activeOutlineColor={colors.tertiary}
+				label="Create a password"
+				mode="outlined"
+				secureTextEntry
+				value={formState.password}
+				onChangeText={(text) => handleInputChange("password", text)}
+			/>
+			<TextInput
+				style={authStyles.input}
+				outlineStyle={authStyles.input}
+				outlineColor={colors.lightGrey}
+				activeOutlineColor={colors.tertiary}
+				label="Confirm your password"
+				mode="outlined"
+				secureTextEntry
+				value={formState.confirmPassword}
+				onChangeText={(text) => handleInputChange("confirmPassword", text)}
+			/>
 
-				{/* Display general error message if exists */}
-				{errorMessage ? (
-					<View style={authStyles.errorContainer}>
-						<Text style={authStyles.error}>{errorMessage}</Text>
-					</View>
-				) : null}
+			{/* Display general error message if exists */}
+			{errorMessage ? (
+				<View style={authStyles.errorContainer}>
+					<Text style={authStyles.error}>{errorMessage}</Text>
+				</View>
+			) : null}
 
-				<TouchableOpacity style={authStyles.authButton} onPress={handleRegister}>
-					<Text style={authStyles.authButtonText}>REGISTER</Text>
-				</TouchableOpacity>
+			<TouchableOpacity style={authStyles.authButton} onPress={handleRegister}>
+				<Text style={authStyles.authButtonText}>REGISTER</Text>
+			</TouchableOpacity>
 
-				{/* Link to sign in if already registered */}
-				<TouchableOpacity
-					style={authStyles.singButton}
-					onPress={() => {
-						navigation.navigate("login");
-					}}>
-					<Text>Already registerd? Sign in here.</Text>
-				</TouchableOpacity>
-			</ScrollView>
-		</>
+			{/* Link to sign in if already registered */}
+			<TouchableOpacity
+				style={authStyles.singButton}
+				onPress={() => {
+					navigation.navigate("login");
+				}}>
+				<Text>Already registerd? Sign in here.</Text>
+			</TouchableOpacity>
+		</ScrollView>
 	);
 };
 

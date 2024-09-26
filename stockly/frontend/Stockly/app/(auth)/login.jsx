@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Image, ScrollView, StatusBar } from "react-native";
+import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
@@ -60,54 +60,51 @@ const LoginScreen = () => {
 	};
 
 	return (
-		<>
-			<StatusBar barStyle="dark-content" backgroundColor="transparent" />
-			<ScrollView contentContainerStyle={authStyles.contentContainer}>
-				<Image style={authStyles.logo} source={require("../../assets/images/stockly-logo.png")} />
-				<TextInput
-					style={authStyles.input}
-					outlineStyle={authStyles.input}
-					outlineColor={colors.lightGrey}
-					activeOutlineColor={colors.tertiary}
-					label="Email"
-					mode="outlined"
-					value={formState.email}
-					onChangeText={(text) => handleInputChange("email", text)}
-					keyboardType="email-address"
-				/>
-				<TextInput
-					style={authStyles.input}
-					outlineStyle={authStyles.input}
-					outlineColor={colors.lightGrey}
-					activeOutlineColor={colors.tertiary}
-					label="Password"
-					mode="outlined"
-					value={formState.password}
-					onChangeText={(text) => handleInputChange("password", text)}
-					secureTextEntry
-				/>
+		<ScrollView contentContainerStyle={authStyles.contentContainer}>
+			<Image style={authStyles.logo} source={require("../../assets/images/stockly-logo.png")} />
+			<TextInput
+				style={authStyles.input}
+				outlineStyle={authStyles.input}
+				outlineColor={colors.lightGrey}
+				activeOutlineColor={colors.tertiary}
+				label="Email"
+				mode="outlined"
+				value={formState.email}
+				onChangeText={(text) => handleInputChange("email", text)}
+				keyboardType="email-address"
+			/>
+			<TextInput
+				style={authStyles.input}
+				outlineStyle={authStyles.input}
+				outlineColor={colors.lightGrey}
+				activeOutlineColor={colors.tertiary}
+				label="Password"
+				mode="outlined"
+				value={formState.password}
+				onChangeText={(text) => handleInputChange("password", text)}
+				secureTextEntry
+			/>
 
-				{/* Display error message if exists */}
-				{errorMessage ? (
-					<View style={authStyles.errorContainer}>
-						<Text style={authStyles.error}>{errorMessage}</Text>
-					</View>
-				) : null}
+			{/* Display error message if exists */}
+			{errorMessage ? (
+				<View style={authStyles.errorContainer}>
+					<Text style={authStyles.error}>{errorMessage}</Text>
+				</View>
+			) : null}
 
-				<TouchableOpacity style={authStyles.authButton} onPress={handleLogin}>
-					<Text style={authStyles.authButtonText}>LOGIN</Text>
-				</TouchableOpacity>
+			<TouchableOpacity style={authStyles.authButton} onPress={handleLogin}>
+				<Text style={authStyles.authButtonText}>LOGIN</Text>
+			</TouchableOpacity>
 
-				{/* Link to sign up if not registered yet*/}
-				<TouchableOpacity
-					style={authStyles.singButton}
-					onPress={() => {
-						navigation.navigate("register"); // Navigate to register screen
-					}}>
-					<Text>Not registered yet? Sign up here.</Text>
-				</TouchableOpacity>
-			</ScrollView>
-		</>
+			{/* Link to sign up if not registered yet*/}
+			<TouchableOpacity
+				style={authStyles.singButton}
+				onPress={() => {
+					navigation.navigate("register"); // Navigate to register screen
+				}}>
+				<Text>Not registered yet? Sign up here.</Text>
+			</TouchableOpacity>
+		</ScrollView>
 	);
 };
 
