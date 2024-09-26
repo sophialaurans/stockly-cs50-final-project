@@ -35,9 +35,9 @@ def edit_profile():
         
         # gets the new profile data from the request
         data = request.get_json()
-        new_name = data.get('name')
-        new_email = data.get('email')
-        new_phone_number = data.get('phone_number')
+        new_name = data.get('name', None)  # default to None if not provided
+        new_email = data.get('email', None)  # default to None if not provided
+        new_phone_number = data.get('phone_number', None)  # default to None if not provided
 
         # fetches user's profile based on their ID
         user = Users.query.filter_by(user_id=current_user).first()
@@ -52,11 +52,11 @@ def edit_profile():
             return jsonify(message="Email already registered"), 400
 
         # updates the user's name, email, or phone number if provided
-        if new_name:
+        if new_name is not None:  # update only if provided
             user.name = new_name
-        if new_email:
+        if new_email is not None:  # update only if provided
             user.email = new_email
-        if new_phone_number:
+        if new_phone_number is not None:  # update only if provided
             user.phone_number = new_phone_number
 
         # check required fields
