@@ -16,7 +16,6 @@ import { useNavigation, useIsFocused } from "@react-navigation/native";
 import config from "../../constants/config";
 import { globalStyles } from "./styles";
 import colors from "../../constants/colors";
-import useNotAuthenticatedWarning from "../../hooks/useNotAuthenticatedWarning";
 
 const ProfileScreen = () => {
 	const navigation = useNavigation();
@@ -40,9 +39,6 @@ const ProfileScreen = () => {
 
 	// State to keep the original profile data for cancellation
 	const [originalProfile, setOriginalProfile] = useState({});
-
-	// Custom hook to handle not authenticated warning
-	const { checkAuthentication } = useNotAuthenticatedWarning();
 
 	// Effect to refetch profile data when the screen is focused
 	useEffect(() => {
@@ -79,7 +75,6 @@ const ProfileScreen = () => {
 	const handleSave = async () => {
 		try {
 			const token = await AsyncStorage.getItem("access_token");
-			checkAuthentication();
 
 			// Send a PUT request to update the profile
 			const response = await axios.put(`${config.apiUrl}/edit-profile`, profile, {
@@ -96,8 +91,6 @@ const ProfileScreen = () => {
 	// Function to handle user logout
 	const handleLogout = async () => {
 		try {
-			checkAuthentication();
-
 			// Remove token from storage and navigate to authentication screen
 			await AsyncStorage.removeItem("access_token");
 
@@ -121,7 +114,6 @@ const ProfileScreen = () => {
 					onPress: async () => {
 						try {
 							const token = await AsyncStorage.getItem("access_token");
-							checkAuthentication();
 
 							// Send a DELETE request to remove the account
 							const response = await axios.delete(`${config.apiUrl}/profile/${user_id}`, {

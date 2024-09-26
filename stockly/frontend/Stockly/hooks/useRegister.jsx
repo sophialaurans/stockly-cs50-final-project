@@ -1,7 +1,6 @@
 import { Alert } from "react-native";
 import axios from "axios";
 import config from "../constants/config";
-import useNotAuthenticatedWarning from "./useNotAuthenticatedWarning";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Custom hook for registering products or clients
@@ -11,15 +10,12 @@ export const useRegister = async (type, formData, navigation, setLoading, setErr
 
 	// Validate required fields for product or client registration
 	if (type === "product" && (!name || !price || !quantity)) {
-		Alert.alert("Required Fields", "Please fill out all required product fields.");
+		Alert.alert("Required Fields", "Product name, price, and quantity are required.");
 		return;
 	} else if (type === "client" && !name) {
-		Alert.alert("Required Fields", "Please provide the client's name.");
+		Alert.alert("Required Fields", "Client name is required.");
 		return;
 	}
-
-	// Get authentication check
-	const { checkAuthentication } = useNotAuthenticatedWarning();
 
 	// Set loading state and reset error state
 	setLoading(true);
@@ -27,8 +23,6 @@ export const useRegister = async (type, formData, navigation, setLoading, setErr
 
 	try {
 		const token = await AsyncStorage.getItem("access_token");
-		checkAuthentication();
-
 		// Determine the correct URL based on registration type
 		const url =
 			type === "product"

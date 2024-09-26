@@ -39,6 +39,7 @@ const ClientDetails = () => {
 					label="Email"
 					value={email}
 					onChangeText={(text) => handleInputChange("email", text)}
+				    keyboardType="email-address"
 				/>
 
 				<TouchableOpacity style={globalStyles.submitButton} onPress={() => handleSave(navigation)}>

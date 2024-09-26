@@ -39,6 +39,7 @@ const RegisterClient = () => {
 					label="Email"
 					value={email}
 					onChangeText={(text) => handleInputChange("email", text)}
+				    keyboardType="email-address"
 				/>
 				<TouchableOpacity style={globalStyles.submitButton} onPress={() => handleRegister(navigation)}>
 					<Text style={globalStyles.submitButtonText}>Add Client</Text>

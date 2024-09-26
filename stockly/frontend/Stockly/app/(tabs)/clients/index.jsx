@@ -31,6 +31,14 @@ const Clients = ({ visible, animateFrom, style }) => {
 
 	// Custom delete hook that removes clients and refetches the data
 	const { handleDelete } = useDelete(setClients, refetch);
+    
+	// Update local clients state when new data is fetched and sort data from largest to smallest by `client_id`
+	useEffect(() => {
+		if (data) {
+            const sortedClients = data.sort((a, b) => b.client_id - a.client_id);
+			setClients(sortedClients);
+		}
+	}, [data]);
 
 	// Refetch data whenever the screen is focused
 	useEffect(() => {
@@ -38,13 +46,6 @@ const Clients = ({ visible, animateFrom, style }) => {
 			refetch();
 		}
 	}, [isFocused, refetch]);
-
-	// Update local clients state when new data is fetched
-	useEffect(() => {
-		if (data) {
-			setClients(data);
-		}
-	}, [data]);
 
 	// Show loading spinner while fetching data
 	if (loading) {

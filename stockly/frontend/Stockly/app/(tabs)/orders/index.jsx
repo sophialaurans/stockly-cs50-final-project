@@ -60,10 +60,11 @@ const Orders = ({ visible, animateFrom, style }) => {
 	// Custom hook to handle not authenticated warning
 	const { checkAuthentication } = useNotAuthenticatedWarning();
 
-	// Refetch data whenever the screen is focused
+	// Refetch data whenever the screen is focused and sort data from largest to smallest by `order_id`
 	useEffect(() => {
 		if (data) {
-			setOrders(data);
+			const sortedOrders = data.sort((a, b) => b.order_id - a.order_id);
+            setOrders(sortedOrders);
 		}
 	}, [data]);
 
@@ -305,13 +306,13 @@ const styles = StyleSheet.create({
 		marginBottom: 3,
 	},
 	orderHeaderName: {
-		flex: 2,
+		flex: 3,
 		fontSize: 17,
 		fontWeight: "bold",
 		color: colors.tertiary,
 	},
 	orderHeaderPrice: {
-		flex: 1,
+		flex: 2,
 		fontSize: 17,
 		textAlign: "right",
 		fontWeight: "bold",

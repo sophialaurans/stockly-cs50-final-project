@@ -178,11 +178,10 @@ const useOrder = (order_id = null) => {
 
 		try {
 			const token = await AsyncStorage.getItem("access_token");
-			checkAuthentication();
 
 			// Make API call to submit the new order
 			const response = await axios.post(
-				`${config.apiUrl}/new-order`,
+				`${config.apiUrl}/orders/new-order`,
 				{
 					client_id: selectedClient,
 					items: items.map((item) => ({
@@ -235,7 +234,6 @@ const useOrder = (order_id = null) => {
 
 		try {
 			const token = await AsyncStorage.getItem("access_token");
-			checkAuthentication();
 
 			const response = await axios.put(
 				`${config.apiUrl}/orders/details/${order.order_id}`,
@@ -258,7 +256,7 @@ const useOrder = (order_id = null) => {
 			);
 
 			if (response.status === 200) {
-				Alert.alert("Success!", "Order saved successfully");
+				Alert.alert("Success!", "Order updated successfully");
 				setItems([]); // Reset items
 				setTotalPrice(0); // Reset total price
 				handleInputChange("selectedClient", ""); // Reset selected client

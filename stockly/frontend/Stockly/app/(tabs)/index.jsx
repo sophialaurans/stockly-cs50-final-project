@@ -56,6 +56,8 @@ const Dashboard = () => {
 	// Effect to refetch data when the screen is focused
 	useEffect(() => {
 		if (isFocused) {
+            setSelectedData(null);
+            setSelectedMonth(null);
 			refetch();
 		}
 	}, [isFocused, refetch]);

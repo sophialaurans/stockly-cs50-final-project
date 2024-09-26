@@ -64,7 +64,7 @@ const usePrintAndSave = () => {
                                             margin: 10px;
                                         }
                                     }
-                                    body { font-family: "Courier New", Courier, monospace; font-size: 12px; width: 100%; margin: 0; padding: 20px; }
+                                    body { font-family: "Courier New", Courier, monospace; font-size: 12px; width: 90%; margin: 0; padding: 30px; }
                                     h1 { text-align: center; font-size: 14px; }
                                     table { width: 100%; border-collapse: collapse; }
                                     th { font-size: 12px; font-weight: bold; padding: 4px; text-align: center; vertical-align: top; }
