@@ -1,0 +1,10 @@
+# Backend .gitignore
+
+/venv/
+/migrations/
+__pycache__/
+*.pyc
+*.pyo
+*.log
+*.sqlite3
+.env
