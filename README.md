@@ -3,11 +3,10 @@
 
 # Stockly
 
-This is Stockly, developed as the Final Project for Harvard University's [CS50 - Introduction to Computer Science course](https://pll.harvard.edu/course/cs50-introduction-computer-science).  
-<br>Stockly is an inventory and order management application designed to help small businesses manage their products, orders, and clients more efficiently and practically.
+This is Stockly, an inventory and order management application designed to help small businesses manage their products, orders, and clients more efficiently and practically.  
+<br>This app was developed as the Final Project for **Harvard University's [CS50 - Introduction to Computer Science course](https://pll.harvard.edu/course/cs50-introduction-computer-science)**.
 
 #### Video Demo: [Watch the video on YouTube](https://youtu.be/yPRaan05zEI) featuring app screenshots, created as part of the final project requirements.
-
 </div>
 
 ## Features
@@ -108,6 +107,21 @@ flask run
 cd stockly/frontend/Stockly
 npm start
 ```
+
+## Running on Mobile Devices
+
+To view and interact with Stockly, there are the following options:
+
+1. **Using Expo**:
+
+   - If you have a physical device, download the **Expo Go** app and scan the QR code displayed in your terminal after running running the frontend (`npm start`).
+
+2. **Using an Emulator**:
+
+   - If you prefer using an emulator, make sure you have an Android or iOS emulator installed.
+   - Start the emulator before running the frontend (`npm start`), and the application should automatically open.
+  
+In the future, I plan to provide an option to generate an APK for Stockly, allowing users to easily install and run the app on Android devices. Stay tuned for updates!
 
 ## Usage
 
