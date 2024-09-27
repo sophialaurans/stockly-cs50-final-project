@@ -2,13 +2,13 @@
    <img src="/stockly/frontend/Stockly/assets/images/stockly-icon.png" width="20%">
 
 # Stockly
-</div>
 
-## Description
-
-This is Stockly, developed as the Final Project for Harvard University's [CS50 - Introduction to Computer Science course](https://pll.harvard.edu/course/cs50-introduction-computer-science). Stockly is an inventory and order management application designed to help small businesses manage their products, orders, and clients more efficiently and practically.
+This is Stockly, developed as the Final Project for Harvard University's [CS50 - Introduction to Computer Science course](https://pll.harvard.edu/course/cs50-introduction-computer-science).  
+<br>Stockly is an inventory and order management application designed to help small businesses manage their products, orders, and clients more efficiently and practically.
 
 #### Video Demo: [Watch the video on YouTube](https://youtu.be/yPRaan05zEI) featuring app screenshots, created as part of the final project requirements.
+
+</div>
 
 ## Features
 
