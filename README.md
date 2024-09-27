@@ -10,7 +10,7 @@
 ## English Version
 
 This is Stockly, an inventory and order management application designed to help small businesses manage their products, orders, and clients more efficiently and practically.  
-<br>This app was developed as the Final Project for **Harvard University's [CS50: Introduction to Computer Science course](https://pll.harvard.edu/course/cs50-introduction-computer-science](https://www.edx.org/learn/computer-science/harvard-university-cs50-s-introduction-to-computer-science)**.
+<br>This app was developed as the Final Project for **Harvard University's [CS50: Introduction to Computer Science course](https://www.edx.org/learn/computer-science/harvard-university-cs50-s-introduction-to-computer-science)**.
 
 #### Video Demo: [Watch the video on YouTube](https://youtu.be/yPRaan05zEI) featuring app screenshots, created as part of the final project requirements.
 
@@ -22,12 +22,12 @@ Stockly includes the following key features:
 
 1. **Dashboard**:
 
-   - View an overview of your business metrics, including:
+   - Get an overview of your business metrics, including:
      - Total products registered
      - Total stock available
      - Number of pending orders
      - Total registered clients
-     - Interactive chart displaying revenue from each month of the year, with detailed total revenue data for completed orders.
+     - Interactive chart displaying revenue from each month of the year, with total revenue data of completed orders for each month.
 
 2. **Products**:
 
@@ -44,6 +44,7 @@ Stockly includes the following key features:
      - Delete client records
 
 4. **Orders**:
+   
    - Track and manage orders efficiently:
      - Change order status
      - Add new orders
@@ -60,9 +61,9 @@ Stockly includes the following key features:
 
 ## Technologies Used
 
-- **Frontend**: React Native
-- **Backend**: Flask
-- **Database**: SQLite
+- **Frontend**: React Native  
+- **Backend**: Flask  
+- **Database**: SQLite  
 - **ORM**: Flask-SQLAlchemy
 
 ## Installation
@@ -126,11 +127,11 @@ To view and interact with Stockly, there are the following options:
    - If you prefer using an emulator, make sure you have an Android or iOS emulator installed.
    - Start the emulator before running the frontend (`npm start`), and the application should automatically open.
   
-In the future, I plan to provide an option to generate an APK for Stockly, allowing users to easily install and run the app on Android devices. Stay tuned for updates!
+In the future, I plan to provide the APK for Stockly, allowing users to easily install and run the app. Stay tuned for updates!
 
 ## Usage
 
-Once the application is running, you can navigate through the different screens using the app interface. Create and manage your inventory, track clients and orders, and view insights on your dashboard.
+Once the application is running, you can navigate through the different screens using the app interface. Create and manage your inventory, track orders, and view insights on your dashboard.
 
 ## Attribution
 
@@ -158,12 +159,12 @@ O Stockly inclui os seguintes recursos principais:
 
 1. **Painel de Controle (Dashboard)**:
 
-   - Visualize uma visão geral das métricas do seu negócio, incluindo:
+   - Tenha uma visão geral das métricas do seu negócio, incluindo:
      - Total de produtos cadastrados
      - Total de estoque disponível
      - Número de pedidos pendentes
      - Total de clientes cadastrados
-     - Gráfico interativo exibindo a receita de cada mês do ano, com dados detalhados de receita total para pedidos concluídos.
+     - Gráfico interativo exibindo a receita de cada mês do ano, com dados da receita total de pedidos concluídos em cada mês.
 
 2. **Produtos**:
 
@@ -174,7 +175,7 @@ O Stockly inclui os seguintes recursos principais:
 
 3. **Clientes**:
 
-   - Mantenha as informações dos clientes:
+   - Guarde as informações dos clientes:
      - Adicione novos clientes
      - Edite os detalhes dos clientes
      - Exclua registros de clientes
@@ -201,9 +202,72 @@ O Stockly inclui os seguintes recursos principais:
 - **Banco de Dados**: SQLite  
 - **ORM**: Flask-SQLAlchemy
 
+## Instalação
+
+Para configurar o Stockly na sua máquina local, siga as seguintes etapas:
+
+### 1. Clone o repositório:
+
+```
+git clone https://github.com/sophialaurans/stockly-cs50-final-project
+```
+
+### 2. Instale as dependências:
+
+#### Para o backend:
+
+```
+cd stockly/backend
+# Ative o ambiente virtual
+# No Windows:
+.\venv\Scripts\activate
+# No macOS/Linux:
+source venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+#### Para o frontend:
+
+```
+cd stockly/frontend
+npm install
+```
+
+### 3. Execute a aplicação:
+
+#### Inicie o servidor backend:
+
+```
+cd stockly/backend
+flask run
+```
+
+#### Inicie a aplicação frontend:
+
+```
+cd stockly/frontend/Stockly
+npm start
+```
+
+## Execução em Dispositivos Móveis
+
+Para visualizar e interagir com o Stockly, existem as seguintes opções:
+
+1. **Usando o Expo**:
+
+   - Se você tiver um dispositivo físico, baixe o aplicativo **Expo Go** e escaneie o código QR exibido no seu terminal após executar o frontend (`npm start`).
+
+2. **Usando um Emulador**:
+
+   - Se preferir usar um emulador, certifique-se de ter um emulador Android ou iOS instalado.
+   - Inicie o emulador antes de executar o frontend (`npm start`), e a aplicação deve abrir automaticamente.
+
+No futuro, pretendo fornecer o APK para o Stockly, permitindo que os usuários instalem e executem o aplicativo facilmente.
+
 ## Uso
 
-Após a aplicação estar em execução, você pode navegar pelas diferentes telas usando a interface do aplicativo. Crie e gerencie seu inventário, acompanhe clientes e pedidos e visualize insights no seu painel de controle.
+Após a aplicação ser iniciada, você pode navegar pelas diferentes telas usando a interface do aplicativo. Crie e gerencie seu inventário, acompanhe pedidos e visualize insights no seu painel de controle.
 
 ## Créditos
 
