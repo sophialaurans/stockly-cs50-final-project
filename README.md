@@ -3,9 +3,10 @@
 
 # Stockly
 
-[English Version](#english-version) | [Versão em Português](#versão-em-português)
+#### [English Version](#english-version) | [Versão em Português](#versão-em-português)
 
 </div>
+<br>
 
 ## English Version
 
