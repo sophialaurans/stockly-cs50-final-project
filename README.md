@@ -1,15 +1,14 @@
 <div align="center">
-   <img src="/stockly/frontend/Stockly/assets/images/stockly-icon.png" width="20%"><br>
-   <img src="/stockly/frontend/Stockly/assets/images/stockly-logo.png" width="25%">
-</div>
+   <img src="/stockly/frontend/Stockly/assets/images/stockly-icon.png" width="20%">
 
 # Stockly
+</div>
 
 #### Video Demo: [https://youtu.be/yPRaan05zEI?si=r2brX1cvdt3wm6A5]
 
 ## Description
 
-This is Stockly, developed for CS50's Introduction to Computer Science Final Project. Stockly is an inventory and order management application created to help small businesses manage their products, orders, and clients more efficiently and practically. This app streamlines the management of products, clients, and orders, allowing users to easily track their business operations.
+This is Stockly, developed for [CS50's Introduction to Computer Science](https://pll.harvard.edu/course/cs50-introduction-computer-science) Final Project. Stockly is an inventory and order management application created to help small businesses manage their products, orders, and clients more efficiently and practically.
 
 ## Features
 
