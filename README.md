@@ -3,11 +3,16 @@
 
 # Stockly
 
+[English Version](#english-version) | [Versão em Português](#versão-em-português)
+
+</div>
+
+## English Version
+
 This is Stockly, an inventory and order management application designed to help small businesses manage their products, orders, and clients more efficiently and practically.  
-<br>This app was developed as the Final Project for **Harvard University's [CS50 - Introduction to Computer Science course](https://pll.harvard.edu/course/cs50-introduction-computer-science)**.
+<br>This app was developed as the Final Project for **Harvard University's [CS50: Introduction to Computer Science course](https://pll.harvard.edu/course/cs50-introduction-computer-science](https://www.edx.org/learn/computer-science/harvard-university-cs50-s-introduction-to-computer-science)**.
 
 #### Video Demo: [Watch the video on YouTube](https://youtu.be/yPRaan05zEI) featuring app screenshots, created as part of the final project requirements.
-</div>
 
 ## Features
 
@@ -22,7 +27,7 @@ Stockly includes the following key features:
      - Total stock available
      - Number of pending orders
      - Total registered clients
-   - Interactive chart displaying revenue from each month of the year, with detailed total revenue data for completed orders.
+     - Interactive chart displaying revenue from each month of the year, with detailed total revenue data for completed orders.
 
 2. **Products**:
 
@@ -127,6 +132,84 @@ In the future, I plan to provide an option to generate an APK for Stockly, allow
 
 Once the application is running, you can navigate through the different screens using the app interface. Create and manage your inventory, track clients and orders, and view insights on your dashboard.
 
-## Acknowledgments
+## Attribution
 
 App Icon: The app icon used in Stockly was adapted from an original design by [Freepik](https://www.freepik.com/icon/box_3639221). Colors were modified to better fit the theme of the application.
+
+## Future Implementations
+
+- Add support for Portuguese translation, allowing Portuguese-speaking users to use the application more accessibly. Currently, the application is available only in English, as it was developed as part of the final project for the **CS50** course.
+- Create an APK to enable users to easily install and run the application.
+
+<br>
+
+# Versão em Português
+
+Este é o Stockly, um aplicativo de gerenciamento de estoque e pedidos projetado para ajudar pequenas empresas a gerenciar seus produtos, pedidos e clientes de maneira mais eficiente e prática.  
+<br>Este aplicativo foi desenvolvido como Projeto Final para o curso **[CS50: Introduction to Computer Science](https://pll.harvard.edu/course/cs50-introduction-computer-science) da Universidade de Harvard**.
+
+#### Vídeo de Demonstração: [Assista ao vídeo no YouTube](https://youtu.be/yPRaan05zEI), com capturas de tela do aplicativo, criado como parte dos requisitos do projeto final.
+
+## Funcionalidades
+
+O Stockly inclui os seguintes recursos principais:
+
+### Telas Principais
+
+1. **Painel de Controle (Dashboard)**:
+
+   - Visualize uma visão geral das métricas do seu negócio, incluindo:
+     - Total de produtos cadastrados
+     - Total de estoque disponível
+     - Número de pedidos pendentes
+     - Total de clientes cadastrados
+     - Gráfico interativo exibindo a receita de cada mês do ano, com dados detalhados de receita total para pedidos concluídos.
+
+2. **Produtos**:
+
+   - Gerencie o inventário de produtos:
+     - Adicione novos produtos
+     - Edite os detalhes de produtos existentes
+     - Exclua produtos do inventário
+
+3. **Clientes**:
+
+   - Mantenha as informações dos clientes:
+     - Adicione novos clientes
+     - Edite os detalhes dos clientes
+     - Exclua registros de clientes
+
+4. **Pedidos**:
+   - Acompanhe e gerencie os pedidos de forma eficiente:
+     - Altere o status dos pedidos
+     - Adicione novos pedidos
+     - Edite os detalhes dos pedidos
+     - Exclua pedidos
+     - Imprima dados específicos dos pedidos ou salve-os como um arquivo PDF
+
+### Gerenciamento de Perfil
+
+- Gerencie as configurações de sua conta:
+  - Edite as informações do perfil
+  - Faça logout do aplicativo
+  - Exclua sua conta, se necessário
+
+## Tecnologias Utilizadas
+
+- **Frontend**: React Native  
+- **Backend**: Flask  
+- **Banco de Dados**: SQLite  
+- **ORM**: Flask-SQLAlchemy
+
+## Uso
+
+Após a aplicação estar em execução, você pode navegar pelas diferentes telas usando a interface do aplicativo. Crie e gerencie seu inventário, acompanhe clientes e pedidos e visualize insights no seu painel de controle.
+
+## Créditos
+
+Ícone do App: O ícone do aplicativo utilizado no Stockly foi adaptado de um design original de [Freepik](https://www.freepik.com/icon/box_3639221). As cores foram modificadas para se adequar melhor ao tema do aplicativo.
+
+## Implementações Futuras
+
+- Adicionar suporte à tradução para o português, permitindo que usuários de língua portuguesa utilizem o aplicativo de forma mais acessível. Atualmente, o aplicativo está disponível apenas em inglês, pois foi desenvolvido como parte do projeto final do curso estadunidense **CS50**.
+- Criar um APK para permitir que usuários instalem e executem o aplicativo facilmente.
