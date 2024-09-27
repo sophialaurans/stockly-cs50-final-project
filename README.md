@@ -1,3 +1,8 @@
+<div align="center">
+   <img src="/stockly/frontend/Stockly/assets/images/stockly-icon.png" width="20%"><br>
+   <img src="/stockly/frontend/Stockly/assets/images/stockly-logo.png" width="25%">
+</div>
+
 # Stockly
 
 #### Video Demo: [https://youtu.be/yPRaan05zEI?si=r2brX1cvdt3wm6A5]
@@ -61,15 +66,15 @@ Stockly includes the following key features:
 
 To set up Stockly on your local machine, follow these steps:
 
-1. **Clone the repository:**
+### 1. Clone the repository:
 
 ```
 git clone https://github.com/sophialaurans/stockly-cs50-final-project
 ```
 
-2. **Install dependencies:**
+### 2. Install dependencies:
 
-### For the backend:
+#### For the backend:
 
 cd backend
 
@@ -83,23 +88,23 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### For the frontend:
+#### For the frontend:
 
 ```
 cd frontend
 npm install
 ```
 
-3. **Run the application:**
+### 3. Run the application:
 
-### Start the backend server:
+#### Start the backend server:
 
 ```
 cd backend
 flask run
 ```
 
-### Start the frontend application:
+#### Start the frontend application:
 
 ```
 cd frontend/Stockly
@@ -112,4 +117,4 @@ Once the application is running, you can navigate through the different screens 
 
 ## Acknowledgments
 
-App Icon: The app icon used in Stockly was adapted from an original design by Freepik. Colors were modified to better fit the theme of the application.
+App Icon: The app icon used in Stockly was adapted from an original design by [Freepik](https://www.freepik.com/icon/box_3639221). Colors were modified to better fit the theme of the application.
