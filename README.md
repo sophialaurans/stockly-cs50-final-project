@@ -4,11 +4,11 @@
 # Stockly
 </div>
 
-#### Video Demo: [https://youtu.be/yPRaan05zEI?si=r2brX1cvdt3wm6A5]
-
 ## Description
 
-This is Stockly, developed for [CS50's Introduction to Computer Science](https://pll.harvard.edu/course/cs50-introduction-computer-science) Final Project. Stockly is an inventory and order management application created to help small businesses manage their products, orders, and clients more efficiently and practically.
+This is Stockly, developed as the Final Project for Harvard University's [CS50 - Introduction to Computer Science course](https://pll.harvard.edu/course/cs50-introduction-computer-science). Stockly is an inventory and order management application designed to help small businesses manage their products, orders, and clients more efficiently and practically.
+
+#### Video Demo: [Watch the video on YouTube](https://youtu.be/yPRaan05zEI) featuring app screenshots, created as part of the final project requirements.
 
 ## Features
 
@@ -75,9 +75,8 @@ git clone https://github.com/sophialaurans/stockly-cs50-final-project
 
 #### For the backend:
 
-cd backend
-
 ```
+cd stockly/backend
 # Activate the virtual environment
 # On Windows:
 .\venv\Scripts\activate
@@ -90,7 +89,7 @@ pip install -r requirements.txt
 #### For the frontend:
 
 ```
-cd frontend
+cd stockly/frontend
 npm install
 ```
 
@@ -99,14 +98,14 @@ npm install
 #### Start the backend server:
 
 ```
-cd backend
+cd stockly/backend
 flask run
 ```
 
 #### Start the frontend application:
 
 ```
-cd frontend/Stockly
+cd stockly/frontend/Stockly
 npm start
 ```
 
