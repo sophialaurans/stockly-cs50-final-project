@@ -3,7 +3,7 @@
 
 # Stockly
 
-#### [English Version](#english-version) | [Versão em Português](#versão-em-português)
+#### [EN-US](#english-version) | [PT-BR](#versão-em-português)
 
 </div>
 <br>
