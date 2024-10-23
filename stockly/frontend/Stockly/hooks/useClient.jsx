@@ -6,9 +6,11 @@ import useNotAuthenticatedWarning from "./useNotAuthenticatedWarning";
 import axios from "axios";
 import config from "../constants/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTranslation } from "react-i18next";
 
 // Custom hook for managing client data
 const useClient = (client_id = null) => {
+	const { t } = useTranslation();
 	const route = useRoute(); // Access current route
 	const { client } = route.params || {}; // Get client data from route parameters
 
@@ -54,8 +56,7 @@ const useClient = (client_id = null) => {
 					checkAuthentication();
 				}
 			} catch (error) {
-				console.error("Error fetching data:", error.message);
-				setError("An unexpected error occurred while fetching data.");
+				setError(t("An unexpected error occurred"));
 			}
 		};
 
@@ -72,16 +73,16 @@ const useClient = (client_id = null) => {
 		try {
 			await useRegister("client", formState, navigation, setLoading, setError);
 		} catch (error) {
-			console.error("Error during registration:", error);
+			console.error(t("Error during registration:"), error);
 		}
 	};
 
 	// Handle saving client data using a custom hook
 	const handleSave = async (navigation) => {
 		try {
-			await useSave("Client", "clients", client_id, formState, navigation, setLoading, setError);
+			await useSave(t("Client"), "clients", client_id, formState, navigation, setLoading, setError);
 		} catch (error) {
-			console.error("Error during save:", error);
+			console.error(t("Error during save:"), error);
 		}
 	};
 

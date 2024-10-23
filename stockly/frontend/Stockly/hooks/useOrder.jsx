@@ -5,9 +5,11 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 import config from "../constants/config";
 import useNotAuthenticatedWarning from "./useNotAuthenticatedWarning";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTranslation } from "react-i18next";
 
 // Custom hook for handling order functionality
 const useOrder = (order_id = null) => {
+	const { t } = useTranslation();
 	const navigation = useNavigation();
 
 	const route = useRoute(); // Hook to access route parameters
@@ -77,8 +79,7 @@ const useOrder = (order_id = null) => {
 					checkAuthentication();
 				}
 			} catch (error) {
-				console.error("Error fetching data:", error.message);
-				setError("An unexpected error occurred while fetching data.");
+				setError(t("An unexpected error occurred"));
 			}
 		};
 
@@ -96,14 +97,14 @@ const useOrder = (order_id = null) => {
 
 		// Validate input fields
 		if (!selectedProduct || !quantity || isNaN(quantity) || quantity <= 0) {
-			Alert.alert("Validation Error", "Please select a product and enter a valid quantity.");
+			Alert.alert(t("Validation Error"), t("Please select a product and enter a valid quantity"));
 			return;
 		}
 
 		// Find the selected product in the products list
 		const product = products.find((p) => p.product_id.toString() === selectedProduct.toString());
 		if (!product) {
-			Alert.alert("Product Error", "Selected product is not valid.");
+			Alert.alert(t("Product Error"), t("Selected product is not valid."));
 			return;
 		}
 
@@ -169,7 +170,7 @@ const useOrder = (order_id = null) => {
 
 		// Validate input fields
 		if (!selectedClient || items.length === 0) {
-			Alert.alert("Validation Error", "Please select a client and add at least one item.");
+			Alert.alert(t("Validation Error"), t("Please select a client and add at least one item"));
 			return;
 		}
 
@@ -201,19 +202,17 @@ const useOrder = (order_id = null) => {
 			);
 
 			if (response.status === 201) {
-				Alert.alert("Success!", "Order placed successfully");
+				Alert.alert(t("Success"), t("Order placed successfully"));
 				setItems([]); // Reset items
 				setTotalPrice(0); // Reset total price
 				handleInputChange("selectedClient", ""); // Reset selected client
 				navigation.goBack(); // Navigate back
 			} else {
-				Alert.alert("Error", "Unexpected response status, please try again");
+				Alert.alert(t("Error"), t("Unexpected response status"));
 			}
 		} catch (error) {
-			console.error("Error:", error.message);
-			console.error("Error Response:", error.response?.data);
-			setError("An unexpected error occurred.");
-			Alert.alert("Error", "An unexpected error occurred.");
+			setError(t("An unexpected error occurred"));
+			Alert.alert(t("Error"), error);
 		} finally {
 			setLoading(false);
 		}
@@ -225,7 +224,7 @@ const useOrder = (order_id = null) => {
 
 		// Validate order saving
 		if (!selectedClient || items.length === 0) {
-			Alert.alert("Validation Error", "Please select a client and add at least one item.");
+			Alert.alert(t("Validation Error"), t("Please select a client and add at least one item."));
 			return;
 		}
 
@@ -256,19 +255,17 @@ const useOrder = (order_id = null) => {
 			);
 
 			if (response.status === 200) {
-				Alert.alert("Success!", "Order updated successfully");
+				Alert.alert(t("Success"), t("Order updated successfully"));
 				setItems([]); // Reset items
 				setTotalPrice(0); // Reset total price
 				handleInputChange("selectedClient", ""); // Reset selected client
 				navigation.goBack(); // Navigate back
 			} else {
-				Alert.alert("Error", "Unexpected response status, please try again");
+				Alert.alert(t("Error"), t("Unexpected response status"));
 			}
 		} catch (error) {
-			console.error("Error:", error.message);
-			console.error("Error Response:", error.response?.data);
-			setError("An unexpected error occurred.");
-			Alert.alert("Error", "An unexpected error occurred.");
+			setError(t("An unexpected error occurred"));
+			Alert.alert(t("Error"), error);
 		} finally {
 			setLoading(false);
 		}

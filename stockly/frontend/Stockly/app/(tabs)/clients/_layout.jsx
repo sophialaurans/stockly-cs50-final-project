@@ -2,9 +2,11 @@ import { Stack, useNavigation } from "expo-router";
 import { TouchableOpacity } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import colors from "../../../constants/colors";
+import { useTranslation } from 'react-i18next';
 
 /* Stack layout for the client-related screens */
 export default function ClientsLayout() {
+    const { t } = useTranslation();
 	const navigation = useNavigation();
 	return (
 		<Stack
@@ -18,7 +20,7 @@ export default function ClientsLayout() {
 			<Stack.Screen
 				name="index"
 				options={{
-					title: "Clients",
+					title: t("Clients"),
 					headerTintColor: "white", // Set the header text color to white
 					headerShadowVisible: false, // Hide the stack header because the tab header is already visible on this screen
 					headerRight: () => (
@@ -32,14 +34,14 @@ export default function ClientsLayout() {
 			<Stack.Screen
 				name="register-client"
 				options={{
-					title: "New Client",
+					title: t("New Client"),
 					headerTintColor: "white",
 				}}
 			/>
 			<Stack.Screen
 				name="client-details"
 				options={{
-					title: "Details",
+					title: t("Details"),
 					headerTintColor: "white",
 				}}
 			/>

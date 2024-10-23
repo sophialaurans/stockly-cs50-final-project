@@ -2,16 +2,18 @@ import { Alert } from "react-native";
 import axios from "axios";
 import config from "../constants/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTranslation } from "react-i18next";
 
 // Custom hook to handle deletion of data
 const useDelete = (setData, refetch) => {
+	const { t } = useTranslation();
     // Function to handle the delete action
 	const handleDelete = async (id, dataName, endpoint) => {
 		// Confirm deletion with the user
-		Alert.alert(`Delete ${dataName}`, `Are you sure you want to delete this ${dataName}?`, [
-			{ text: "Cancel", style: "cancel" }, // Cancel button
+		Alert.alert(`${t("Delete")} ${dataName}`, `${t("Are you sure you want to delete this")} ${dataName}?`, [
+			{ text: t("Cancel"), style: "cancel" }, // Cancel button
 			{
-				text: "Delete", // Delete button
+				text: t("Delete"), // Delete button
 				onPress: async () => {
 					try {
 						const token = await AsyncStorage.getItem("access_token");
@@ -27,15 +29,13 @@ const useDelete = (setData, refetch) => {
 						if (response.status === 200) {
 							// Update local data by filtering out the deleted item
 							setData((prevData) => prevData.filter((item) => item.id !== id));
-							Alert.alert("Success!", `${dataName} deleted successfully`);
+							Alert.alert(t("Success"), `${dataName} deleted successfully`);
 							refetch(); // Refetch data to update the view
 						} else {
-							console.log("Error response:", response.data);
-							Alert.alert("Error", `Failed to delete ${dataName}`);
+							Alert.alert(t("Error"), `${t("Failed to delete")} ${dataName}`);
 						}
 					} catch (error) {
-						console.log("Catch Error:", error.response ? error.response.data : error.message);
-						Alert.alert("Error", "An unexpected error occurred.");
+						Alert.alert(t("Error"), t("An unexpected error occurred"));
 					}
 				},
 				style: "destructive", // Style for delete button

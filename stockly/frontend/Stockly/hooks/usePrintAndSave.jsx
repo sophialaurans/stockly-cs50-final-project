@@ -1,13 +1,17 @@
 import { useState, useEffect } from "react";
+import { Alert } from "react-native";
 import * as Print from "expo-print";
 import { shareAsync } from "expo-sharing";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import config from "../constants/config";
 import colors from "../constants/colors";
+import { useTranslation } from "react-i18next";
+import { startActivityAsync } from "expo-intent-launcher";
 
 // Custom hook for printing and saving order receipts
 const usePrintAndSave = () => {
+	const { t } = useTranslation();
 	const [data, setData] = useState(null);
 	const [loadingPrint, setLoadingPrint] = useState(false);
 	const [error, setError] = useState(null);
@@ -42,8 +46,7 @@ const usePrintAndSave = () => {
 			});
 			setData(response.data);
 		} catch (error) {
-			setError("Error fetching data.");
-			console.error("Error:", error.response ? error.response.data : error.message);
+			setError(t("Error fetching data"));
 		}
 	};
 
@@ -64,7 +67,7 @@ const usePrintAndSave = () => {
                                             margin: 10px;
                                         }
                                     }
-                                    body { font-family: "Courier New", Courier, monospace; font-size: 12px; width: 90%; margin: 0; padding: 30px; }
+                                    body { font-family: "Courier New", Courier, monospace; font-size: 16px; width: 90%; height: auto; margin: 0; padding: 30px; }
                                     h1 { text-align: center; font-size: 14px; }
                                     table { width: 100%; border-collapse: collapse; }
                                     th { font-size: 12px; font-weight: bold; padding: 4px; text-align: center; vertical-align: top; }
@@ -74,17 +77,18 @@ const usePrintAndSave = () => {
                                 </style>
                             </head>
                             <body>
-                                <h1>Order Receipt</h1>
-                                <p>Client: ${data.client_name}</p>
-                                <p>Seller: ${data.user_name}</p>
-                                <p>Date: ${new Date().toLocaleDateString()}</p>
+                                <h1>${t("Order Receipt")}</h1>
+                                
+                                <p>${t("Client")}: ${data.client_name}</p>
+                                <p>${t("Seller")}: ${data.user_name}</p>
+                                <p>${t("Date")}: ${new Date().toLocaleDateString()}</p>
 
                                 <table>
                                     <thead>
                                         <tr>
                                             <th>ITEM</th>
                                             <th>QNT</th>
-                                            <th>PRICE</th>
+                                            <th>${t("PRICE")}</th>
                                             <th>TOTAL</th>
                                         </tr>
                                     </thead>
@@ -95,15 +99,15 @@ const usePrintAndSave = () => {
                                         <tr>
                                             <td>${item.product_name} ${item.product_size || ""}</td>
                                             <td>${item.quantity}</td>
-                                            <td>$${item.price.toFixed(2)}</td>
-                                            <td>$${(item.price * item.quantity).toFixed(2)}</td>
+                                            <td>${t('currency.symbol')}${item.price.toFixed(2)}</td>
+                                            <td>${t('currency.symbol')}${(item.price * item.quantity).toFixed(2)}</td>
                                         </tr>
                                         `
 											)
 											.join("")}
                                         <tr>
-                                            <td colspan="3" class="total">TOTAL PRICE</td>
-                                            <td class="total">$${data.total_price.toFixed(2)}</td>
+                                            <td colspan="3" class="total">${t("TOTAL PRICE")}</td>
+                                            <td class="total">${t('currency.symbol')}${data.total_price.toFixed(2)}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -161,20 +165,20 @@ const usePrintAndSave = () => {
                                     </style>
                                 </head>
                                 <body>
-                                    <h1>Order Receipt</h1>
+                                    <h1>${t("Order Receipt")}</h1>
                                     
-                                    <p><strong>Client:</strong> ${data.client_name}</p>
-                                    <p><strong>Seller:</strong> ${data.user_name}</p>
-                                    <p><strong>Order ID:</strong> ${data.order_id}</p>
-                                    <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                                    <p><strong>${t("Client")}:</strong> ${data.client_name}</p>
+                                    <p><strong>${t("Seller")}:</strong> ${data.user_name}</p>
+                                    <p><strong>${t("Order ID")}:</strong> ${data.order_id}</p>
+                                    <p><strong>${t("Date")}:</strong> ${new Date().toLocaleDateString()}</p>
 
                                     <table>
                                         <tbody>
                                             <tr>
                                                 <th>Item</th>
                                                 <th>Quantity</th>
-                                                <th>Price (each)</th>
-                                                <th>Total (item)</th>
+                                                <th>${t("Price")}</th>
+                                                <th>Total</th>
                                             </tr>
                                             ${data.items
 												.map(
@@ -182,15 +186,15 @@ const usePrintAndSave = () => {
                                             <tr>
                                                 <td>${item.product_name} ${item.product_size || ""}</td>
                                                 <td>${item.quantity}</td>
-                                                <td>$${item.price.toFixed(2)}</td>
-                                                <td>$${(item.price * item.quantity).toFixed(2)}</td>
+                                                <td>${t('currency.symbol')}${item.price.toFixed(2)}</td>
+                                                <td>${t('currency.symbol')}${(item.price * item.quantity).toFixed(2)}</td>
                                             </tr>
                                             `
 												)
 												.join("")}
                                             <tr class="total-row">
                                                 <td colspan="3" class="right-align">TOTAL</td>
-                                                <td>$${data.total_price.toFixed(2)}</td>
+                                                <td>${t('currency.symbol')}${data.total_price.toFixed(2)}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -200,11 +204,10 @@ const usePrintAndSave = () => {
                         `;
 						// Create a PDF file from HTML
 						const { uri } = await Print.printToFileAsync({ html: pdfHtml });
-						console.log("File has been saved to: ", uri); // Log file URI
 						await shareAsync(uri, { UTI: ".pdf", mimeType: "application/pdf" }); // Share the generated PDF
 					}
 				} catch (error) {
-					console.error("Print error:", error);
+                    Alert.alert(t("Error"), error);
 				} finally {
 					setLoadingPrint(false);
 					setData(null);
@@ -223,7 +226,7 @@ const usePrintAndSave = () => {
 			const printer = await Print.selectPrinterAsync(); // iOS only
 			setSelectedPrinter(printer);
 		} catch (error) {
-			console.error("Select printer error:", error);
+            Alert.alert(t("Error"), error);
 		}
 	};
 

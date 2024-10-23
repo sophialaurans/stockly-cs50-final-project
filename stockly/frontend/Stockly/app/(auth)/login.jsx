@@ -7,8 +7,10 @@ import config from "../../constants/config";
 import { TextInput } from "react-native-paper";
 import { authStyles } from "./styles";
 import colors from "../../constants/colors";
+import { useTranslation } from "react-i18next";
 
 const LoginScreen = () => {
+	const { t } = useTranslation();
 	const navigation = useNavigation();
 	const [errorMessage, setErrorMessage] = useState(""); // State to store error messages
 
@@ -32,7 +34,7 @@ const LoginScreen = () => {
 
 		if (!email || !password) {
 			// Check if fields are filled
-			setErrorMessage("Missing email or password");
+			setErrorMessage(t("Missing email or password"));
 			return;
 		}
 
@@ -50,12 +52,16 @@ const LoginScreen = () => {
 				await AsyncStorage.setItem("access_token", access_token);
 				navigation.replace("(tabs)");
 			} else {
-				setErrorMessage(response.data.message || "An error occurred");
+				setErrorMessage(response.data.message || t("An error occurred"));
 			}
 		} catch (error) {
 			// Handle network and API response errors
-			const errorMessageError = error.response ? error.response.data.message : "An unexpected error occurred";
-			setErrorMessage(errorMessageError);
+			const errorMessageError = error.response ? error.response.data.message : t("An unexpected error occurred");
+			if (errorMessageError === "Incorrect email or password") {
+				setErrorMessage(t("Incorrect email or password"));
+			} else {
+				setErrorMessage(errorMessageError);
+			}
 		}
 	};
 
@@ -78,7 +84,7 @@ const LoginScreen = () => {
 				outlineStyle={authStyles.input}
 				outlineColor={colors.lightGrey}
 				activeOutlineColor={colors.tertiary}
-				label="Password"
+				label={t("Password")}
 				mode="outlined"
 				value={formState.password}
 				onChangeText={(text) => handleInputChange("password", text)}
@@ -102,7 +108,7 @@ const LoginScreen = () => {
 				onPress={() => {
 					navigation.navigate("register"); // Navigate to register screen
 				}}>
-				<Text>Not registered yet? Sign up here.</Text>
+				<Text>{t("Not registered yet")}</Text>
 			</TouchableOpacity>
 		</ScrollView>
 	);

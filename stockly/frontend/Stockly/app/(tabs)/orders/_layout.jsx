@@ -2,9 +2,11 @@ import { Stack, useNavigation } from "expo-router";
 import { TouchableOpacity } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import colors from "../../../constants/colors";
+import { useTranslation } from 'react-i18next';
 
 /* Stack layout for the order-related screens */
 export default function OrdersLayout() {
+    const { t } = useTranslation();
 	const navigation = useNavigation();
 	return (
 		<Stack
@@ -18,7 +20,7 @@ export default function OrdersLayout() {
 			<Stack.Screen
 				name="index"
 				options={{
-					title: "Orders",
+					title: t("Orders"),
 					headerShadowVisible: false, // Hide the stack header because the tab header is already visible on this screen
 					headerTintColor: "white", // Set the header text color to white
 					headerRight: () => (
@@ -32,14 +34,14 @@ export default function OrdersLayout() {
 			<Stack.Screen
 				name="new-order"
 				options={{
-					title: "New Order",
+					title: t("New Order"),
 					headerTintColor: "white",
 				}}
 			/>
 			<Stack.Screen
 				name="order-details"
 				options={{
-					title: "Details",
+					title: t("Details"),
 					headerTintColor: "white",
 				}}
 			/>

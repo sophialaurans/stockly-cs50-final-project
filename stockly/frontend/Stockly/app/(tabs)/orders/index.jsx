@@ -26,8 +26,11 @@ import usePrintAndSave from "../../../hooks/usePrintAndSave";
 import useDelete from "../../../hooks/useDelete";
 import useNotAuthenticatedWarning from "../../../hooks/useNotAuthenticatedWarning";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTranslation } from 'react-i18next';
 
 const Orders = ({ visible, animateFrom, style }) => {
+    const { t } = useTranslation();
+
 	// State to toggle displaying all items in an order
 	const [showAllItems, setShowAllItems] = useState(false);
 
@@ -110,11 +113,10 @@ const Orders = ({ visible, animateFrom, style }) => {
 				);
 				setOrders(updatedOrders);
 			} else {
-				Alert.alert("Error", "Failed to update order status");
+				Alert.alert(t("Error"), t("Failed to update order status"));
 			}
 		} catch (error) {
-			console.log("Catch Error:", error.response ? error.response.data : error.message);
-			Alert.alert("Error", "An unexpected error occurred.");
+			Alert.alert(t("Error"), t("An unexpected error occurred"));
 		}
 	};
 
@@ -124,7 +126,7 @@ const Orders = ({ visible, animateFrom, style }) => {
 		try {
 			await printReceipt(order_id);
 		} catch (error) {
-			Alert.alert("Error", "Error printing receipt");
+			Alert.alert(t("Error"), t("Error printing receipt"));
 		} finally {
 			setLoadingPrint(false);
 		}
@@ -136,7 +138,7 @@ const Orders = ({ visible, animateFrom, style }) => {
 		try {
 			await printToFile(order_id);
 		} catch (error) {
-			Alert.alert("Error", "Error saving to file");
+			Alert.alert(t("Error"), t("Error saving to file"));
 		} finally {
 			setLoadingPrint(false);
 		}
@@ -157,13 +159,13 @@ const Orders = ({ visible, animateFrom, style }) => {
 								index === orders.length - 1 ? { borderBottomWidth: 0 } : {},
 							]}>
 							<View style={styles.orderHeaderContainer}>
-								<Text style={styles.orderHeaderName}>Order from {item.client_name}</Text>
-								<Text style={styles.orderHeaderPrice}>Total: $ {item.total_price?.toFixed(2)}</Text>
+								<Text style={styles.orderHeaderName}>{t("Order from")} {item.client_name}</Text>
+								<Text style={styles.orderHeaderPrice}>{t("Total")} {t('currency.symbol')} {item.total_price?.toFixed(2)}</Text>
 							</View>
 							<View style={globalStyles.flatlistItemContent}>
 								<View style={globalStyles.flatlistItemData}>
 									<View style={styles.orderDateContainer}>
-										<Text style={styles.orderDateText}>Created on {item.date.slice(0, 10)}</Text>
+										<Text style={styles.orderDateText}>{t("Created on")} {item.date.slice(0, 10)}</Text>
 									</View>
 									<View style={styles.orderItemsContainer}>
 										{item.items
@@ -178,7 +180,7 @@ const Orders = ({ visible, animateFrom, style }) => {
 														{orderItem.product_color ? ` ${orderItem.product_color}` : ""}
 													</Text>
 													<Text style={styles.orderItemsTextPrice}>
-														${orderItem.price?.toFixed(2)} each
+                                                        {t('currency.symbol')}{orderItem.price?.toFixed(2)} {t("each")}
 													</Text>
 												</View>
 											))}
@@ -187,7 +189,7 @@ const Orders = ({ visible, animateFrom, style }) => {
 												onPress={() => setShowAllItems(true)}
 												style={styles.seeMoreLessButton}>
 												<AntDesign name="down" size={11} color={colors.primary} />
-												<Text style={styles.seeMoreLessButtonText}>See more...</Text>
+												<Text style={styles.seeMoreLessButtonText}>{t("See more")}</Text>
 											</TouchableOpacity>
 										)}
 										{showAllItems && item.items.length > 5 && (
@@ -195,21 +197,21 @@ const Orders = ({ visible, animateFrom, style }) => {
 												onPress={() => setShowAllItems(false)}
 												style={styles.seeMoreLessButton}>
 												<AntDesign name="up" size={11} color={colors.primary} />
-												<Text style={styles.seeMoreLessButtonText}>See less</Text>
+												<Text style={styles.seeMoreLessButtonText}>{t("See less")}</Text>
 											</TouchableOpacity>
 										)}
 									</View>
 
 									{/* Picker to change the status of an order */}
 									<View style={styles.pickerContainer}>
-										<Text style={globalStyles.flatlistItemDetailsLabel}>Status: </Text>
+										<Text style={globalStyles.flatlistItemDetailsLabel}>{t("Status")} </Text>
 										<Picker
 											style={styles.orderStatusPicker}
 											selectedValue={item.status}
 											onValueChange={(newStatus) => handleStatusChange(item.order_id, newStatus)}>
-											<Picker.Item label="Pending" value="pending" />
-											<Picker.Item label="Completed" value="completed" />
-											<Picker.Item label="Shipped" value="shipped" />
+											<Picker.Item label={t("Pending")} value="pending" />
+											<Picker.Item label={t("Completed")} value="completed" />
+											<Picker.Item label={t("Shipped")} value="shipped" />
 										</Picker>
 									</View>
 								</View>
@@ -224,7 +226,7 @@ const Orders = ({ visible, animateFrom, style }) => {
 									</TouchableOpacity>
 									<TouchableOpacity
 										onPress={() => {
-											handleDelete(item.order_id, "Order", "orders");
+											handleDelete(item.order_id, t("Order"), "orders");
 										}}>
 										<FontAwesome name="trash" size={24} color={colors.text} />
 									</TouchableOpacity>
@@ -259,7 +261,7 @@ const Orders = ({ visible, animateFrom, style }) => {
 										<View style={styles.modalBackground}>
 											<View style={styles.modalContent}>
 												<ActivityIndicator size="large" color="white" />
-												<Text style={styles.modalText}>Processing request...</Text>
+												<Text style={styles.modalText}>{t("Processing request")}</Text>
 											</View>
 										</View>
 									</Modal>
@@ -270,13 +272,13 @@ const Orders = ({ visible, animateFrom, style }) => {
 					onScroll={onScroll}
 				/>
 			) : (
-				<Text>No orders registered yet.</Text>
+				<Text>{t("No orders registered yet")}</Text>
 			)}
 
 			{/* Floating action button to create a new order */}
 			<AnimatedFAB
 				icon={"plus"}
-				label={"New Order  "}
+				label={t("New Order")}
 				color={"white"}
 				extended={isExtended}
 				onPress={() => navigation.navigate("new-order")}

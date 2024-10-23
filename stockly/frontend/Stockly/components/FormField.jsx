@@ -3,11 +3,14 @@ import { View, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { TextInput } from "react-native-paper";
 import colors from "../constants/colors";
+import { useTranslation } from "react-i18next";
 
 // Reusable form field component that handles both text input and picker dropdowns
 const FormField = ({ label, value, onChangeText, placeholder, pickerOptions, keyboardType }) => {
+	const { t } = useTranslation();
+
 	// Check if the field is "Description" to set multiline input
-	const isMultiline = label === "Description";
+	const isMultiline = label === t("Description");
 
 	return (
 		<View style={styles.formContainer}>

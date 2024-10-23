@@ -108,6 +108,7 @@ export const globalStyles = StyleSheet.create({
 	addItemButtonText: {
 		color: colors.tertiary,
 		fontWeight: "bold",
+        textAlign: "center",
 	},
 	// Style for the container of each item in the order item flatlist
 	item: {

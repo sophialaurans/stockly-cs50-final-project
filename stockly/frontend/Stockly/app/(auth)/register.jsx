@@ -6,8 +6,10 @@ import config from "../../constants/config";
 import { TextInput } from "react-native-paper";
 import { authStyles } from "./styles";
 import colors from "../../constants/colors";
+import { useTranslation } from 'react-i18next';
 
 const RegisterScreen = () => {
+    const { t } = useTranslation();
 	const navigation = useNavigation();
 
 	// State to manage the form input values
@@ -36,13 +38,13 @@ const RegisterScreen = () => {
 
 		// Check if passwords match
 		if (password !== confirmPassword) {
-			setErrorMessage("Passwords do not match");
+			setErrorMessage(t("Passwords do not match"));
 			return;
 		}
 
 		// Check for empty fields
 		if (!name || !email || !password || !confirmPassword) {
-			setErrorMessage("All fields are required");
+			setErrorMessage(t("All fields are required"));
 			return;
 		}
 
@@ -56,20 +58,20 @@ const RegisterScreen = () => {
 
 			// Handle different response statuses
 			if (response.status === 201) {
-				Alert.alert("Success!", "Registration successful! You can now sign in.");
+				Alert.alert(t("Success"), t("Registration successful"));
 				navigation.replace("(auth)");
 			} else if (response.status === 400) {
-				setErrorMessage("Error:", response.data.message);
+				setErrorMessage(t("Error:"), response.data.message);
 			} else {
-				Alert.alert("Error", "Unexpected response status, please try again");
+				Alert.alert(t("Error:"), t("Unexpected response status"));
 			}
 		} catch (error) {
 			// Handle specific error responses
 			if (error.response && error.response.status === 400) {
 				setInvalidEmailError(error.response.data.message);
-				console.log("Error", error.response.data.message || "Bad Request");
+				console.log(t("Error:"), error.response.data.message || "Bad Request");
 			} else {
-				console.log("Error", "An unexpected error occurred");
+				console.log(t("Error:"), t("An unexpected error occurred"));
 			}
 		}
 	};
@@ -82,7 +84,7 @@ const RegisterScreen = () => {
 				outlineStyle={authStyles.input}
 				outlineColor={colors.lightGrey}
 				activeOutlineColor={colors.tertiary}
-				label="Name"
+				label={t("Name")}
 				mode="outlined"
 				value={formState.name}
 				onChangeText={(text) => handleInputChange("name", text)}
@@ -111,7 +113,7 @@ const RegisterScreen = () => {
 				outlineStyle={authStyles.input}
 				outlineColor={colors.lightGrey}
 				activeOutlineColor={colors.tertiary}
-				label="Create a password"
+				label={t("Create a password")}
 				mode="outlined"
 				secureTextEntry
 				value={formState.password}
@@ -122,7 +124,7 @@ const RegisterScreen = () => {
 				outlineStyle={authStyles.input}
 				outlineColor={colors.lightGrey}
 				activeOutlineColor={colors.tertiary}
-				label="Confirm your password"
+				label={t("Confirm your password")}
 				mode="outlined"
 				secureTextEntry
 				value={formState.confirmPassword}
@@ -137,7 +139,7 @@ const RegisterScreen = () => {
 			) : null}
 
 			<TouchableOpacity style={authStyles.authButton} onPress={handleRegister}>
-				<Text style={authStyles.authButtonText}>REGISTER</Text>
+				<Text style={authStyles.authButtonText}>{t("REGISTER")}</Text>
 			</TouchableOpacity>
 
 			{/* Link to sign in if already registered */}
@@ -146,7 +148,7 @@ const RegisterScreen = () => {
 				onPress={() => {
 					navigation.navigate("login");
 				}}>
-				<Text>Already registerd? Sign in here.</Text>
+				<Text>{t("Already registerd")}</Text>
 			</TouchableOpacity>
 		</ScrollView>
 	);

@@ -5,8 +5,10 @@ import useProduct from "../../../hooks/useProduct";
 import FormField from "../../../components/FormField";
 import { globalStyles } from "../styles";
 import colors from "../../../constants/colors";
+import { useTranslation } from 'react-i18next';
 
 const ProductDetails = () => {
+    const { t } = useTranslation();
 	const navigation = useNavigation();
 
 	// Destructure state and functions from the custom useProduct hook
@@ -23,58 +25,48 @@ const ProductDetails = () => {
 		<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={globalStyles.container}>
 			<ScrollView>
 				<FormField
-					placeholder="Name"
-					label="Name"
+					label={t("Name")}
 					value={name}
 					onChangeText={(text) => handleInputChange("name", text)}
 				/>
 				<FormField
-					placeholder="Size"
-					label="Size"
+					label={t("Size")}
 					value={size}
 					onChangeText={(text) => handleInputChange("size", text)}
 				/>
 				<FormField
-					placeholder="Color"
-					label="Color"
+					label={t("Color")}
 					value={color}
 					onChangeText={(text) => handleInputChange("color", text)}
 				/>
 				<FormField
-					placeholder="Dimensions"
-					label="Dimensions"
+					label={t("Dimensions")}
 					value={dimensions}
 					onChangeText={(text) => handleInputChange("dimensions", text)}
 				/>
 				<FormField
-					placeholder="Price"
-					label="Price"
+					label={t("Price")}
 					value={price.toString()}
 					onChangeText={(text) => handleInputChange("price", text)}
 					keyboardType="numeric"
 				/>
 				<FormField
-					placeholder="Description"
-					label="Description"
+					label={t("Description")}
 					value={description}
 					onChangeText={(text) => handleInputChange("description", text)}
 				/>
 				<FormField
-					placeholder="Quantity in Stock"
-					label="Quantity in Stock"
+					label={t("Quantity in Stock")}
 					value={quantity.toString()}
 					onChangeText={(text) => handleInputChange("quantity", text)}
 				/>
 
 				<TouchableOpacity style={globalStyles.submitButton} onPress={() => handleSave(navigation)}>
-					<Text style={globalStyles.submitButtonText}>Save Product</Text>
+					<Text style={globalStyles.submitButtonText}>{t("Save Product")}</Text>
 				</TouchableOpacity>
 
 				{/* Show a loading spinner while save is in progress */}
 				{loading && <ActivityIndicator size="large" color={colors.primary} />}
-
-				{/* Display an error message if there's an error */}
-				{error && <Text>{error}</Text>}
 			</ScrollView>
 		</KeyboardAvoidingView>
 	);

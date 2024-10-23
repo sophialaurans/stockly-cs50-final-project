@@ -10,8 +10,11 @@ import Octicons from "@expo/vector-icons/Octicons";
 import { LineChart } from "react-native-chart-kit";
 import { LinearGradient } from "expo-linear-gradient";
 import colors from "../../constants/colors";
+import { useTranslation } from 'react-i18next';
 
 const Dashboard = () => {
+    const { t } = useTranslation();
+
 	// Get screen width for responsive design
 	const screenWidth = Dimensions.get("window").width;
 
@@ -28,18 +31,18 @@ const Dashboard = () => {
 
 	// Array of month names for display purposes
 	const monthNames = [
-		"January",
-		"February",
-		"March",
-		"April",
-		"May",
-		"June",
-		"July",
-		"August",
-		"September",
-		"October",
-		"November",
-		"December",
+		t("January"),
+		t("February"),
+		t("March"),
+		t("April"),
+		t("May"),
+		t("June"),
+		t("July"),
+		t("August"),
+		t("September"),
+		t("October"),
+		t("November"),
+		t("December"),
 	];
 
 	// Data structure for the revenue chart
@@ -86,14 +89,14 @@ const Dashboard = () => {
 				<View style={styles.cardPack}>
 					<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
 						<View style={styles.cardHeader}>
-							<Text style={styles.cardTitle}>Products</Text>
+							<Text style={styles.cardTitle}>{t("Products")}</Text>
 							<FontAwesome6 name="boxes-stacked" size={20} color="white" />
 						</View>
 						<Text style={styles.cardValue}>{data.totalProducts}</Text>
 					</LinearGradient>
 					<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
 						<View style={styles.cardHeader}>
-							<Text style={styles.cardTitle}>Items in Stock</Text>
+							<Text style={styles.cardTitle}>{t("Items in Stock")}</Text>
 							<MaterialIcons name="inventory" size={20} color="white" />
 						</View>
 						<Text style={styles.cardValue}>{data.totalStock}</Text>
@@ -104,14 +107,14 @@ const Dashboard = () => {
 				<View style={styles.cardPack}>
 					<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
 						<View style={styles.cardHeader}>
-							<Text style={styles.cardTitle}>Orders in Progress</Text>
+							<Text style={styles.cardTitle}>{t("Orders in Progress")}</Text>
 							<FontAwesome6 name="boxes-packing" size={20} color="white" />
 						</View>
 						<Text style={styles.cardValue}>{data.pendingOrders}</Text>
 					</LinearGradient>
 					<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
 						<View style={styles.cardHeader}>
-							<Text style={styles.cardTitle}>Clients</Text>
+							<Text style={styles.cardTitle}>{t("Clients")}</Text>
 							<MaterialCommunityIcons name="folder-account" size={20} color="white" />
 						</View>
 						<Text style={styles.cardValue}>{data.totalClients}</Text>
@@ -121,15 +124,15 @@ const Dashboard = () => {
 				{/* Card for displaying monthly revenue chart */}
 				<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.cardChart}>
 					<View style={styles.cardHeader}>
-						<Text style={styles.cardTitle}>Monthly Revenue</Text>
+						<Text style={styles.cardTitle}>{t("Monthly Revenue")}</Text>
 						<FontAwesome6 name="hand-holding-dollar" size={20} color="white" />
 					</View>
 					<View style={styles.dotDataContainer}>
 						<Octicons name="dot-fill" size={24} color={colors.turquoise} />
 						<Text style={styles.dotData}>
 							{selectedMonth !== null
-								? `${monthNames[selectedMonth]}: $ ${selectedData.toFixed(2)}`
-								: `Current month: $ ${Number(data.currentMonthRevenue).toFixed(2)}`}
+								? `${monthNames[selectedMonth]}: ${t('currency.symbol')} ${selectedData.toFixed(2)}`
+								: `${t("Current month")}: ${t('currency.symbol')} ${Number(data.currentMonthRevenue).toFixed(2)}`}
 						</Text>
 					</View>
 					<LineChart

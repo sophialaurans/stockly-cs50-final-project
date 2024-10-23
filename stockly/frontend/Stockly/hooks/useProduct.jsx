@@ -6,9 +6,11 @@ import useNotAuthenticatedWarning from "./useNotAuthenticatedWarning";
 import axios from "axios";
 import config from "../constants/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTranslation } from "react-i18next";
 
 // Custom hook for managing product data
 const useProduct = (product_id = null) => {
+	const { t } = useTranslation();
 	const route = useRoute(); // Access current route
 	const { product } = route.params || {}; // Get product data from route parameters
 
@@ -83,7 +85,7 @@ const useProduct = (product_id = null) => {
 	// Handle saving product data using a custom hook
 	const handleSave = async (navigation) => {
 		try {
-			await useSave("Product", "products", product_id, formState, navigation, setLoading, setError);
+			await useSave(t("Product"), "products", product_id, formState, navigation, setLoading, setError);
 		} catch (error) {
 			console.error("Error during save:", error);
 		}

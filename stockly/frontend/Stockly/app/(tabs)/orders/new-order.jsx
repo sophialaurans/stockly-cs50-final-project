@@ -14,8 +14,10 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import useOrder from "../../../hooks/useOrder";
 import { globalStyles } from "../styles";
 import colors from "../../../constants/colors";
+import { useTranslation } from "react-i18next";
 
 const NewOrder = () => {
+	const { t } = useTranslation();
 	const navigation = useNavigation();
 
 	// Destructure state and functions from the custom useOrder hook
@@ -35,15 +37,17 @@ const NewOrder = () => {
 
 	return (
 		// Adjust keyboard behavior for iOS/Android when form is active
-		<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={globalStyles.container}>
-			<View style={globalStyles.container}>
+		<KeyboardAvoidingView
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
+			style={globalStyles.container}>
+			<View>
 				{/* Form field for selecting a client */}
 				<View style={globalStyles.picker}>
 					<FormField
-						label="Select Client"
+						label={t("Select Client")}
 						value={formState.selectedClient}
 						onChangeText={(itemValue) => handleInputChange("selectedClient", itemValue)}
-						placeholder="Select a client"
+						placeholder={t("Select a client")}
 						pickerOptions={clients.map((client) => ({
 							label: client.name,
 							value: client.client_id,
@@ -54,14 +58,14 @@ const NewOrder = () => {
 				{/* Form field for selecting a product */}
 				<View style={globalStyles.picker}>
 					<FormField
-						label="Select Product"
+						label={t("Select Product")}
 						value={formState.selectedProduct}
 						onChangeText={(itemValue) => handleInputChange("selectedProduct", itemValue)}
-						placeholder="Select a product"
+						placeholder={t("Select a product")}
 						pickerOptions={products.map((product) => ({
 							label: `${product.name} ${product.size ? "- " + product.size : ""} ${
 								product.color ? "- " + product.color : ""
-							} - $${product.price.toFixed(2)}`,
+							} - ${t('currency.symbol')}${product.price.toFixed(2)}`,
 							value: product.product_id,
 						}))}
 					/>
@@ -69,17 +73,17 @@ const NewOrder = () => {
 
 				{/* Form field for entering quantity */}
 				<FormField
-					label="Quantity"
+					label={t("Quantity")}
 					value={formState.quantity}
 					onChangeText={(text) => handleInputChange("quantity", text)}
-					placeholder="Enter quantity"
+					placeholder={t("Enter quantity")}
 					keyboardType="numeric"
 				/>
 
 				{/* Button to add item to the order */}
 				<View style={globalStyles.addItemButtonContainer}>
 					<TouchableOpacity style={globalStyles.addItemButton} onPress={handleAddItem}>
-						<Text style={globalStyles.addItemButtonText}>Add Item</Text>
+						<Text style={globalStyles.addItemButtonText}>{t("Add Item")}</Text>
 					</TouchableOpacity>
 				</View>
 
@@ -96,9 +100,9 @@ const NewOrder = () => {
 									{item.product_color ? <Text>{item.product_color}</Text> : null}
 								</View>
 								<Text style={globalStyles.itemData}>
-									{item.quantity} x ${item.price.toFixed(2)}
+									{item.quantity} x {t('currency.symbol')}{item.price.toFixed(2)}
 								</Text>
-								<Text style={globalStyles.itemData}>${item.total.toFixed(2)}</Text>
+								<Text style={globalStyles.itemData}>{t('currency.symbol')}{item.total.toFixed(2)}</Text>
 								<TouchableOpacity
 									onPress={() => handleDeleteItem(item.product_id)}
 									style={globalStyles.deleteButton}>
@@ -108,14 +112,14 @@ const NewOrder = () => {
 						)}
 					/>
 				) : (
-					<Text>No items added yet.</Text>
+					<Text>{t("No items added yet")}</Text>
 				)}
 
 				{/* Display total price if items are added */}
 				{items.length > 0 ? (
 					<View style={globalStyles.totalPrice}>
-						<Text style={globalStyles.totalPriceLabel}>Total Price:</Text>
-						<Text style={globalStyles.totalPriceValue}>${totalPrice.toFixed(2)}</Text>
+						<Text style={globalStyles.totalPriceLabel}>{t("Total Price")}</Text>
+						<Text style={globalStyles.totalPriceValue}>{t('currency.symbol')}{totalPrice.toFixed(2)}</Text>
 					</View>
 				) : null}
 
@@ -123,13 +127,12 @@ const NewOrder = () => {
 				{loading ? (
 					<ActivityIndicator size="large" color={colors.primary} />
 				) : (
-					<TouchableOpacity onPress={() => handleSubmitOrder(navigation)} style={globalStyles.submitButton}>
-						<Text style={globalStyles.submitButtonText}>Place Order</Text>
+					<TouchableOpacity
+						onPress={() => handleSubmitOrder(navigation)}
+						style={globalStyles.submitButton}>
+						<Text style={globalStyles.submitButtonText}>{t("Place Order")}</Text>
 					</TouchableOpacity>
 				)}
-
-				{/* Display error message if there's an error */}
-				{error && <Text>{error}</Text>}
 			</View>
 		</KeyboardAvoidingView>
 	);

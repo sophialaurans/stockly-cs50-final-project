@@ -16,8 +16,10 @@ import { useNavigation, useIsFocused } from "@react-navigation/native";
 import config from "../../constants/config";
 import { globalStyles } from "./styles";
 import colors from "../../constants/colors";
+import { useTranslation } from 'react-i18next';
 
 const ProfileScreen = () => {
+    const { t } = useTranslation();
 	const navigation = useNavigation();
 
 	// Hook to check if the screen is focused
@@ -80,11 +82,15 @@ const ProfileScreen = () => {
 			const response = await axios.put(`${config.apiUrl}/edit-profile`, profile, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			Alert.alert(null, response.data.message);
+
+            if (response.data.message === "Profile updated successfully") {
+                Alert.alert(t("Success"), t("Profile updated successfully"));
+            } else {
+                Alert.alert(null, response.data.message);
+            }
 			setIsEditing(false);
 		} catch (error) {
-			console.log("Error response data:", error.response ? error.response.data : error.message);
-			Alert.alert("Error", "Failed to update profile");
+			Alert.alert(t("Error"), t("Failed to update profile"));
 		}
 	};
 
@@ -96,8 +102,7 @@ const ProfileScreen = () => {
 
 			navigation.replace("(auth)");
 		} catch (error) {
-			console.error("Logout Error:", error);
-			Alert.alert("Error", "Failed to log out");
+			Alert.alert(t("Error"), t("Failed to log out"));
 		}
 	};
 
@@ -105,12 +110,12 @@ const ProfileScreen = () => {
 	const handleDeleteAccount = async (user_id) => {
 		// Confirm deletion with the user
 		Alert.alert(
-			"Delete Account",
-			"Are you sure you want to delete your account? This action cannot be undone.",
+			t("Delete account"),
+			t("Are you sure you want to delete"),
 			[
-				{ text: "Cancel", style: "cancel" },
+				{ text: t("Cancel"), style: "cancel" },
 				{
-					text: "Delete",
+					text: t("Delete"),
 					onPress: async () => {
 						try {
 							const token = await AsyncStorage.getItem("access_token");
@@ -125,14 +130,13 @@ const ProfileScreen = () => {
 							// Check for successful deletion
 							if (response.status === 200) {
 								await AsyncStorage.removeItem("access_token");
-								Alert.alert("Account Deleted", "Your account has been deleted.");
+								Alert.alert(t("Account Deleted"), t("Your account has been deleted"));
 								navigation.replace("(auth)");
 							} else {
-								Alert.alert("Error", "Failed to delete account.");
+								Alert.alert(t("Error"), t("Failed to delete account"));
 							}
 						} catch (error) {
-							console.error("Catch Error:", error.response ? error.response.data : error.message);
-							Alert.alert("Error", "An unexpected error occurred.");
+							Alert.alert(t("Error"), t("An unexpected error occurred"));
 						}
 					},
 					style: "destructive", // Style for the delete button
@@ -145,7 +149,7 @@ const ProfileScreen = () => {
 	return (
 		<ScrollView contentContainerStyle={globalStyles.container}>
 			{/* Input of the user's name */}
-			<Text style={styles.inputTitle}>Name</Text>
+			<Text style={styles.inputTitle}>{t("Name")}</Text>
 			<TextInput
 				value={profile.name}
 				editable={isEditing}
@@ -177,7 +181,7 @@ const ProfileScreen = () => {
 			/>
 
 			{/* Input of the user's phone number */}
-			<Text style={styles.inputTitle}>Phone number</Text>
+			<Text style={styles.inputTitle}>{t("Phone number")}</Text>
 			<TextInput
 				value={profile.phone_number || ""}
 				editable={isEditing}
@@ -197,16 +201,16 @@ const ProfileScreen = () => {
 				{isEditing ? (
 					<View style={styles.buttonPack}>
 						<TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-							<Text style={styles.cancelButtonText}>Cancel</Text>
+							<Text style={styles.cancelButtonText}>{t("Cancel")}</Text>
 						</TouchableOpacity>
 						<TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-							<Text style={styles.saveButtonText}>Save</Text>
+							<Text style={styles.saveButtonText}>{t("Save")}</Text>
 						</TouchableOpacity>
 					</View>
 				) : (
 					/* Button to start editing profile */
 					<TouchableOpacity style={globalStyles.submitButton} onPress={() => setIsEditing(true)}>
-						<Text style={globalStyles.submitButtonText}>Edit Profile</Text>
+						<Text style={globalStyles.submitButtonText}>{t("Edit Profile")}</Text>
 					</TouchableOpacity>
 				)}
 			</View>
@@ -214,10 +218,10 @@ const ProfileScreen = () => {
 				/* Buttons to sign out or delete user account */
 				<View style={styles.redContainer}>
 					<TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-						<Text style={styles.logoutButtonText}>Sign out</Text>
+						<Text style={styles.logoutButtonText}>{t("Sign out")}</Text>
 					</TouchableOpacity>
 					<TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteAccount(profile.user_id)}>
-						<Text style={styles.deleteButtonText}>Delete account</Text>
+						<Text style={styles.deleteButtonText}>{t("Delete account")}</Text>
 					</TouchableOpacity>
 				</View>
 			)}

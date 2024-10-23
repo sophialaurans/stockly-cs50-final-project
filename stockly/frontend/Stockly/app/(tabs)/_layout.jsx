@@ -1,13 +1,23 @@
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, ActivityIndicator } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs, router } from "expo-router";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import colors from "../../constants/colors";
+import useAuthenticatedFetch from "../../hooks/useAuthenticatedFetch";
+import { useTranslation } from 'react-i18next';
 
 /* Tab layout for the main screens */
 export default function TabLayout() {
+    const { t } = useTranslation();
+    
+    // Prevent the tab from showing before the page is fully loaded
+	const { loading } = useAuthenticatedFetch("");
+    if (loading) {
+		return <ActivityIndicator size="large" color={colors.primary} />;
+	}
+
 	return (
 		<Tabs
 			screenOptions={{
@@ -46,7 +56,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="products"
 				options={{
-					title: "Products",
+					title: t("Products"),
 					headerShown: false, // Hide the tab header because the screen's local stack header is already visible
 					tabBarIcon: ({ color }) => <FontAwesome5 name="box-open" size={24} color={color} />,
 				}}
@@ -59,7 +69,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="orders"
 				options={{
-					title: "Orders",
+					title: t("Orders"),
 					headerShown: false, // Hide the tab header because the screen's local stack header is already visible
 					tabBarIcon: ({ color }) => <Ionicons name="receipt" size={24} color={color} />,
 				}}
@@ -72,7 +82,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="clients"
 				options={{
-					title: "Clients",
+					title: t("Clients"),
 					headerShown: false, // Hide the tab header because the screen's local stack header is already visible
 					tabBarIcon: ({ color }) => <FontAwesome size={28} name="address-book" color={color} />,
 				}}
@@ -85,7 +95,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="profile"
 				options={{
-					title: "Profile",
+					title: t("Profile"),
 					headerTintColor: "white",
 					tabBarButton: () => null, // Hide the profile button from the tab bar
 				}}

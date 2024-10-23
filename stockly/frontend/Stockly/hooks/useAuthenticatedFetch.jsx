@@ -34,7 +34,6 @@ const useAuthenticatedFetch = (endpoint) => {
 		} catch (error) {
 			// For other errors, set the error state and log the error
 			setError("Error fetching data.");
-			console.error("Error:", error.response ? error.response.data : error.message);
 		} finally {
 			setLoading(false); // Set loading state to false after fetch attempt
 		}

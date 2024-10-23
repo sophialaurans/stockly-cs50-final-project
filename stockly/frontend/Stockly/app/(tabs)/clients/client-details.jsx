@@ -5,8 +5,11 @@ import useClient from "../../../hooks/useClient";
 import FormField from "../../../components/FormField";
 import { globalStyles } from "../styles";
 import colors from "../../../constants/colors";
+import { useTranslation } from 'react-i18next';
 
 const ClientDetails = () => {
+    const { t } = useTranslation();
+
 	const navigation = useNavigation();
 
 	// Destructure state and functions from the custom useClient hook
@@ -23,19 +26,16 @@ const ClientDetails = () => {
 		<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={globalStyles.container}>
 			<ScrollView>
 				<FormField
-					placeholder="Name"
-					label="Name"
+					label={t("Name")}
 					value={name}
 					onChangeText={(text) => handleInputChange("name", text)}
 				/>
 				<FormField
-					placeholder="Phone number"
-					label="Phone number"
+					label={t("Phone number")}
 					value={phone_number}
 					onChangeText={(text) => handleInputChange("phone_number", text)}
 				/>
 				<FormField
-					placeholder="Email"
 					label="Email"
 					value={email}
 					onChangeText={(text) => handleInputChange("email", text)}
@@ -43,14 +43,11 @@ const ClientDetails = () => {
 				/>
 
 				<TouchableOpacity style={globalStyles.submitButton} onPress={() => handleSave(navigation)}>
-					<Text style={globalStyles.submitButtonText}>Save Client</Text>
+					<Text style={globalStyles.submitButtonText}>{t("Save Client")}</Text>
 				</TouchableOpacity>
 
 				{/* Show a loading spinner while save is in progress */}
 				{loading && <ActivityIndicator size="large" color={colors.primary} />}
-
-				{/* Display an error message if there's an error */}
-				{error && <Text>{error}</Text>}
 			</ScrollView>
 		</KeyboardAvoidingView>
 	);
