@@ -38,6 +38,11 @@
       "INTERNET",
       "BLUETOOTH",
       "BLUETOOTH_ADMIN"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "40369fe1-82ec-4f77-93e0-df054a811884"
+      }
+    }
   }
 }

@@ -7,7 +7,7 @@ import axios from "axios";
 import config from "../constants/config";
 import colors from "../constants/colors";
 import { useTranslation } from "react-i18next";
-import BluetoothEscposPrinter from "react-native-bluetooth-escpos-printer";
+import ThermalPrinterModule from "react-native-thermal-printer";
 
 // Custom hook for printing and saving order receipts
 const usePrintAndSave = () => {
@@ -56,51 +56,57 @@ const usePrintAndSave = () => {
 			if (data && orderId) {
 				try {
 					if (action === "print") {
-                        try {
-                            await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
-                            await BluetoothEscposPrinter.setBlob(0);
-                            await BluetoothEscposPrinter.printText(`${t("Order Receipt")}\n\r`, {
-                                encoding: 'GBK',
-                                codepage: 0,
-                                widthtimes: 1,
-                                heigthtimes: 1,
-                                fonttype: 1
-                            });
-                    
-                            await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.LEFT);
-                            await BluetoothEscposPrinter.printText(`${t("Client")}: ${data.client_name}\n\r`, {});
-                            await BluetoothEscposPrinter.printText(`${t("Seller")}: ${data.user_name}\n\r`, {});
-                            await BluetoothEscposPrinter.printText(`${t("Date")}: ${new Date().toLocaleDateString()}\n\r`, {});
-                    
-                            await BluetoothEscposPrinter.printText("--------------------------------\n\r", {});
-                    
-                            const columnWidths = [16, 6, 10, 10];
-                            await BluetoothEscposPrinter.printColumn(columnWidths,
-                                [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.CENTER, BluetoothEscposPrinter.ALIGN.CENTER, BluetoothEscposPrinter.ALIGN.RIGHT],
-                                ["ITEM", "QNT", `${t("PRICE")}`, "TOTAL"], {});
-                    
-                            for (let item of data.items) {
-                                await BluetoothEscposPrinter.printColumn(columnWidths,
-                                    [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.CENTER, BluetoothEscposPrinter.ALIGN.CENTER, BluetoothEscposPrinter.ALIGN.RIGHT],
-                                    [`${item.product_name} ${item.product_size || ""}`, item.quantity.toString(), `${t("currency.symbol")}${item.price.toFixed(2)}`, `${t("currency.symbol")}${(item.price * item.quantity).toFixed(2)}`], {});
-                            }
-                    
-                            await BluetoothEscposPrinter.printText("\n\r", {});
-                            await BluetoothEscposPrinter.printText("--------------------------------\n\r", {});
-                    
-                            await BluetoothEscposPrinter.printColumn([22, 10],
-                                [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
-                                [`${t("TOTAL PRICE")}`, `${t("currency.symbol")}${data.total_price.toFixed(2)}`], {});
-                    
-                            await BluetoothEscposPrinter.printText("\n\r", {});
-                    
-                            await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
-                            await BluetoothEscposPrinter.printText("Obrigado pela sua compra!\n\r\n\r", {});
-                            await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.LEFT);
-                        } catch (err) {
-                            console.log(err.message);
-                        }
-                    } else if (action === "file") {
+						ThermalPrinterModule.defaultConfig = {
+							...ThermalPrinterModule.defaultConfig,
+							ip: "192.168.100.246",
+							port: 9100,
+							autoCut: false,
+							timeout: 30000,
+                            printerWidthMM: 80,
+						};
+
+                        const receipt =
+							"[C]<u><font size='big'>${t('Order Receipt')}</font></u>\n" +
+							"[L]\n" +
+							"[C]================================\n" +
+							"[L]\n" +
+							"[L]<b>${t('Client')}:</b> ${data.client_name}\n" +
+							"[L]<b>${t('Seller')}:</b> ${data.user_name}\n" +
+							"[L]<b>${t('Order ID')}:</b> ${data.order_id}\n" +
+							"[L]<b>${t('Date')}:</b> " +
+							new Date().toLocaleDateString() +
+							"\n" +
+							"[L]\n" +
+							"[C]--------------------------------\n" +
+							data.items
+								.map(
+									(item) =>
+										"[L]<b>" +
+										item.product_name +
+										" " +
+										(item.product_size || "") +
+										"</b>[R]" +
+										t("currency.symbol") +
+										item.price.toFixed(2) +
+										"\n" +
+										"[L]  + ${t('Quantity')} : " +
+										item.quantity +
+										"\n"
+								)
+								.join("") +
+							"[C]--------------------------------\n" +
+							"[R]TOTAL :[R]" +
+							t("currency.symbol") +
+							data.total_price.toFixed(2) +
+							"\n" +
+							"[L]\n" +
+							"[C]================================\n";
+						
+                        await ThermalPrinterModule.printBluetooth({
+                            payload: receipt,
+                        });
+
+					} else if (action === "file") {
 						// HTML template for the PDF file
 						const pdfHtml = `
                             <html>
@@ -191,6 +197,7 @@ const usePrintAndSave = () => {
 					}
 				} catch (error) {
 					Alert.alert(t("Error"), error);
+                    console.log(t("Error"), error)
 				} finally {
 					setLoadingPrint(false);
 					setData(null);
