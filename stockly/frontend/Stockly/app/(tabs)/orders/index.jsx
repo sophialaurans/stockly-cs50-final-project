@@ -26,7 +26,7 @@ import usePrintAndSave from "../../../hooks/usePrintAndSave";
 import useDelete from "../../../hooks/useDelete";
 import useNotAuthenticatedWarning from "../../../hooks/useNotAuthenticatedWarning";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const Orders = ({ visible, animateFrom, style }) => {
     const { t } = useTranslation();

@@ -7,7 +7,7 @@ import axios from "axios";
 import config from "../constants/config";
 import colors from "../constants/colors";
 import { useTranslation } from "react-i18next";
-import { startActivityAsync } from "expo-intent-launcher";
+import BluetoothEscposPrinter from "react-native-bluetooth-escpos-printer";
 
 // Custom hook for printing and saving order receipts
 const usePrintAndSave = () => {
@@ -56,70 +56,51 @@ const usePrintAndSave = () => {
 			if (data && orderId) {
 				try {
 					if (action === "print") {
-						// HTML template for the printed receipt
-						const receiptHtml = `
-                        <html>
-                            <head>
-                                <style>
-                                    @media print {
-                                        @page {
-                                            size: 80mm auto;
-                                            margin: 10px;
-                                        }
-                                    }
-                                    body { font-family: "Courier New", Courier, monospace; font-size: 16px; width: 90%; height: auto; margin: 0; padding: 30px; }
-                                    h1 { text-align: center; font-size: 14px; }
-                                    table { width: 100%; border-collapse: collapse; }
-                                    th { font-size: 12px; font-weight: bold; padding: 4px; text-align: center; vertical-align: top; }
-                                    td { font-size: 12px; padding: 4px; text-align: left; vertical-align: top; }
-                                    td:last-child { text-align: right; }
-                                    .total { text-align: right; font-weight: bold; padding-top: 8px; vertical-align: bottom; }
-                                </style>
-                            </head>
-                            <body>
-                                <h1>${t("Order Receipt")}</h1>
-                                
-                                <p>${t("Client")}: ${data.client_name}</p>
-                                <p>${t("Seller")}: ${data.user_name}</p>
-                                <p>${t("Date")}: ${new Date().toLocaleDateString()}</p>
-
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>ITEM</th>
-                                            <th>QNT</th>
-                                            <th>${t("PRICE")}</th>
-                                            <th>TOTAL</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${data.items
-											.map(
-												(item) => `
-                                        <tr>
-                                            <td>${item.product_name} ${item.product_size || ""}</td>
-                                            <td>${item.quantity}</td>
-                                            <td>${t('currency.symbol')}${item.price.toFixed(2)}</td>
-                                            <td>${t('currency.symbol')}${(item.price * item.quantity).toFixed(2)}</td>
-                                        </tr>
-                                        `
-											)
-											.join("")}
-                                        <tr>
-                                            <td colspan="3" class="total">${t("TOTAL PRICE")}</td>
-                                            <td class="total">${t('currency.symbol')}${data.total_price.toFixed(2)}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </body>
-                        </html>
-                        `;
-						// Execute printing
-						await Print.printAsync({
-							html: receiptHtml,
-							printerUrl: selectedPrinter?.url, // Use the selected printer's URL
-						});
-					} else if (action === "file") {
+                        try {
+                            await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
+                            await BluetoothEscposPrinter.setBlob(0);
+                            await BluetoothEscposPrinter.printText(`${t("Order Receipt")}\n\r`, {
+                                encoding: 'GBK',
+                                codepage: 0,
+                                widthtimes: 1,
+                                heigthtimes: 1,
+                                fonttype: 1
+                            });
+                    
+                            await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.LEFT);
+                            await BluetoothEscposPrinter.printText(`${t("Client")}: ${data.client_name}\n\r`, {});
+                            await BluetoothEscposPrinter.printText(`${t("Seller")}: ${data.user_name}\n\r`, {});
+                            await BluetoothEscposPrinter.printText(`${t("Date")}: ${new Date().toLocaleDateString()}\n\r`, {});
+                    
+                            await BluetoothEscposPrinter.printText("--------------------------------\n\r", {});
+                    
+                            const columnWidths = [16, 6, 10, 10];
+                            await BluetoothEscposPrinter.printColumn(columnWidths,
+                                [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.CENTER, BluetoothEscposPrinter.ALIGN.CENTER, BluetoothEscposPrinter.ALIGN.RIGHT],
+                                ["ITEM", "QNT", `${t("PRICE")}`, "TOTAL"], {});
+                    
+                            for (let item of data.items) {
+                                await BluetoothEscposPrinter.printColumn(columnWidths,
+                                    [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.CENTER, BluetoothEscposPrinter.ALIGN.CENTER, BluetoothEscposPrinter.ALIGN.RIGHT],
+                                    [`${item.product_name} ${item.product_size || ""}`, item.quantity.toString(), `${t("currency.symbol")}${item.price.toFixed(2)}`, `${t("currency.symbol")}${(item.price * item.quantity).toFixed(2)}`], {});
+                            }
+                    
+                            await BluetoothEscposPrinter.printText("\n\r", {});
+                            await BluetoothEscposPrinter.printText("--------------------------------\n\r", {});
+                    
+                            await BluetoothEscposPrinter.printColumn([22, 10],
+                                [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                                [`${t("TOTAL PRICE")}`, `${t("currency.symbol")}${data.total_price.toFixed(2)}`], {});
+                    
+                            await BluetoothEscposPrinter.printText("\n\r", {});
+                    
+                            await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
+                            await BluetoothEscposPrinter.printText("Obrigado pela sua compra!\n\r\n\r", {});
+                            await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.LEFT);
+                        } catch (err) {
+                            console.log(err.message);
+                        }
+                    } else if (action === "file") {
 						// HTML template for the PDF file
 						const pdfHtml = `
                             <html>
@@ -186,15 +167,17 @@ const usePrintAndSave = () => {
                                             <tr>
                                                 <td>${item.product_name} ${item.product_size || ""}</td>
                                                 <td>${item.quantity}</td>
-                                                <td>${t('currency.symbol')}${item.price.toFixed(2)}</td>
-                                                <td>${t('currency.symbol')}${(item.price * item.quantity).toFixed(2)}</td>
+                                                <td>${t("currency.symbol")}${item.price.toFixed(2)}</td>
+                                                <td>${t("currency.symbol")}${(
+														item.price * item.quantity
+													).toFixed(2)}</td>
                                             </tr>
                                             `
 												)
 												.join("")}
                                             <tr class="total-row">
                                                 <td colspan="3" class="right-align">TOTAL</td>
-                                                <td>${t('currency.symbol')}${data.total_price.toFixed(2)}</td>
+                                                <td>${t("currency.symbol")}${data.total_price.toFixed(2)}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -207,7 +190,7 @@ const usePrintAndSave = () => {
 						await shareAsync(uri, { UTI: ".pdf", mimeType: "application/pdf" }); // Share the generated PDF
 					}
 				} catch (error) {
-                    Alert.alert(t("Error"), error);
+					Alert.alert(t("Error"), error);
 				} finally {
 					setLoadingPrint(false);
 					setData(null);
@@ -226,7 +209,7 @@ const usePrintAndSave = () => {
 			const printer = await Print.selectPrinterAsync(); // iOS only
 			setSelectedPrinter(printer);
 		} catch (error) {
-            Alert.alert(t("Error"), error);
+			Alert.alert(t("Error"), error);
 		}
 	};
 
