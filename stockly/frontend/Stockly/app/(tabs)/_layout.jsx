@@ -6,7 +6,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import colors from "../../constants/colors";
 import useAuthenticatedFetch from "../../hooks/useAuthenticatedFetch";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 /* Tab layout for the main screens */
 export default function TabLayout() {

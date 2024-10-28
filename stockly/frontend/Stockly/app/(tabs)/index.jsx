@@ -10,7 +10,7 @@ import Octicons from "@expo/vector-icons/Octicons";
 import { LineChart } from "react-native-chart-kit";
 import { LinearGradient } from "expo-linear-gradient";
 import colors from "../../constants/colors";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const Dashboard = () => {
     const { t } = useTranslation();

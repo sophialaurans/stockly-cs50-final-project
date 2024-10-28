@@ -16,7 +16,7 @@ import { useNavigation, useIsFocused } from "@react-navigation/native";
 import config from "../../constants/config";
 import { globalStyles } from "./styles";
 import colors from "../../constants/colors";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const ProfileScreen = () => {
     const { t } = useTranslation();

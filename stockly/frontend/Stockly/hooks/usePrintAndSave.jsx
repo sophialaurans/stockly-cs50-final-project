@@ -7,7 +7,6 @@ import axios from "axios";
 import config from "../constants/config";
 import colors from "../constants/colors";
 import { useTranslation } from "react-i18next";
-import { startActivityAsync } from "expo-intent-launcher";
 
 // Custom hook for printing and saving order receipts
 const usePrintAndSave = () => {

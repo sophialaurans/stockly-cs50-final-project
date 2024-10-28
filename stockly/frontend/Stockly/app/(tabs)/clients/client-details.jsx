@@ -5,7 +5,7 @@ import useClient from "../../../hooks/useClient";
 import FormField from "../../../components/FormField";
 import { globalStyles } from "../styles";
 import colors from "../../../constants/colors";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const ClientDetails = () => {
     const { t } = useTranslation();

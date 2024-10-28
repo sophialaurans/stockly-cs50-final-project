@@ -8,7 +8,7 @@ import { AnimatedFAB } from "react-native-paper";
 import { globalStyles } from "../styles";
 import colors from "../../../constants/colors";
 import useDelete from "../../../hooks/useDelete";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const Products = ({ visible, animateFrom, style }) => {
     const { t } = useTranslation();

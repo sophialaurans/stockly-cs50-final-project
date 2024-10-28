@@ -6,7 +6,7 @@ import config from "../../constants/config";
 import { TextInput } from "react-native-paper";
 import { authStyles } from "./styles";
 import colors from "../../constants/colors";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const RegisterScreen = () => {
     const { t } = useTranslation();

@@ -2,7 +2,7 @@ import { Stack, useNavigation } from "expo-router";
 import { TouchableOpacity } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import colors from "../../../constants/colors";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 /* Stack layout for the client-related screens */
 export default function ClientsLayout() {
