@@ -55,56 +55,102 @@ const usePrintAndSave = () => {
 			if (data && orderId) {
 				try {
 					if (action === "print") {
-						ThermalPrinterModule.defaultConfig = {
-							...ThermalPrinterModule.defaultConfig,
-							ip: "192.168.100.246",
-							port: 9100,
-							autoCut: false,
-							timeout: 30000,
-                            printerWidthMM: 80,
-						};
+						// HTML template for the printed receipt
+						const receiptHtml = `
+                        <html>
+                            <head>
+                                <style>
+                                    @media print {
+                                        @page {
+                                            size: 80mm auto;
+                                        }
+                                    }
+                                    body {
+                                        font-family: "Courier New", Courier, monospace;
+                                        font-size: 20px;
+                                        width: 90%;
+                                        margin: 20px;
+                                    }
+                                    h1 {
+                                        text-align: center;
+                                        font-size: 24px;
+                                    }
+                                    table {
+                                        width: 100%;
+                                        border-collapse: collapse;
+                                    }
+                                    .th {
+                                        font-size: 20px;
+                                        font-weight: bold;
+                                        padding: 4px;
+                                        text-align: left;
+                                        vertical-align: top;
+                                    }
+                                    td {
+                                        font-size: 20px;
+                                        padding: 4px;
+                                        text-align: left;
+                                        vertical-align: top;
+                                    }
+                                    td:last-child, th:last-child {
+                                        text-align: right;
+                                    }
+                                    .total {
+                                        text-align: right;
+                                        font-weight: bold;
+                                        padding-top: 8px;
+                                        vertical-align: bottom;
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <h1>${t("Order Receipt")}</h1>
+                                
+                                <p>${t("Client")}: ${data.client_name}</p>
+                                <p>${t("Seller")}: ${data.user_name}</p>
+                                <p>${t("Date")}: ${new Date().toLocaleDateString()}</p>
 
-                        const receipt =
-							"[C]<u><font size='big'>${t('Order Receipt')}</font></u>\n" +
-							"[L]\n" +
-							"[C]================================\n" +
-							"[L]\n" +
-							"[L]<b>${t('Client')}:</b> ${data.client_name}\n" +
-							"[L]<b>${t('Seller')}:</b> ${data.user_name}\n" +
-							"[L]<b>${t('Order ID')}:</b> ${data.order_id}\n" +
-							"[L]<b>${t('Date')}:</b> " +
-							new Date().toLocaleDateString() +
-							"\n" +
-							"[L]\n" +
-							"[C]--------------------------------\n" +
-							data.items
-								.map(
-									(item) =>
-										"[L]<b>" +
-										item.product_name +
-										" " +
-										(item.product_size || "") +
-										"</b>[R]" +
-										t("currency.symbol") +
-										item.price.toFixed(2) +
-										"\n" +
-										"[L]  + ${t('Quantity')} : " +
-										item.quantity +
-										"\n"
-								)
-								.join("") +
-							"[C]--------------------------------\n" +
-							"[R]TOTAL :[R]" +
-							t("currency.symbol") +
-							data.total_price.toFixed(2) +
-							"\n" +
-							"[L]\n" +
-							"[C]================================\n";
-						
-                        await ThermalPrinterModule.printBluetooth({
-                            payload: receipt,
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td class="th">ITEM</th>
+                                            <td class="th">QNT</th>
+                                            <td class="th">${t("PRICE")}</th>
+                                            <td class="th">TOTAL</th>
+                                        </tr>
+                                        ${data.items
+											.map(
+												(item) => `
+                                        <tr>
+                                            <td>${item.product_name} ${item.product_size || ""}</td>
+                                            <td>${item.quantity}</td>
+                                            <td>${t('currency.symbol')}${item.price.toFixed(2)}</td>
+                                            <td>${t('currency.symbol')}${(item.price * item.quantity).toFixed(2)}</td>
+                                        </tr>
+                                        `
+											)
+											.join("")}
+                                        <tr>
+                                            <td colspan="3" class="total">${t("TOTAL PRICE")}</td>
+                                            <td class="total">${t('currency.symbol')}${data.total_price.toFixed(2)}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </body>
+                        </html>
+                        `;
+
+                        const { uri } = await Print.printToFileAsync({
+                            html: receiptHtml,
+                            width: 226.4,
+                            base64: false,
                         });
-
+						// Execute printing
+						await Print.printAsync({
+							uri,
+                            width: 226.4,
+							printerUrl: selectedPrinter?.url, // Use the selected printer's URL
+						});
 					} else if (action === "file") {
 						// HTML template for the PDF file
 						const pdfHtml = `
@@ -162,7 +208,7 @@ const usePrintAndSave = () => {
                                         <tbody>
                                             <tr>
                                                 <th>Item</th>
-                                                <th>Quantity</th>
+                                                <th>${t("Quantity")}</th>
                                                 <th>${t("Price")}</th>
                                                 <th>Total</th>
                                             </tr>
