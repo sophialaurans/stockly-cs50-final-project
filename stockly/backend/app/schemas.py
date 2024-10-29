@@ -28,10 +28,13 @@ class OrderItemSchema(SQLAlchemyAutoSchema):
     user_id = fields.Int(required=True)
     product_id = fields.Int(required=True)
     quantity = fields.Int(required=True, validate=validate.Range(min=1))
-    price = fields.Float(dump_only=True)
+    price = fields.Method("get_price", dump_only=True)
     product_name = fields.Method("get_product_name", dump_only=True)
     product_size = fields.Method("get_product_size", dump_only=True)
     product_color = fields.Method("get_product_color", dump_only=True)
+
+    def get_price(self, obj):
+        return obj.product.price if obj.product else None
 
     def get_product_name(self, obj):
         return obj.product.name if obj.product else None

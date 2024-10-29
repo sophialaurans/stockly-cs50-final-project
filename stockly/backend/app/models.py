@@ -56,7 +56,6 @@ class OrderItems(db.Model):
     user = db.relationship('Users', backref='order_items')
     product = db.relationship('Products', back_populates='order_items')
     quantity = db.Column(db.Integer, nullable=False, default=1)
-    price = db.Column(db.Float, nullable=False)
 
 class MonthlyRevenue(db.Model):
     __tablename__ = 'monthly_revenue'

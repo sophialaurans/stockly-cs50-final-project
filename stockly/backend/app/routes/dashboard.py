@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models import Products, Orders, Clients, OrderItems, MonthlyRevenue, Users
 from ..extensions import db
-from datetime import datetime
+from datetime import datetime, timezone
 import calendar
 
 # blueprint for dashboard routes
@@ -27,8 +27,8 @@ def dashboard():
     total_clients = Clients.query.filter_by(user_id=current_user).count()
     
     # gets the current year and month
-    current_year = datetime.utcnow().year
-    current_month = datetime.utcnow().month
+    current_year = datetime.now(timezone.utc).year
+    current_month = datetime.now(timezone.utc).month
 
     # calculates revenue for the current month
     current_month_revenue = db.session.query(db.func.coalesce(MonthlyRevenue.revenue, 0)).filter_by(

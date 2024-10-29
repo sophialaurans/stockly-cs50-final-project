@@ -4,7 +4,7 @@ from marshmallow import ValidationError
 from ..models import Orders, OrderItems, Products, Clients, MonthlyRevenue, Users
 from ..extensions import db
 from ..schemas import OrderSchema, OrderItemSchema
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
 
 # blueprint for handling order-related routes
@@ -58,10 +58,9 @@ def new_order():
             user_id=current_user,
             product_id=item_data['product_id'],
             quantity=item_data['quantity'],
-            price=product.price,
         )
 
-        total_price += item.quantity * item.price # calculate total price for the order
+        total_price += item.quantity * product.price # calculate total price for the order
         order.items.append(item) # add item to the order
 
     order.total_price = total_price # set the total price for the order
@@ -94,10 +93,10 @@ def update_order(order_id):
                 {
                     "product_id": item.product_id,
                     "quantity": item.quantity,
-                    "price": item.price,
-                    "product_name": Products.query.get(item.product_id).name,
-                    "product_size": Products.query.get(item.product_id).size,
-                    "total": item.price * item.quantity,
+                    "price": Products.query.get(item.product_id).price if Products.query.get(item.product_id) else 0,
+                    "product_name": Products.query.get(item.product_id).name if Products.query.get(item.product_id) else "Unknown",
+                    "product_size": Products.query.get(item.product_id).size if Products.query.get(item.product_id) else "Unknown",
+                    "total": Products.query.get(item.product_id).price * item.quantity if Products.query.get(item.product_id) else 0,
                 } for item in order.items
             ],
             "total_price": order.total_price
@@ -127,10 +126,9 @@ def update_order(order_id):
             user_id=current_user,
             product_id=item_data['product_id'],
             quantity=item_data['quantity'],
-            price=product.price
         )
         
-        total_price += item.quantity * item.price # calculate total price
+        total_price += item.quantity * product.price # calculate total price
         order.items.append(item) # add item to the order
     
     order.total_price = total_price # set the updated total price
@@ -197,14 +195,18 @@ def update_order_status(order_id):
         db.session.commit()
 
         # get the current date and month
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         current_year = now.year
         current_month = now.month
 
         # if the old status was 'completed', adjust the monthly revenue
-        if old_status == 'completed':
-            completed_order_revenue = db.session.query(db.func.coalesce(db.func.sum(OrderItems.price * OrderItems.quantity), 0)).join(Orders).filter(
-                Orders.order_id == order_id
+        if old_status == 'completed' and new_status != 'completed':
+            completed_order_revenue = (
+                db.session.query(db.func.coalesce(db.func.sum(Products.price * OrderItems.quantity), 0))
+                .select_from(OrderItems)
+                .join(Products)
+                .join(Orders)
+                .filter(Orders.order_id == order_id)
             ).scalar() # calculate the revenue from the completed order
 
             # check if there is already a revenue record for this order
@@ -221,15 +223,20 @@ def update_order_status(order_id):
             return jsonify({"message": "No changes needed, status remains 'completed'."}), 200
 
         # if the new status is 'completed', adjust the monthly revenue
-        if new_status == 'completed':
-            completed_order_revenue = db.session.query(db.func.coalesce(db.func.sum(OrderItems.price * OrderItems.quantity), 0)).join(Orders).filter(
-                Orders.order_id == order_id
-            ).scalar()  # calculate the revenue from the order being completed
+        if new_status == 'completed' and old_status != 'completed':
+            completed_order_revenue = (
+                db.session.query(db.func.coalesce(db.func.sum(Products.price * OrderItems.quantity), 0))
+                .select_from(OrderItems)
+                .join(Products)
+                .join(Orders)
+                .filter(Orders.order_id == order_id)
+            ).scalar() # calculate the revenue from the order being completed
 
             # check if there is already a revenue record for the current month
             existing_revenue = MonthlyRevenue.query.filter_by(user_id=current_user, year=current_year, month=current_month).first()
             if existing_revenue:
                 existing_revenue.revenue += Decimal(completed_order_revenue)  # add the revenue from the completed order
+                existing_revenue.order_id = order_id  # add order id to the revenue
             else:
                 # create a new revenue record for the current month if it doesn't exist
                 new_revenue = MonthlyRevenue(user_id=current_user, order_id=order_id, year=current_year, month=current_month, revenue=Decimal(completed_order_revenue))
