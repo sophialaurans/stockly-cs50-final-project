@@ -32,6 +32,9 @@ const useClient = (client_id = null) => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
+    const { save } = useSave();
+    const { register } = useRegister();
+
 	// Get authentication check from the custom hook
 	const { checkAuthentication } = useNotAuthenticatedWarning();
 
@@ -71,7 +74,7 @@ const useClient = (client_id = null) => {
 	// Handle client registration using a custom hook
 	const handleRegister = async (navigation) => {
 		try {
-			await useRegister("client", formState, navigation, setLoading, setError);
+			await register(t("Client"), "client", formState, navigation, setLoading, setError);
 		} catch (error) {
 			console.error(t("Error during registration:"), error);
 		}
@@ -80,7 +83,7 @@ const useClient = (client_id = null) => {
 	// Handle saving client data using a custom hook
 	const handleSave = async (navigation) => {
 		try {
-			await useSave(t("Client"), "clients", client_id, formState, navigation, setLoading, setError);
+			await save(t("Client"), "clients", client_id, formState, navigation, setLoading, setError);
 		} catch (error) {
 			console.error(t("Error during save:"), error);
 		}

@@ -36,6 +36,9 @@ const useProduct = (product_id = null) => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
+    const { save } = useSave();
+    const { register } = useRegister();
+
 	// Get authentication check from the custom hook
 	const { checkAuthentication } = useNotAuthenticatedWarning();
 
@@ -76,7 +79,7 @@ const useProduct = (product_id = null) => {
 	// Handle product registration using a custom hook
 	const handleRegister = async (navigation) => {
 		try {
-			await useRegister("product", formState, navigation, setLoading, setError);
+			await register(t("Product"), "product", formState, navigation, setLoading, setError);
 		} catch (error) {
 			console.error("Error during registration:", error);
 		}
@@ -85,7 +88,7 @@ const useProduct = (product_id = null) => {
 	// Handle saving product data using a custom hook
 	const handleSave = async (navigation) => {
 		try {
-			await useSave(t("Product"), "products", product_id, formState, navigation, setLoading, setError);
+			await save(t("Product"), "products", product_id, formState, navigation, setLoading, setError);
 		} catch (error) {
 			console.error("Error during save:", error);
 		}
