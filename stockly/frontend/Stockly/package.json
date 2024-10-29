@@ -25,10 +25,10 @@
     "@react-navigation/stack": "^6.4.1",
     "@types/axios": "^0.14.0",
     "axios": "^1.7.3",
+    "cookie": "^0.7.0",
     "expo": "^51.0.37",
     "expo-constants": "~16.0.2",
     "expo-font": "~12.0.10",
-    "expo-intent-launcher": "^11.0.1",
     "expo-linear-gradient": "^13.0.2",
     "expo-linking": "~6.3.1",
     "expo-localization": "~15.0.3",
@@ -59,7 +59,8 @@
     "react-native-thermal-printer": "^2.3.6",
     "react-native-thermal-receipt-printer": "^1.2.0-rc.2",
     "react-native-vector-icons": "^10.1.0",
-    "react-native-web": "~0.19.10"
+    "react-native-web": "~0.19.10",
+    "send": "^0.19.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
