@@ -111,7 +111,7 @@ const ProfileScreen = () => {
 		// Confirm deletion with the user
 		Alert.alert(
 			t("Delete account"),
-			t("Are you sure you want to delete"),
+			t("Are you sure you want to delete your account"),
 			[
 				{ text: t("Cancel"), style: "cancel" },
 				{

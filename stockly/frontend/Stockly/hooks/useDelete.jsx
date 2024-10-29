@@ -29,7 +29,7 @@ const useDelete = (setData, refetch) => {
 						if (response.status === 200) {
 							// Update local data by filtering out the deleted item
 							setData((prevData) => prevData.filter((item) => item.id !== id));
-							Alert.alert(t("Success"), `${dataName} deleted successfully`);
+							Alert.alert(t("Success"), `${dataName} ${t("deleted successfully")}`);
 							refetch(); // Refetch data to update the view
 						} else {
 							Alert.alert(t("Error"), `${t("Failed to delete")} ${dataName}`);
