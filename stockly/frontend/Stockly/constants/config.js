@@ -1,5 +1,5 @@
 const config = {
-	apiUrl: "http://localhost:8081",
+	apiUrl: "https://stockly-91d90c0a936b.herokuapp.com/",
 };
 
 export default config;
