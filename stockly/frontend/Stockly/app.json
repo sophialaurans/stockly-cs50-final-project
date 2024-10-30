@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Stockly",
-    "slug": "Stockly",
+    "slug": "stockly",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/stockly-icon.png",
@@ -34,10 +34,10 @@
     "experiments": {
       "typedRoutes": true
     },
-    "permissions": [
-      "INTERNET",
-      "BLUETOOTH",
-      "BLUETOOTH_ADMIN"
-    ]
+    "extra": {
+      "eas": {
+        "projectId": "abeb4e96-7fc1-4e3a-894f-dc37ca221396"
+      }
+    }
   }
 }
