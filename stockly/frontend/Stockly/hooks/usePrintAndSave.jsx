@@ -139,16 +139,10 @@ const usePrintAndSave = () => {
                             </body>
                         </html>
                         `;
-
-                        const { uri } = await Print.printToFileAsync({
-                            html: receiptHtml,
-                            width: 226.4,
-                            base64: false,
-                        });
 						// Execute printing
 						await Print.printAsync({
-							uri,
-                            width: 226.4,
+							html: receiptHtml,
+                            base64: false,
 							printerUrl: selectedPrinter?.url, // Use the selected printer's URL
 						});
 					} else if (action === "file") {
