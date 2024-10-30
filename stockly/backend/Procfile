@@ -1,1 +1,1 @@
-web: python stockly/backend/app.py
+web: python app.py
