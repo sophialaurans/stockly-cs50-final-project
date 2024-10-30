@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, Image, ScrollView, Alert, Switch } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
@@ -10,9 +10,16 @@ import colors from "../../constants/colors";
 import { useTranslation } from "react-i18next";
 
 const LoginScreen = () => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const navigation = useNavigation();
 	const [errorMessage, setErrorMessage] = useState(""); // State to store error messages
+    const [language, setLanguage] = useState(i18n.language);
+
+    const toggleLanguage = () => {
+		const newLanguage = language === "en" ? "pt" : "en";
+		i18n.changeLanguage(newLanguage);
+		setLanguage(newLanguage);
+	};
 
 	// State to manage the form input values
 	const [formState, setFormState] = useState({
@@ -53,6 +60,7 @@ const LoginScreen = () => {
 				navigation.replace("(tabs)");
 			} else {
 				setErrorMessage(response.data.message || t("An error occurred"));
+				Alert.alert(t("Error", errorMessage));
 			}
 		} catch (error) {
 			// Handle network and API response errors
@@ -61,6 +69,7 @@ const LoginScreen = () => {
 				setErrorMessage(t("Incorrect email or password"));
 			} else {
 				setErrorMessage(errorMessageError);
+                Alert.alert(t("Error", errorMessage));
 			}
 		}
 	};
@@ -110,6 +119,22 @@ const LoginScreen = () => {
 				}}>
 				<Text>{t("Not registered yet")}</Text>
 			</TouchableOpacity>
+
+            <View style={authStyles.languageSwitch}>
+                <Text style={[authStyles.languageText, language === "en" ? authStyles.activeLanguage : authStyles.inactiveLanguage]}>
+                    English
+                </Text>
+                <Switch
+                    value={language === "pt"}
+                    onValueChange={toggleLanguage}
+                    thumbColor={language === "pt" ? colors.primary : colors.primary}
+                    trackColor={{ false: colors.secondary, true: colors.secondary }}
+                />
+                <Text style={[authStyles.languageText, language === "pt" ? authStyles.activeLanguage : authStyles.inactiveLanguage]}>
+                    Português
+                </Text>
+            </View>
+
 		</ScrollView>
 	);
 };

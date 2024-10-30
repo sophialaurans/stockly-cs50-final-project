@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Alert, ScrollView, Image } from "react-native";
+import { View, Text, TouchableOpacity, Alert, ScrollView, Image, Switch } from "react-native";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import config from "../../constants/config";
@@ -9,8 +9,16 @@ import colors from "../../constants/colors";
 import { useTranslation } from "react-i18next";
 
 const RegisterScreen = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 	const navigation = useNavigation();
+
+    const [language, setLanguage] = useState(i18n.language);
+
+    const toggleLanguage = () => {
+		const newLanguage = language === "en" ? "pt" : "en";
+		i18n.changeLanguage(newLanguage);
+		setLanguage(newLanguage);
+	};
 
 	// State to manage the form input values
 	const [formState, setFormState] = useState({
@@ -150,6 +158,22 @@ const RegisterScreen = () => {
 				}}>
 				<Text>{t("Already registerd")}</Text>
 			</TouchableOpacity>
+
+            <View style={authStyles.languageSwitch}>
+                <Text style={[authStyles.languageText, language === "en" ? authStyles.activeLanguage : authStyles.inactiveLanguage]}>
+                    English
+                </Text>
+                <Switch
+                    value={language === "pt"}
+                    onValueChange={toggleLanguage}
+                    thumbColor={language === "pt" ? colors.tertiary : colors.tertiary}
+                    trackColor={{ false: colors.secondary, true: colors.secondary }}
+                />
+                <Text style={[authStyles.languageText, language === "pt" ? authStyles.activeLanguage : authStyles.inactiveLanguage]}>
+                    Português
+                </Text>
+            </View>
+
 		</ScrollView>
 	);
 };

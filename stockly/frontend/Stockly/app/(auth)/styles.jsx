@@ -53,4 +53,21 @@ export const authStyles = StyleSheet.create({
 	singButton: {
 		marginTop: 50,
 	},
+    // Style for language Switch
+    languageSwitch: {
+        marginTop: "10%",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    languageText: {
+        fontSize: 14,
+        marginHorizontal: 5,
+    },
+    activeLanguage: {
+        color: colors.secondary,
+    },
+    inactiveLanguage: {
+        color: colors.grey,
+    },
 });

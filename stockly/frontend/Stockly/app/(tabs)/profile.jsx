@@ -8,6 +8,7 @@ import {
 	ActivityIndicator,
 	StyleSheet,
 	ScrollView,
+	Switch,
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,10 +18,19 @@ import config from "../../constants/config";
 import { globalStyles } from "./styles";
 import colors from "../../constants/colors";
 import { useTranslation } from "react-i18next";
+import { authStyles } from "../(auth)/styles";
 
 const ProfileScreen = () => {
-    const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const navigation = useNavigation();
+
+	const [language, setLanguage] = useState(i18n.language);
+
+	const toggleLanguage = () => {
+		const newLanguage = language === "en" ? "pt" : "en";
+		i18n.changeLanguage(newLanguage);
+		setLanguage(newLanguage);
+	};
 
 	// Hook to check if the screen is focused
 	const isFocused = useIsFocused();
@@ -83,11 +93,11 @@ const ProfileScreen = () => {
 				headers: { Authorization: `Bearer ${token}` },
 			});
 
-            if (response.data.message === "Profile updated successfully") {
-                Alert.alert(t("Success"), t("Profile updated successfully"));
-            } else {
-                Alert.alert(null, response.data.message);
-            }
+			if (response.data.message === "Profile updated successfully") {
+				Alert.alert(t("Success"), t("Profile updated successfully"));
+			} else {
+				Alert.alert(null, response.data.message);
+			}
 			setIsEditing(false);
 		} catch (error) {
 			Alert.alert(t("Error"), t("Failed to update profile"));
@@ -217,10 +227,34 @@ const ProfileScreen = () => {
 			{isEditing ? null : (
 				/* Buttons to sign out or delete user account */
 				<View style={styles.redContainer}>
+                    <View style={authStyles.languageSwitch}>
+                        <Text
+                            style={[
+                                authStyles.languageText,
+                                language === "en" ? authStyles.activeLanguage : authStyles.inactiveLanguage,
+                            ]}>
+                            English
+                        </Text>
+                        <Switch
+                            value={language === "pt"}
+                            onValueChange={toggleLanguage}
+                            thumbColor={language === "pt" ? colors.primary : colors.primary}
+                            trackColor={{ false: colors.secondary, true: colors.secondary }}
+                        />
+                        <Text
+                            style={[
+                                authStyles.languageText,
+                                language === "pt" ? authStyles.activeLanguage : authStyles.inactiveLanguage,
+                            ]}>
+                            Português
+                        </Text>
+                    </View>
 					<TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
 						<Text style={styles.logoutButtonText}>{t("Sign out")}</Text>
 					</TouchableOpacity>
-					<TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteAccount(profile.user_id)}>
+					<TouchableOpacity
+						style={styles.deleteButton}
+						onPress={() => handleDeleteAccount(profile.user_id)}>
 						<Text style={styles.deleteButtonText}>{t("Delete account")}</Text>
 					</TouchableOpacity>
 				</View>
