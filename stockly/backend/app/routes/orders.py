@@ -146,13 +146,18 @@ def update_order(order_id):
 def delete_order(order_id):
     current_user = get_jwt_identity()
 
+    # get the current date and month
+    now = datetime.now(timezone.utc)
+    current_year = now.year
+    current_month = now.month
+
     order = Orders.query.filter_by(order_id=order_id, user_id=current_user).first()
 
     if not order:
         return jsonify({"error": "Order not found"}), 404
     
     # check if there's a corresponding MonthlyRevenue record for this order
-    monthly_revenue = MonthlyRevenue.query.filter_by(order_id=order_id).first()
+    monthly_revenue = MonthlyRevenue.query.filter_by(month=current_month, year=current_year).first()
     if monthly_revenue:
         # remove the revenue record
         db.session.delete(monthly_revenue)
@@ -210,7 +215,7 @@ def update_order_status(order_id):
             ).scalar() # calculate the revenue from the completed order
 
             # check if there is already a revenue record for this order
-            existing_revenue = MonthlyRevenue.query.filter_by(user_id=current_user, order_id=order_id).first()
+            existing_revenue = MonthlyRevenue.query.filter_by(user_id=current_user, year=current_year, month=current_month).first()
             if existing_revenue:
                 existing_revenue.revenue -= Decimal(completed_order_revenue)  # subtract the revenue from the completed order
                 if existing_revenue.revenue < 0:
