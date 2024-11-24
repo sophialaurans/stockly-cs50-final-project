@@ -10,10 +10,11 @@ import Octicons from "@expo/vector-icons/Octicons";
 import { LineChart } from "react-native-chart-kit";
 import { LinearGradient } from "expo-linear-gradient";
 import colors from "../../constants/colors";
-import { useTranslation } from "react-i18next";
+import { useIntl } from "react-intl";
+import { LanguageProvider } from "../IntlManager";
 
 const Dashboard = () => {
-    const { t } = useTranslation();
+    const intl = useIntl();
 
 	// Get screen width for responsive design
 	const screenWidth = Dimensions.get("window").width;
@@ -31,18 +32,18 @@ const Dashboard = () => {
 
 	// Array of month names for display purposes
 	const monthNames = [
-		t("January"),
-		t("February"),
-		t("March"),
-		t("April"),
-		t("May"),
-		t("June"),
-		t("July"),
-		t("August"),
-		t("September"),
-		t("October"),
-		t("November"),
-		t("December"),
+		intl.formatMessage({ id: "January"}),
+		intl.formatMessage({ id: "February"}),
+		intl.formatMessage({ id: "March"}),
+		intl.formatMessage({ id: "April"}),
+		intl.formatMessage({ id: "May"}),
+		intl.formatMessage({ id: "June"}),
+		intl.formatMessage({ id: "July"}),
+		intl.formatMessage({ id: "August"}),
+		intl.formatMessage({ id: "September"}),
+		intl.formatMessage({ id: "October"}),
+		intl.formatMessage({ id: "November"}),
+		intl.formatMessage({ id: "December"}),
 	];
 
 	// Data structure for the revenue chart
@@ -83,94 +84,100 @@ const Dashboard = () => {
 	}
 
 	return (
-		<PaperProvider style={styles.container}>
-			<ScrollView contentContainerStyle={styles.contentContainer}>
-				{/* Cards for displaying product and stock information */}
-				<View style={styles.cardPack}>
-					<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
-						<View style={styles.cardHeader}>
-							<Text style={styles.cardTitle}>{t("Products")}</Text>
-							<FontAwesome6 name="boxes-stacked" size={20} color="white" />
-						</View>
-						<Text style={styles.cardValue}>{data.totalProducts}</Text>
-					</LinearGradient>
-					<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
-						<View style={styles.cardHeader}>
-							<Text style={styles.cardTitle}>{t("Items in Stock")}</Text>
-							<MaterialIcons name="inventory" size={20} color="white" />
-						</View>
-						<Text style={styles.cardValue}>{data.totalStock}</Text>
-					</LinearGradient>
-				</View>
+        <PaperProvider style={styles.container}>
+            <ScrollView contentContainerStyle={styles.contentContainer}>
+                {/* Cards for displaying product and stock information */}
+                <View style={styles.cardPack}>
+                    <LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
+                        <View style={styles.cardHeader}>
+                            <Text style={styles.cardTitle}>{intl.formatMessage({ id: "Products"})}</Text>
+                            <FontAwesome6 name="boxes-stacked" size={20} color="white" />
+                        </View>
+                        <Text style={styles.cardValue}>{data.totalProducts}</Text>
+                    </LinearGradient>
+                    <LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
+                        <View style={styles.cardHeader}>
+                            <Text style={styles.cardTitle}>{intl.formatMessage({ id: "Items in Stock"})}</Text>
+                            <MaterialIcons name="inventory" size={20} color="white" />
+                        </View>
+                        <Text style={styles.cardValue}>{data.totalStock}</Text>
+                    </LinearGradient>
+                </View>
 
-				{/* Cards for displaying orders and clients information */}
-				<View style={styles.cardPack}>
-					<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
-						<View style={styles.cardHeader}>
-							<Text style={styles.cardTitle}>{t("Orders in Progress")}</Text>
-							<FontAwesome6 name="boxes-packing" size={20} color="white" />
-						</View>
-						<Text style={styles.cardValue}>{data.pendingOrders}</Text>
-					</LinearGradient>
-					<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
-						<View style={styles.cardHeader}>
-							<Text style={styles.cardTitle}>{t("Clients")}</Text>
-							<MaterialCommunityIcons name="folder-account" size={20} color="white" />
-						</View>
-						<Text style={styles.cardValue}>{data.totalClients}</Text>
-					</LinearGradient>
-				</View>
+                {/* Cards for displaying orders and clients information */}
+                <View style={styles.cardPack}>
+                    <LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
+                        <View style={styles.cardHeader}>
+                            <Text style={styles.cardTitle}>{intl.formatMessage({ id: "Orders in Progress"})}</Text>
+                            <FontAwesome6 name="boxes-packing" size={20} color="white" />
+                        </View>
+                        <Text style={styles.cardValue}>{data.pendingOrders}</Text>
+                    </LinearGradient>
+                    <LinearGradient colors={["transparent", colors.darkBlue]} style={styles.card}>
+                        <View style={styles.cardHeader}>
+                            <Text style={styles.cardTitle}>{intl.formatMessage({ id: "Clients"})}</Text>
+                            <MaterialCommunityIcons name="folder-account" size={20} color="white" />
+                        </View>
+                        <Text style={styles.cardValue}>{data.totalClients}</Text>
+                    </LinearGradient>
+                </View>
 
-				{/* Card for displaying monthly revenue chart */}
-				<LinearGradient colors={["transparent", colors.darkBlue]} style={styles.cardChart}>
-					<View style={styles.cardHeader}>
-						<Text style={styles.cardTitle}>{t("Monthly Revenue")}</Text>
-						<FontAwesome6 name="hand-holding-dollar" size={20} color="white" />
-					</View>
-					<View style={styles.dotDataContainer}>
-						<Octicons name="dot-fill" size={24} color={colors.turquoise} />
-						<Text style={styles.dotData}>
-							{selectedMonth !== null
-								? `${monthNames[selectedMonth]}: ${t('currency.symbol')} ${selectedData.toFixed(2)}`
-								: `${t("Current month")}: ${t('currency.symbol')} ${Number(data.currentMonthRevenue).toFixed(2)}`}
-						</Text>
-					</View>
-					<LineChart
-						data={revenue}
-						width={screenWidth - 80}
-						height={230}
-						verticalLabelRotation={30}
-						chartConfig={{
-							backgroundColor: colors.tertiary,
-							backgroundGradientFromOpacity: 0,
-							backgroundGradientToOpacity: 0,
-							decimalPlaces: 2,
-							color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-							labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-							style: {
-								borderRadius: 16,
-							},
-						}}
-						getDotProps={(value, index) => {
-							return {
-								r: "6",
-								strokeWidth: "2",
-								stroke: index === selectedMonth ? "white" : "transparent",
-							};
-						}}
-						bezier
-						onDataPointClick={({ value, index }) => {
-							setSelectedData(value);
-							setSelectedMonth(index);
-						}}
-					/>
-				</LinearGradient>
-			</ScrollView>
-		</PaperProvider>
+                {/* Card for displaying monthly revenue chart */}
+                <LinearGradient colors={["transparent", colors.darkBlue]} style={styles.cardChart}>
+                    <View style={styles.cardHeader}>
+                        <Text style={styles.cardTitle}>{intl.formatMessage({ id: "Monthly Revenue"})}</Text>
+                        <FontAwesome6 name="hand-holding-dollar" size={20} color="white" />
+                    </View>
+                    <View style={styles.dotDataContainer}>
+                        <Octicons name="dot-fill" size={24} color={colors.turquoise} />
+                        <Text style={styles.dotData}>
+                            {selectedMonth !== null
+                                ? `${monthNames[selectedMonth]}: ${intl.formatMessage({ id: "currency.symbol"})} ${selectedData.toFixed(2)}`
+                                : `${intl.formatMessage({ id: "Current month"})}: ${intl.formatMessage({ id: "currency.symbol"})} ${Number(data.currentMonthRevenue).toFixed(2)}`}
+                        </Text>
+                    </View>
+                    <LineChart
+                        data={revenue}
+                        width={screenWidth - 80}
+                        height={230}
+                        verticalLabelRotation={30}
+                        chartConfig={{
+                            backgroundColor: colors.tertiary,
+                            backgroundGradientFromOpacity: 0,
+                            backgroundGradientToOpacity: 0,
+                            decimalPlaces: 2,
+                            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                            style: {
+                                borderRadius: 16,
+                            },
+                        }}
+                        getDotProps={(value, index) => {
+                            return {
+                                r: "6",
+                                strokeWidth: "2",
+                                stroke: index === selectedMonth ? "white" : "transparent",
+                            };
+                        }}
+                        bezier
+                        onDataPointClick={({ value, index }) => {
+                            setSelectedData(value);
+                            setSelectedMonth(index);
+                        }}
+                    />
+                </LinearGradient>
+            </ScrollView>
+        </PaperProvider>
 	);
 };
 
-export default Dashboard;
+export default function DashboardWrapper() {
+    return (
+		<LanguageProvider>
+            <Dashboard />
+        </LanguageProvider>
+	);
+};
 
 // Styles for the index screen
 const styles = StyleSheet.create({

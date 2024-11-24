@@ -6,11 +6,11 @@ import useNotAuthenticatedWarning from "./useNotAuthenticatedWarning";
 import axios from "axios";
 import config from "../constants/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useTranslation } from "react-i18next";
+import { useIntl } from "react-intl";
 
 // Custom hook for managing product data
 const useProduct = (product_id = null) => {
-	const { t } = useTranslation();
+	const intl = useIntl();
 	const route = useRoute(); // Access current route
 	const { product } = route.params || {}; // Get product data from route parameters
 
@@ -79,7 +79,7 @@ const useProduct = (product_id = null) => {
 	// Handle product registration using a custom hook
 	const handleRegister = async (navigation) => {
 		try {
-			await register(t("Product"), "product", formState, navigation, setLoading, setError);
+			await register(intl.formatMessage({ id: "Product"}), "product", formState, navigation, setLoading, setError);
 		} catch (error) {
 			console.error("Error during registration:", error);
 		}
@@ -88,7 +88,7 @@ const useProduct = (product_id = null) => {
 	// Handle saving product data using a custom hook
 	const handleSave = async (navigation) => {
 		try {
-			await save(t("Product"), "products", product_id, formState, navigation, setLoading, setError);
+			await save(intl.formatMessage({ id: "Product"}), "products", product_id, formState, navigation, setLoading, setError);
 		} catch (error) {
 			console.error("Error during save:", error);
 		}

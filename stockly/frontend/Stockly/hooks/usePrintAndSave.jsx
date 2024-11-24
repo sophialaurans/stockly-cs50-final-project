@@ -6,11 +6,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import config from "../constants/config";
 import colors from "../constants/colors";
-import { useTranslation } from "react-i18next";
+import { useIntl } from "react-intl";
 
 // Custom hook for printing and saving order receipts
 const usePrintAndSave = () => {
-	const { t } = useTranslation();
+	const intl = useIntl();
 	const [data, setData] = useState(null);
 	const [loadingPrint, setLoadingPrint] = useState(false);
 	const [error, setError] = useState(null);
@@ -45,7 +45,7 @@ const usePrintAndSave = () => {
 			});
 			setData(response.data);
 		} catch (error) {
-			setError(t("Error fetching data"));
+			setError(intl.formatMessage({ id: "Error fetching data"}));
 		}
 	};
 
@@ -104,18 +104,18 @@ const usePrintAndSave = () => {
                                 </style>
                             </head>
                             <body>
-                                <h1>${t("Order Receipt")}</h1>
+                                <h1>${intl.formatMessage({ id: "Order Receipt"})}</h1>
                                 
-                                <p>${t("Client")}: ${data.client_name}</p>
-                                <p>${t("Seller")}: ${data.user_name}</p>
-                                <p>${t("Date")}: ${new Date().toLocaleDateString()}</p>
+                                <p>${intl.formatMessage({ id: "Client"})}: ${data.client_name}</p>
+                                <p>${intl.formatMessage({ id: "Seller"})}: ${data.user_name}</p>
+                                <p>${intl.formatMessage({ id: "Date"})}: ${new Date().toLocaleDateString()}</p>
 
                                 <table>
                                     <tbody>
                                         <tr>
                                             <td class="th">ITEM</th>
                                             <td class="th">QNT</th>
-                                            <td class="th">${t("PRICE")}</th>
+                                            <td class="th">${intl.formatMessage({ id: "PRICE"})}</th>
                                             <td class="th">TOTAL</th>
                                         </tr>
                                         ${data.items
@@ -124,15 +124,15 @@ const usePrintAndSave = () => {
                                         <tr>
                                             <td>${item.product_name} ${item.product_size || ""}</td>
                                             <td>${item.quantity}</td>
-                                            <td>${t('currency.symbol')}${item.price.toFixed(2)}</td>
-                                            <td>${t('currency.symbol')}${(item.price * item.quantity).toFixed(2)}</td>
+                                            <td>${intl.formatMessage({ id: "currency.symbol" })}${item.price.toFixed(2)}</td>
+                                            <td>${intl.formatMessage({ id: "currency.symbol" })}${(item.price * item.quantity).toFixed(2)}</td>
                                         </tr>
                                         `
 											)
 											.join("")}
                                         <tr>
-                                            <td colspan="3" class="total">${t("TOTAL PRICE")}</td>
-                                            <td class="total">${t('currency.symbol')}${data.total_price.toFixed(2)}</td>
+                                            <td colspan="3" class="total">${intl.formatMessage({ id: "TOTAL PRICE"})}</td>
+                                            <td class="total">${intl.formatMessage({ id: "currency.symbol" })}${data.total_price.toFixed(2)}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -191,19 +191,19 @@ const usePrintAndSave = () => {
                                     </style>
                                 </head>
                                 <body>
-                                    <h1>${t("Order Receipt")}</h1>
+                                    <h1>${intl.formatMessage({ id: "Order Receipt"})}</h1>
                                     
-                                    <p><strong>${t("Client")}:</strong> ${data.client_name}</p>
-                                    <p><strong>${t("Seller")}:</strong> ${data.user_name}</p>
-                                    <p><strong>${t("Order ID")}:</strong> ${data.order_id}</p>
-                                    <p><strong>${t("Date")}:</strong> ${new Date().toLocaleDateString()}</p>
+                                    <p><strong>${intl.formatMessage({ id: "Client"})}:</strong> ${data.client_name}</p>
+                                    <p><strong>${intl.formatMessage({ id: "Seller"})}:</strong> ${data.user_name}</p>
+                                    <p><strong>${intl.formatMessage({ id: "Order ID"})}:</strong> ${data.order_id}</p>
+                                    <p><strong>${intl.formatMessage({ id: "Date"})}:</strong> ${new Date().toLocaleDateString()}</p>
 
                                     <table>
                                         <tbody>
                                             <tr>
                                                 <th>Item</th>
-                                                <th>${t("Quantity")}</th>
-                                                <th>${t("Price")}</th>
+                                                <th>${intl.formatMessage({ id: "Quantity"})}</th>
+                                                <th>${intl.formatMessage({ id: "Price"})}</th>
                                                 <th>Total</th>
                                             </tr>
                                             ${data.items
@@ -212,8 +212,8 @@ const usePrintAndSave = () => {
                                             <tr>
                                                 <td>${item.product_name} ${item.product_size || ""}</td>
                                                 <td>${item.quantity}</td>
-                                                <td>${t("currency.symbol")}${item.price.toFixed(2)}</td>
-                                                <td>${t("currency.symbol")}${(
+                                                <td>${intl.formatMessage({ id: "currency.symbol"})}${item.price.toFixed(2)}</td>
+                                                <td>${intl.formatMessage({ id: "currency.symbol"})}${(
 														item.price * item.quantity
 													).toFixed(2)}</td>
                                             </tr>
@@ -222,7 +222,7 @@ const usePrintAndSave = () => {
 												.join("")}
                                             <tr class="total-row">
                                                 <td colspan="3" class="right-align">TOTAL</td>
-                                                <td>${t("currency.symbol")}${data.total_price.toFixed(2)}</td>
+                                                <td>${intl.formatMessage({ id: "currency.symbol"})}${data.total_price.toFixed(2)}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -235,8 +235,8 @@ const usePrintAndSave = () => {
 						await shareAsync(uri, { UTI: ".pdf", mimeType: "application/pdf" }); // Share the generated PDF
 					}
 				} catch (error) {
-					Alert.alert(t("Error"), error);
-                    console.log(t("Error"), error)
+					Alert.alert(intl.formatMessage({ id: "Error"}), error);
+                    console.log(intl.formatMessage({ id: "Error"}), error)
 				} finally {
 					setLoadingPrint(false);
 					setData(null);
@@ -255,7 +255,7 @@ const usePrintAndSave = () => {
 			const printer = await Print.selectPrinterAsync(); // iOS only
 			setSelectedPrinter(printer);
 		} catch (error) {
-			Alert.alert(t("Error"), error);
+			Alert.alert(intl.formatMessage({ id: "Error"}), error);
 		}
 	};
 

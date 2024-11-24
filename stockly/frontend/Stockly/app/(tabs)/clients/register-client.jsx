@@ -5,10 +5,10 @@ import useClient from "../../../hooks/useClient";
 import FormField from "../../../components/FormField";
 import { globalStyles } from "../styles";
 import colors from "../../../constants/colors";
-import { useTranslation } from "react-i18next";
+import { useIntl } from "react-intl";
 
 const RegisterClient = () => {
-    const { t } = useTranslation();
+    const intl = useIntl();
 
 	const navigation = useNavigation();
 
@@ -26,12 +26,12 @@ const RegisterClient = () => {
 		<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={globalStyles.container}>
 			<ScrollView>
 				<FormField
-					label={t("Name")}
+					label={intl.formatMessage({ id: "Name"})}
 					value={name}
 					onChangeText={(text) => handleInputChange("name", text)}
 				/>
 				<FormField
-					label={t("Phone number")}
+					label={intl.formatMessage({ id: "Phone number"})}
 					value={phone_number}
 					onChangeText={(text) => handleInputChange("phone_number", text)}
 				/>
@@ -42,7 +42,7 @@ const RegisterClient = () => {
 				    keyboardType="email-address"
 				/>
 				<TouchableOpacity style={globalStyles.submitButton} onPress={() => handleRegister(navigation)}>
-					<Text style={globalStyles.submitButtonText}>{t("Add New Client")}</Text>
+					<Text style={globalStyles.submitButtonText}>{intl.formatMessage({ id: "Add New Client"})}</Text>
 				</TouchableOpacity>
 
 				{/* Show a loading spinner while save is in progress */}

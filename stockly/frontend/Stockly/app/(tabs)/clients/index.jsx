@@ -8,10 +8,10 @@ import { AnimatedFAB } from "react-native-paper";
 import { globalStyles } from "../styles";
 import colors from "../../../constants/colors";
 import useDelete from "../../../hooks/useDelete";
-import { useTranslation } from "react-i18next";
+import { useIntl } from "react-intl";
 
 const Clients = ({ visible, animateFrom, style }) => {
-    const { t } = useTranslation();
+    const intl = useIntl();
 
 	// Handles scroll events to collapse or expand FAB based on scroll position
 	const [isExtended, setIsExtended] = useState(true);
@@ -80,7 +80,7 @@ const Clients = ({ visible, animateFrom, style }) => {
 										{item.phone_number ? (
 											<View style={globalStyles.flatlistItemDetails}>
 												<Text style={globalStyles.flatlistItemDetailsLabel}>
-													{t("Phone number")}:{" "}
+													{intl.formatMessage({ id: "Phone number"})}:{" "}
 												</Text>
 												<Text style={globalStyles.flatlistItemDetailsValue}>
 													{item.phone_number}
@@ -106,7 +106,7 @@ const Clients = ({ visible, animateFrom, style }) => {
 									</TouchableOpacity>
 									<TouchableOpacity
 										onPress={() => {
-											handleDelete(item.client_id, t("Client"), "clients");
+											handleDelete(item.client_id, intl.formatMessage({ id: "Client"}), "clients");
 										}}>
 										<FontAwesome name="trash" size={24} color={colors.text} />
 									</TouchableOpacity>
@@ -117,12 +117,12 @@ const Clients = ({ visible, animateFrom, style }) => {
 					onScroll={onScroll}
 				/>
 			) : (
-				<Text>{t("No clients registered yet")}.</Text>
+				<Text>{intl.formatMessage({ id: "No clients registered yet"})}.</Text>
 			)}
 			{/* FAB button to navigate to the client registration screen */}
 			<AnimatedFAB
 				icon={"plus"}
-				label={t("Add Client")}
+				label={intl.formatMessage({ id: "Add Client"})}
 				color={"white"}
 				extended={isExtended}
 				onPress={() => navigation.navigate("register-client")}

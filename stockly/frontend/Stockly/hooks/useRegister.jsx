@@ -2,11 +2,11 @@ import { Alert } from "react-native";
 import axios from "axios";
 import config from "../constants/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useTranslation } from "react-i18next";
+import { useIntl } from "react-intl";
 
 // Custom hook for registering products or clients
 export const useRegister = () => {
-	const { t } = useTranslation();
+	const intl = useIntl();
 
     const register = async (title, type, formData, navigation, setLoading, setError) => {
         // Destructure form data based on type
@@ -14,10 +14,10 @@ export const useRegister = () => {
 
         // Validate required fields for product or client registration
         if (type === "product" && (!name || !price || !quantity)) {
-            Alert.alert(t("Required Fields"), t("Product name price and quantity are required"));
+            Alert.alert(intl.formatMessage({ id: "Required Fields"}), intl.formatMessage({ id: "Product name price and quantity are required"}));
             return;
         } else if (type === "client" && !name) {
-            Alert.alert(t("Required Fields"), t("Client name is required"));
+            Alert.alert(intl.formatMessage({ id: "Required Fields"}), intl.formatMessage({ id: "Client name is required"}));
             return;
         }
 
@@ -48,13 +48,13 @@ export const useRegister = () => {
             });
 
             if (response.status === 201) {
-                Alert.alert(t("Success"), `${title} ${t("registered successfully")}`);
+                Alert.alert(intl.formatMessage({ id: "Success"}), `${title} ${intl.formatMessage({ id: "registered successfully"})}`);
             } else {
-                Alert.alert(t("Error"), t("Unexpected response status"));
+                Alert.alert(intl.formatMessage({ id: "Error"}), intl.formatMessage({ id: "Unexpected response status"}));
             }
         } catch (error) {
-            setError(t("Error fetching data"));
-            Alert.alert(t("Error"), t("An unexpected error occurred"));
+            setError(intl.formatMessage({ id: "Error fetching data"}));
+            Alert.alert(intl.formatMessage({ id: "Error"}), intl.formatMessage({ id: "An unexpected error occurred"}));
         } finally {
             setLoading(false); // Reset loading state
             navigation.goBack();

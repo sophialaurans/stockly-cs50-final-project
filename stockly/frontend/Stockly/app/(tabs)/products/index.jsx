@@ -8,10 +8,10 @@ import { AnimatedFAB } from "react-native-paper";
 import { globalStyles } from "../styles";
 import colors from "../../../constants/colors";
 import useDelete from "../../../hooks/useDelete";
-import { useTranslation } from "react-i18next";
+import { useIntl } from "react-intl";
 
 const Products = ({ visible, animateFrom, style }) => {
-    const { t } = useTranslation();
+    const intl = useIntl();
 
 	// Handles scroll events to collapse or expand FAB based on scroll position
 	const [isExtended, setIsExtended] = useState(true);
@@ -79,24 +79,24 @@ const Products = ({ visible, animateFrom, style }) => {
 									<View>
 										{item.size ? (
 											<View style={globalStyles.flatlistItemDetails}>
-												<Text style={globalStyles.flatlistItemDetailsLabel}>{t("Size")}: </Text>
+												<Text style={globalStyles.flatlistItemDetailsLabel}>{intl.formatMessage({ id: "Size"})}: </Text>
 												<Text style={globalStyles.flatlistItemDetailsValue}>{item.size}</Text>
 											</View>
 										) : null}
 										{item.color ? (
 											<View style={globalStyles.flatlistItemDetails}>
-												<Text style={globalStyles.flatlistItemDetailsLabel}>{t("Color")} </Text>
+												<Text style={globalStyles.flatlistItemDetailsLabel}>{intl.formatMessage({ id: "Color"})} </Text>
 												<Text style={globalStyles.flatlistItemDetailsValue}>{item.color}</Text>
 											</View>
 										) : null}
 										<View style={globalStyles.flatlistItemDetails}>
-											<Text style={globalStyles.flatlistItemDetailsLabel}>{t("Price")} </Text>
+											<Text style={globalStyles.flatlistItemDetailsLabel}>{intl.formatMessage({ id: "Price"})} </Text>
 											<Text style={globalStyles.flatlistItemDetailsValue}>
-                                                {t('currency.symbol')} {item.price?.toFixed(2)}
+                                                {intl.formatMessage({ id: "currency.symbol" })} {item.price?.toFixed(2)}
 											</Text>
 										</View>
 										<View style={globalStyles.flatlistItemDetails}>
-											<Text style={globalStyles.flatlistItemDetailsLabel}>{t("In Stock")} </Text>
+											<Text style={globalStyles.flatlistItemDetailsLabel}>{intl.formatMessage({ id: "In Stock"})} </Text>
 											<Text style={globalStyles.flatlistItemDetailsValue}>{item.quantity}</Text>
 										</View>
 									</View>
@@ -112,7 +112,7 @@ const Products = ({ visible, animateFrom, style }) => {
 									</TouchableOpacity>
 									<TouchableOpacity
 										onPress={() => {
-											handleDelete(item.product_id, t("Product"), "products");
+											handleDelete(item.product_id, intl.formatMessage({ id: "Product"}), "products");
 										}}>
 										<FontAwesome name="trash" size={24} color={colors.text} />
 									</TouchableOpacity>
@@ -123,13 +123,13 @@ const Products = ({ visible, animateFrom, style }) => {
 					onScroll={onScroll}
 				/>
 			) : (
-				<Text>{t("No products registered yet")}</Text>
+				<Text>{intl.formatMessage({ id: "No products registered yet"})}</Text>
 			)}
 
 			{/* FAB button to navigate to the product registration screen */}
 			<AnimatedFAB
 				icon={"plus"}
-				label={t("Add Product")}
+				label={intl.formatMessage({ id: "Add Product"})}
 				color={"white"}
 				extended={isExtended}
 				onPress={() => navigation.navigate("register-product")}

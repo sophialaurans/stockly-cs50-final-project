@@ -7,19 +7,14 @@ import config from "../../constants/config";
 import { TextInput } from "react-native-paper";
 import { authStyles } from "./styles";
 import colors from "../../constants/colors";
-import { useTranslation } from "react-i18next";
+import { useIntl } from "react-intl";
+import { LanguageProvider } from "../IntlManager";
 
 const LoginScreen = () => {
-	const { t, i18n } = useTranslation();
+	const intl = useIntl();
+
 	const navigation = useNavigation();
 	const [errorMessage, setErrorMessage] = useState(""); // State to store error messages
-    const [language, setLanguage] = useState(i18n.language);
-
-    const toggleLanguage = () => {
-		const newLanguage = language === "en" ? "pt" : "en";
-		i18n.changeLanguage(newLanguage);
-		setLanguage(newLanguage);
-	};
 
 	// State to manage the form input values
 	const [formState, setFormState] = useState({
@@ -41,7 +36,7 @@ const LoginScreen = () => {
 
 		if (!email || !password) {
 			// Check if fields are filled
-			setErrorMessage(t("Missing email or password"));
+			setErrorMessage(intl.formatMessage({ id: "Missing email or password" }));
 			return;
 		}
 
@@ -59,17 +54,19 @@ const LoginScreen = () => {
 				await AsyncStorage.setItem("access_token", access_token);
 				navigation.replace("(tabs)");
 			} else {
-				setErrorMessage(response.data.message || t("An error occurred"));
-				Alert.alert(t("Error", errorMessage));
+				setErrorMessage(response.data.message || intl.formatMessage({ id: "An error occurred" }));
+				Alert.alert(intl.formatMessage({ id: "Error" }), errorMessage);
 			}
 		} catch (error) {
 			// Handle network and API response errors
-			const errorMessageError = error.response ? error.response.data.message : t("An unexpected error occurred");
+			const errorMessageError = error.response
+				? error.response.data.message
+				: intl.formatMessage({ id: "An unexpected error occurred" });
 			if (errorMessageError === "Incorrect email or password") {
-				setErrorMessage(t("Incorrect email or password"));
+				setErrorMessage(intl.formatMessage({ id: "Incorrect email or password" }));
 			} else {
 				setErrorMessage(errorMessageError);
-                Alert.alert(t("Error", errorMessage));
+				Alert.alert(intl.formatMessage({ id: "Error" }), errorMessage);
 			}
 		}
 	};
@@ -93,7 +90,7 @@ const LoginScreen = () => {
 				outlineStyle={authStyles.input}
 				outlineColor={colors.lightGrey}
 				activeOutlineColor={colors.tertiary}
-				label={t("Password")}
+				label={intl.formatMessage({ id: "Password" })}
 				mode="outlined"
 				value={formState.password}
 				onChangeText={(text) => handleInputChange("password", text)}
@@ -117,26 +114,39 @@ const LoginScreen = () => {
 				onPress={() => {
 					navigation.navigate("register"); // Navigate to register screen
 				}}>
-				<Text>{t("Not registered yet")}</Text>
+				<Text>{intl.formatMessage({ id: "Not registered yet" })}</Text>
 			</TouchableOpacity>
 
-            <View style={authStyles.languageSwitch}>
-                <Text style={[authStyles.languageText, language === "en" ? authStyles.activeLanguage : authStyles.inactiveLanguage]}>
-                    English
-                </Text>
-                <Switch
-                    value={language === "pt"}
-                    onValueChange={toggleLanguage}
-                    thumbColor={language === "pt" ? colors.primary : colors.primary}
-                    trackColor={{ false: colors.secondary, true: colors.secondary }}
-                />
-                <Text style={[authStyles.languageText, language === "pt" ? authStyles.activeLanguage : authStyles.inactiveLanguage]}>
-                    Português
-                </Text>
-            </View>
-
+			{/*<View style={authStyles.languageSwitch}>
+				<Text
+					style={[
+						authStyles.languageText,
+						locale === "en" ? authStyles.activeLanguage : authStyles.inactiveLanguage,
+					]}>
+					English
+				</Text>
+				<Switch
+					value={locale === "pt"}
+					onValueChange={(value) => switchLanguage(value ? "pt" : "en")}
+					thumbColor={locale === "en" ? colors.primary : colors.primary}
+					trackColor={{ false: colors.secondary, true: colors.secondary }}
+				/>
+				<Text
+					style={[
+						authStyles.languageText,
+						locale === "pt" ? authStyles.activeLanguage : authStyles.inactiveLanguage,
+					]}>
+					Português
+				</Text>
+			</View>*/}
 		</ScrollView>
 	);
 };
 
-export default LoginScreen;
+export default function LoginScreenWrapper() {
+	return (
+		<LanguageProvider>
+			<LoginScreen />
+		</LanguageProvider>
+	);
+}

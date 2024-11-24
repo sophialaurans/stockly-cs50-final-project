@@ -2,11 +2,11 @@ import { Stack, useNavigation } from "expo-router";
 import { TouchableOpacity } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import colors from "../../../constants/colors";
-import { useTranslation } from "react-i18next";
+import { useIntl } from "react-intl";
 
 /* Stack layout for the product-related screens */
 export default function ProductsLayout() {
-    const { t } = useTranslation();
+    const intl = useIntl();
 	const navigation = useNavigation();
 	return (
 		<Stack
@@ -20,7 +20,7 @@ export default function ProductsLayout() {
 			<Stack.Screen
 				name="index"
 				options={{
-					title: t("Products"),
+					title: intl.formatMessage({ id: "Products"}),
 					headerShadowVisible: false, // Hide the stack header because the tab header is already visible on this screen
 					headerTintColor: "white", // Set the header text color to white
 					headerRight: () => (
@@ -34,14 +34,14 @@ export default function ProductsLayout() {
 			<Stack.Screen
 				name="register-product"
 				options={{
-					title: t("New Product"),
+					title: intl.formatMessage({ id: "New Product"}),
 					headerTintColor: "white",
 				}}
 			/>
 			<Stack.Screen
 				name="product-details"
 				options={{
-					title: t("Details"),
+					title: intl.formatMessage({ id: "Details"}),
 					headerTintColor: "white",
 				}}
 			/>

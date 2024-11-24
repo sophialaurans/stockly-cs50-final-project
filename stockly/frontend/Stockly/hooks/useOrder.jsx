@@ -5,11 +5,11 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 import config from "../constants/config";
 import useNotAuthenticatedWarning from "./useNotAuthenticatedWarning";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useTranslation } from "react-i18next";
+import { useIntl } from "react-intl";
 
 // Custom hook for handling order functionality
 const useOrder = (order_id = null) => {
-	const { t } = useTranslation();
+	const intl = useIntl();
 	const navigation = useNavigation();
 
 	const route = useRoute(); // Hook to access route parameters
@@ -79,7 +79,7 @@ const useOrder = (order_id = null) => {
 					checkAuthentication();
 				}
 			} catch (error) {
-				setError(t("An unexpected error occurred"));
+				setError(intl.formatMessage({ id: "An unexpected error occurred"}));
 			}
 		};
 
@@ -97,14 +97,14 @@ const useOrder = (order_id = null) => {
 
 		// Validate input fields
 		if (!selectedProduct || !quantity || isNaN(quantity) || quantity <= 0) {
-			Alert.alert(t("Validation Error"), t("Please select a product and enter a valid quantity"));
+			Alert.alert(intl.formatMessage({ id: "Validation Error"}), intl.formatMessage({ id: "Please select a product and enter a valid quantity"}));
 			return;
 		}
 
 		// Find the selected product in the products list
 		const product = products.find((p) => p.product_id.toString() === selectedProduct.toString());
 		if (!product) {
-			Alert.alert(t("Product Error"), t("Selected product is not valid."));
+			Alert.alert(intl.formatMessage({ id: "Product Error"}), intl.formatMessage({ id: "Selected product is not valid."}));
 			return;
 		}
 
@@ -170,7 +170,7 @@ const useOrder = (order_id = null) => {
 
 		// Validate input fields
 		if (!selectedClient || items.length === 0) {
-			Alert.alert(t("Validation Error"), t("Please select a client and add at least one item"));
+			Alert.alert(intl.formatMessage({ id: "Validation Error"}), intl.formatMessage({ id: "Please select a client and add at least one item"}));
 			return;
 		}
 
@@ -202,17 +202,17 @@ const useOrder = (order_id = null) => {
 			);
 
 			if (response.status === 201) {
-				Alert.alert(t("Success"), t("Order placed successfully"));
+				Alert.alert(intl.formatMessage({ id: "Success"}), intl.formatMessage({ id: "Order placed successfully"}));
 				setItems([]); // Reset items
 				setTotalPrice(0); // Reset total price
 				handleInputChange("selectedClient", ""); // Reset selected client
 				navigation.goBack(); // Navigate back
 			} else {
-				Alert.alert(t("Error"), t("Unexpected response status"));
+				Alert.alert(intl.formatMessage({ id: "Error"}), intl.formatMessage({ id: "Unexpected response status"}));
 			}
 		} catch (error) {
-			setError(t("An unexpected error occurred"));
-			Alert.alert(t("Error"), error);
+			setError(intl.formatMessage({ id: "An unexpected error occurred"}));
+			Alert.alert(intl.formatMessage({ id: "Error"}), error);
 		} finally {
 			setLoading(false);
 		}
@@ -224,7 +224,7 @@ const useOrder = (order_id = null) => {
 
 		// Validate order saving
 		if (!selectedClient || items.length === 0) {
-			Alert.alert(t("Validation Error"), t("Please select a client and add at least one item."));
+			Alert.alert(intl.formatMessage({ id: "Validation Error"}), intl.formatMessage({ id: "Please select a client and add at least one item."}));
 			return;
 		}
 
@@ -255,17 +255,17 @@ const useOrder = (order_id = null) => {
 			);
 
 			if (response.status === 200) {
-				Alert.alert(t("Success"), t("Order updated successfully"));
+				Alert.alert(intl.formatMessage({ id: "Success"}), intl.formatMessage({ id: "Order updated successfully"}));
 				setItems([]); // Reset items
 				setTotalPrice(0); // Reset total price
 				handleInputChange("selectedClient", ""); // Reset selected client
 				navigation.goBack(); // Navigate back
 			} else {
-				Alert.alert(t("Error"), t("Unexpected response status"));
+				Alert.alert(intl.formatMessage({ id: "Error"}), intl.formatMessage({ id: "Unexpected response status"}));
 			}
 		} catch (error) {
-			setError(t("An unexpected error occurred"));
-			Alert.alert(t("Error"), error);
+			setError(intl.formatMessage({ id: "An unexpected error occurred"}));
+			Alert.alert(intl.formatMessage({ id: "Error"}), error);
 		} finally {
 			setLoading(false);
 		}

@@ -6,11 +6,11 @@ import useNotAuthenticatedWarning from "./useNotAuthenticatedWarning";
 import axios from "axios";
 import config from "../constants/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useTranslation } from "react-i18next";
+import { useIntl } from "react-intl";
 
 // Custom hook for managing client data
 const useClient = (client_id = null) => {
-	const { t } = useTranslation();
+	const intl = useIntl();
 	const route = useRoute(); // Access current route
 	const { client } = route.params || {}; // Get client data from route parameters
 
@@ -59,7 +59,7 @@ const useClient = (client_id = null) => {
 					checkAuthentication();
 				}
 			} catch (error) {
-				setError(t("An unexpected error occurred"));
+				setError(intl.formatMessage({ id: "An unexpected error occurred"}));
 			}
 		};
 
@@ -74,18 +74,18 @@ const useClient = (client_id = null) => {
 	// Handle client registration using a custom hook
 	const handleRegister = async (navigation) => {
 		try {
-			await register(t("Client"), "client", formState, navigation, setLoading, setError);
+			await register(intl.formatMessage({ id: "Client"}), "client", formState, navigation, setLoading, setError);
 		} catch (error) {
-			console.error(t("Error during registration:"), error);
+			console.error(intl.formatMessage({ id: "Error during registration:"}), error);
 		}
 	};
 
 	// Handle saving client data using a custom hook
 	const handleSave = async (navigation) => {
 		try {
-			await save(t("Client"), "clients", client_id, formState, navigation, setLoading, setError);
+			await save(intl.formatMessage({ id: "Client"}), "clients", client_id, formState, navigation, setLoading, setError);
 		} catch (error) {
-			console.error(t("Error during save:"), error);
+			console.error(intl.formatMessage({ id: "Error during save:"}), error);
 		}
 	};
 

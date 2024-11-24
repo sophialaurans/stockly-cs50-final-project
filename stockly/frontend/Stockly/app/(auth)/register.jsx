@@ -6,19 +6,13 @@ import config from "../../constants/config";
 import { TextInput } from "react-native-paper";
 import { authStyles } from "./styles";
 import colors from "../../constants/colors";
-import { useTranslation } from "react-i18next";
+import { LanguageProvider } from "../IntlManager";
+import { useIntl } from "react-intl";
 
 const RegisterScreen = () => {
-    const { t, i18n } = useTranslation();
+    const intl = useIntl();
+
 	const navigation = useNavigation();
-
-    const [language, setLanguage] = useState(i18n.language);
-
-    const toggleLanguage = () => {
-		const newLanguage = language === "en" ? "pt" : "en";
-		i18n.changeLanguage(newLanguage);
-		setLanguage(newLanguage);
-	};
 
 	// State to manage the form input values
 	const [formState, setFormState] = useState({
@@ -46,13 +40,13 @@ const RegisterScreen = () => {
 
 		// Check if passwords match
 		if (password !== confirmPassword) {
-			setErrorMessage(t("Passwords do not match"));
+			setErrorMessage(intl.formatMessage({ id: "Passwords do not match"}));
 			return;
 		}
 
 		// Check for empty fields
 		if (!name || !email || !password || !confirmPassword) {
-			setErrorMessage(t("All fields are required"));
+			setErrorMessage(intl.formatMessage({ id: "All fields are required"}));
 			return;
 		}
 
@@ -66,116 +60,130 @@ const RegisterScreen = () => {
 
 			// Handle different response statuses
 			if (response.status === 201) {
-				Alert.alert(t("Success"), t("Registration successful"));
+				Alert.alert(intl.formatMessage({ id: "Success"}), intl.formatMessage({ id: "Registration successful"}));
 				navigation.replace("(auth)");
 			} else if (response.status === 400) {
-				setErrorMessage(t("Error:"), response.data.message);
+				setErrorMessage(intl.formatMessage({ id: "Error:"}), response.data.message);
 			} else {
-				Alert.alert(t("Error:"), t("Unexpected response status"));
+				Alert.alert(intl.formatMessage({ id: "Error:"}), intl.formatMessage({ id: "Unexpected response status"}));
 			}
 		} catch (error) {
 			// Handle specific error responses
 			if (error.response && error.response.status === 400) {
 				setInvalidEmailError(error.response.data.message);
-				console.log(t("Error:"), error.response.data.message || "Bad Request");
+				console.log(intl.formatMessage({ id: "Error:"}), error.response.data.message || "Bad Request");
 			} else {
-				console.log(t("Error:"), t("An unexpected error occurred"));
+				console.log(intl.formatMessage({ id: "Error:"}), intl.formatMessage({ id: "An unexpected error occurred"}));
 			}
 		}
 	};
 
 	return (
-		<ScrollView contentContainerStyle={authStyles.contentContainer}>
-			<Image style={authStyles.logo} source={require("../../assets/images/stockly-logo.png")} />
-			<TextInput
-				style={authStyles.input}
-				outlineStyle={authStyles.input}
-				outlineColor={colors.lightGrey}
-				activeOutlineColor={colors.tertiary}
-				label={t("Name")}
-				mode="outlined"
-				value={formState.name}
-				onChangeText={(text) => handleInputChange("name", text)}
-			/>
-			<TextInput
-				style={authStyles.input}
-				outlineStyle={authStyles.input}
-				outlineColor={colors.lightGrey}
-				activeOutlineColor={colors.tertiary}
-				label="Email"
-				mode="outlined"
-				value={formState.email}
-				onChangeText={(text) => handleInputChange("email", text)}
-				keyboardType="email-address"
-			/>
+        <ScrollView contentContainerStyle={authStyles.contentContainer}>
+            <Image style={authStyles.logo} source={require("../../assets/images/stockly-logo.png")} />
+            <TextInput
+                style={authStyles.input}
+                outlineStyle={authStyles.input}
+                outlineColor={colors.lightGrey}
+                activeOutlineColor={colors.tertiary}
+                label={intl.formatMessage({ id: "Name"})}
+                mode="outlined"
+                value={formState.name}
+                onChangeText={(text) => handleInputChange("name", text)}
+            />
+            <TextInput
+                style={authStyles.input}
+                outlineStyle={authStyles.input}
+                outlineColor={colors.lightGrey}
+                activeOutlineColor={colors.tertiary}
+                label="Email"
+                mode="outlined"
+                value={formState.email}
+                onChangeText={(text) => handleInputChange("email", text)}
+                keyboardType="email-address"
+            />
 
-			{/* Display invalid email error if exists */}
-			{invalidEmailError ? (
-				<View style={authStyles.errorContainer}>
-					<Text style={authStyles.error}>{invalidEmailError}</Text>
-				</View>
-			) : null}
+            {/* Display invalid email error if exists */}
+            {invalidEmailError ? (
+                <View style={authStyles.errorContainer}>
+                    <Text style={authStyles.error}>{invalidEmailError}</Text>
+                </View>
+            ) : null}
 
-			<TextInput
-				style={authStyles.input}
-				outlineStyle={authStyles.input}
-				outlineColor={colors.lightGrey}
-				activeOutlineColor={colors.tertiary}
-				label={t("Create a password")}
-				mode="outlined"
-				secureTextEntry
-				value={formState.password}
-				onChangeText={(text) => handleInputChange("password", text)}
-			/>
-			<TextInput
-				style={authStyles.input}
-				outlineStyle={authStyles.input}
-				outlineColor={colors.lightGrey}
-				activeOutlineColor={colors.tertiary}
-				label={t("Confirm your password")}
-				mode="outlined"
-				secureTextEntry
-				value={formState.confirmPassword}
-				onChangeText={(text) => handleInputChange("confirmPassword", text)}
-			/>
+            <TextInput
+                style={authStyles.input}
+                outlineStyle={authStyles.input}
+                outlineColor={colors.lightGrey}
+                activeOutlineColor={colors.tertiary}
+                label={intl.formatMessage({ id: "Create a password"})}
+                mode="outlined"
+                secureTextEntry
+                value={formState.password}
+                onChangeText={(text) => handleInputChange("password", text)}
+            />
+            <TextInput
+                style={authStyles.input}
+                outlineStyle={authStyles.input}
+                outlineColor={colors.lightGrey}
+                activeOutlineColor={colors.tertiary}
+                label={intl.formatMessage({ id: "Confirm your password"})}
+                mode="outlined"
+                secureTextEntry
+                value={formState.confirmPassword}
+                onChangeText={(text) => handleInputChange("confirmPassword", text)}
+            />
 
-			{/* Display general error message if exists */}
-			{errorMessage ? (
-				<View style={authStyles.errorContainer}>
-					<Text style={authStyles.error}>{errorMessage}</Text>
-				</View>
-			) : null}
+            {/* Display general error message if exists */}
+            {errorMessage ? (
+                <View style={authStyles.errorContainer}>
+                    <Text style={authStyles.error}>{errorMessage}</Text>
+                </View>
+            ) : null}
 
-			<TouchableOpacity style={authStyles.authButton} onPress={handleRegister}>
-				<Text style={authStyles.authButtonText}>{t("REGISTER")}</Text>
-			</TouchableOpacity>
+            <TouchableOpacity style={authStyles.authButton} onPress={handleRegister}>
+                <Text style={authStyles.authButtonText}>{intl.formatMessage({ id: "REGISTER"})}</Text>
+            </TouchableOpacity>
 
-			{/* Link to sign in if already registered */}
-			<TouchableOpacity
-				style={authStyles.singButton}
-				onPress={() => {
-					navigation.navigate("login");
-				}}>
-				<Text>{t("Already registerd")}</Text>
-			</TouchableOpacity>
+            {/* Link to sign in if already registered */}
+            <TouchableOpacity
+                style={authStyles.singButton}
+                onPress={() => {
+                    navigation.navigate("login");
+                }}>
+                <Text>{intl.formatMessage({ id: "Already registerd"})}</Text>
+            </TouchableOpacity>
 
-            <View style={authStyles.languageSwitch}>
-                <Text style={[authStyles.languageText, language === "en" ? authStyles.activeLanguage : authStyles.inactiveLanguage]}>
-                    English
-                </Text>
-                <Switch
-                    value={language === "pt"}
-                    onValueChange={toggleLanguage}
-                    thumbColor={language === "pt" ? colors.tertiary : colors.tertiary}
-                    trackColor={{ false: colors.secondary, true: colors.secondary }}
-                />
-                <Text style={[authStyles.languageText, language === "pt" ? authStyles.activeLanguage : authStyles.inactiveLanguage]}>
-                    Português
-                </Text>
-            </View>
+            {/*<View style={authStyles.languageSwitch}>
+				<Text
+					style={[
+						authStyles.languageText,
+						locale === "en" ? authStyles.activeLanguage : authStyles.inactiveLanguage,
+					]}>
+					English
+				</Text>
+				<Switch
+					value={locale === "pt"}
+					onValueChange={(value) => switchLanguage(value ? "pt" : "en")}
+					thumbColor={locale === "en" ? colors.primary : colors.primary}
+					trackColor={{ false: colors.secondary, true: colors.secondary }}
+				/>
+				<Text
+					style={[
+						authStyles.languageText,
+						locale === "pt" ? authStyles.activeLanguage : authStyles.inactiveLanguage,
+					]}>
+					Português
+				</Text>
+			</View>*/}
 
-		</ScrollView>
+        </ScrollView>
 	);
 };
 
-export default RegisterScreen;
+export default function RegisterScreenWrapper() {
+    return (
+        <LanguageProvider>
+            <RegisterScreen />
+        </LanguageProvider>
+    );
+}

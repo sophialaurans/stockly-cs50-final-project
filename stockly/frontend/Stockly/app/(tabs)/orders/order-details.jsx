@@ -14,10 +14,10 @@ import FormField from "../../../components/FormField";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { globalStyles } from "../styles";
 import colors from "../../../constants/colors";
-import { useTranslation } from "react-i18next";
+import { useIntl } from "react-intl";
 
 const OrderDetails = () => {
-	const { t } = useTranslation();
+	const intl = useIntl();
 	const navigation = useNavigation();
 
 	// Destructure state and functions from the custom useOrder hook
@@ -44,28 +44,28 @@ const OrderDetails = () => {
 				{/* Form field for selecting a client */}
 				<View style={globalStyles.picker}>
 					<FormField
-						label={t("Select Client")}
+						label={intl.formatMessage({ id: "Select Client"})}
 						value={formState.selectedClient}
 						onChangeText={(itemValue) => handleInputChange("selectedClient", itemValue)}
 						pickerOptions={clients.map((client) => ({
 							label: client.name,
 							value: client.client_id,
 						}))}
-						placeholder={t("Select a client")}
+						placeholder={intl.formatMessage({ id: "Select a client"})}
 					/>
 				</View>
 
 				{/* Form field for selecting a product */}
 				<View style={globalStyles.picker}>
 					<FormField
-						label={t("Select Product")}
+						label={intl.formatMessage({ id: "Select Product"})}
 						value={formState.selectedProduct}
 						onChangeText={(itemValue) => handleInputChange("selectedProduct", itemValue)}
-						placeholder={t("Select a product")}
+						placeholder={intl.formatMessage({ id: "Select a product"})}
 						pickerOptions={products.map((product) => ({
 							label: `${product.name} ${product.size ? "- " + product.size : ""} ${
 								product.color ? "- " + product.color : ""
-							} - ${t('currency.symbol')}${product.price.toFixed(2)}`,
+							} - ${intl.formatMessage({ id: "currency.symbol" })}${product.price.toFixed(2)}`,
 							value: product.product_id,
 						}))}
 					/>
@@ -73,10 +73,10 @@ const OrderDetails = () => {
 
 				{/* Form field for entering quantity */}
 				<FormField
-					label={t("Quantity")}
+					label={intl.formatMessage({ id: "Quantity"})}
 					value={formState.quantity}
 					onChangeText={(text) => handleInputChange("quantity", text)}
-					placeholder={t("Enter quantity")}
+					placeholder={intl.formatMessage({ id: "Enter quantity"})}
 					keyboardType="numeric"
 				/>
 
@@ -86,7 +86,7 @@ const OrderDetails = () => {
 						style={globalStyles.addItemButton}
 						onPress={handleAddItem}
 						activeOpacity={0.7}>
-						<Text style={globalStyles.addItemButtonText}>{t("Add Item")}</Text>
+						<Text style={globalStyles.addItemButtonText}>{intl.formatMessage({ id: "Add Item"})}</Text>
 					</TouchableOpacity>
 				</View>
 
@@ -103,7 +103,7 @@ const OrderDetails = () => {
 									{item.product_color ? <Text>{item.product_color}</Text> : null}
 								</View>
 								<Text style={globalStyles.itemData}>
-									{item.quantity} x {t('currency.symbol')}{item.price.toFixed(2)}
+									{item.quantity} x {intl.formatMessage({ id: "currency.symbol" })}{item.price.toFixed(2)}
 								</Text>
 								<Text style={globalStyles.itemData}>${item.total}</Text>
 								<TouchableOpacity
@@ -115,14 +115,14 @@ const OrderDetails = () => {
 						)}
 					/>
 				) : (
-					<Text>{t("No items added yet")}</Text>
+					<Text>{intl.formatMessage({ id: "No items added yet"})}</Text>
 				)}
 
 				{/* Display total price if items are added */}
 				{items.length > 0 ? (
 					<View style={globalStyles.totalPrice}>
-						<Text style={globalStyles.totalPriceLabel}>{t("Total Price")}</Text>
-						<Text style={globalStyles.totalPriceValue}>{t('currency.symbol')}{totalPrice.toFixed(2)}</Text>
+						<Text style={globalStyles.totalPriceLabel}>{intl.formatMessage({ id: "Total Price"})}</Text>
+						<Text style={globalStyles.totalPriceValue}>{intl.formatMessage({ id: "currency.symbol" })}{totalPrice.toFixed(2)}</Text>
 					</View>
 				) : null}
 
@@ -133,7 +133,7 @@ const OrderDetails = () => {
 					<TouchableOpacity
 						onPress={() => handleSaveOrder(navigation)}
 						style={globalStyles.submitButton}>
-						<Text style={globalStyles.submitButtonText}>{t("Save Order")}</Text>
+						<Text style={globalStyles.submitButtonText}>{intl.formatMessage({ id: "Save Order"})}</Text>
 					</TouchableOpacity>
 				)}
 			</View>

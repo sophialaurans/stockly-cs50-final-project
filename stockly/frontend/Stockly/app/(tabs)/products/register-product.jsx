@@ -12,10 +12,10 @@ import useProduct from "../../../hooks/useProduct";
 import FormField from "../../../components/FormField";
 import { globalStyles } from "../styles";
 import colors from "../../../constants/colors";
-import { useTranslation } from "react-i18next";
+import { useIntl } from "react-intl";
 
 const RegisterProduct = () => {
-	const { t } = useTranslation();
+	const intl = useIntl();
 	const navigation = useNavigation();
 
 	// Destructure state and functions from the custom useProduct hook
@@ -34,38 +34,38 @@ const RegisterProduct = () => {
 			style={globalStyles.container}>
 			<ScrollView>
 				<FormField
-					label={t("Name")}
+					label={intl.formatMessage({ id: "Name"})}
 					value={name}
 					onChangeText={(text) => handleInputChange("name", text)}
 				/>
 				<FormField
-					label={t("Size")}
+					label={intl.formatMessage({ id: "Size"})}
 					value={size}
 					onChangeText={(text) => handleInputChange("size", text)}
 				/>
 				<FormField
-					label={t("Color")}
+					label={intl.formatMessage({ id: "Color"})}
 					value={color}
 					onChangeText={(text) => handleInputChange("color", text)}
 				/>
 				<FormField
-					label={t("Dimensions")}
+					label={intl.formatMessage({ id: "Dimensions"})}
 					value={dimensions}
 					onChangeText={(text) => handleInputChange("dimensions", text)}
 				/>
 				<FormField
-					label={t("Price")}
+					label={intl.formatMessage({ id: "Price"})}
 					value={price}
 					onChangeText={(text) => handleInputChange("price", text)}
 					keyboardType="numeric"
 				/>
 				<FormField
-					label={t("Description")}
+					label={intl.formatMessage({ id: "Description"})}
 					value={description}
 					onChangeText={(text) => handleInputChange("description", text)}
 				/>
 				<FormField
-					label={t("Quantity in Stock")}
+					label={intl.formatMessage({ id: "Quantity in Stock"})}
 					value={quantity}
 					onChangeText={(text) => handleInputChange("quantity", text)}
 					keyboardType="numeric"
@@ -74,7 +74,7 @@ const RegisterProduct = () => {
 				<TouchableOpacity
 					style={globalStyles.submitButton}
 					onPress={() => handleRegister(navigation)}>
-					<Text style={globalStyles.submitButtonText}>{t("Add New Product")}</Text>
+					<Text style={globalStyles.submitButtonText}>{intl.formatMessage({ id: "Add New Product"})}</Text>
 				</TouchableOpacity>
 
 				{/* Show a loading spinner while save is in progress */}
