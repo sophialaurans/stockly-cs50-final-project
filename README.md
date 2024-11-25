@@ -5,6 +5,8 @@
 
 #### [EN-US](#english-version) | [PT-BR](#versão-em-português)
 
+[![Download APK](https://img.shields.io/badge/Download-APK-blue)](https://expo.dev/accounts/sophialns/projects/stockly/builds/cc1295f5-bbfd-41f0-8060-bb9783480a49)
+
 </div>
 <br>
 
@@ -67,6 +69,10 @@ Stockly includes the following key features:
 - **Database**: SQLite  
 - **ORM**: Flask-SQLAlchemy
 
+## Languages
+
+The app automatically detects the device's language and will be displayed in **Portuguese** or **English**, depending on the device's language settings.
+
 ## Installation
 
 To set up Stockly on your local machine, follow these steps:
@@ -95,7 +101,7 @@ pip install -r requirements.txt
 #### For the frontend:
 
 ```
-cd stockly/frontend
+cd stockly/frontend/stockly
 npm install
 ```
 
@@ -111,7 +117,7 @@ flask run
 #### Start the frontend application:
 
 ```
-cd stockly/frontend/Stockly
+cd stockly/frontend/stockly
 npm start
 ```
 
@@ -128,7 +134,8 @@ To view and interact with Stockly, there are the following options:
    - If you prefer using an emulator, make sure you have an Android or iOS emulator installed.
    - Start the emulator before running the frontend (`npm start`), and the application should automatically open.
   
-In the future, I plan to provide the APK for Stockly, allowing users to easily install and run the app. Stay tuned for updates!
+3. **Download APK**
+   - You can download the APK of the app by clicking the following link: [Download APK](https://expo.dev/accounts/sophialns/projects/stockly/builds/cc1295f5-bbfd-41f0-8060-bb9783480a49)
 
 ## Usage
 
@@ -137,11 +144,6 @@ Once the application is running, you can navigate through the different screens 
 ## Attribution
 
 App Icon: The app icon used in Stockly was adapted from an original design by [Freepik](https://www.freepik.com/icon/box_3639221). Colors were modified to better fit the theme of the application.
-
-## Future Implementations
-
-- Add support for Portuguese translation, allowing Portuguese-speaking users to use the application more accessibly. Currently, the application is available only in English, as it was developed as part of the final project for the **CS50** course.
-- Create an APK to enable users to easily install and run the application.
 
 <br>
 
@@ -203,6 +205,10 @@ O Stockly inclui os seguintes recursos principais:
 - **Banco de Dados**: SQLite  
 - **ORM**: Flask-SQLAlchemy
 
+## Idiomas
+
+O aplicativo detecta automaticamente o idioma do dispositivo e será exibido em **Português** ou **Inglês**, dependendo da configuração de idioma do seu dispositivo.
+
 ## Instalação
 
 Para configurar o Stockly na sua máquina local, siga as seguintes etapas:
@@ -231,7 +237,7 @@ pip install -r requirements.txt
 #### Para o frontend:
 
 ```
-cd stockly/frontend
+cd stockly/frontend/stockly
 npm install
 ```
 
@@ -247,7 +253,7 @@ flask run
 #### Inicie a aplicação frontend:
 
 ```
-cd stockly/frontend/Stockly
+cd stockly/frontend/stockly
 npm start
 ```
 
@@ -263,8 +269,10 @@ Para visualizar e interagir com o Stockly, existem as seguintes opções:
 
    - Se preferir usar um emulador, certifique-se de ter um emulador Android ou iOS instalado.
    - Inicie o emulador antes de executar o frontend (`npm start`), e a aplicação deve abrir automaticamente.
+  
+3. **Download APK**:
 
-No futuro, pretendo fornecer o APK para o Stockly, permitindo que os usuários instalem e executem o aplicativo facilmente.
+   -Você pode baixar o APK do aplicativo clicando no seguinte link: [Baixar APK](https://expo.dev/accounts/sophialns/projects/stockly/builds/cc1295f5-bbfd-41f0-8060-bb9783480a49)
 
 ## Uso
 
@@ -273,8 +281,3 @@ Após a aplicação ser iniciada, você pode navegar pelas diferentes telas usan
 ## Créditos
 
 Ícone do App: O ícone do aplicativo utilizado no Stockly foi adaptado de um design original de [Freepik](https://www.freepik.com/icon/box_3639221). As cores foram modificadas para se adequar melhor ao tema do aplicativo.
-
-## Implementações Futuras
-
-- Adicionar suporte à tradução para o português, permitindo que usuários de língua portuguesa utilizem o aplicativo de forma mais acessível. Atualmente, o aplicativo está disponível apenas em inglês, pois foi desenvolvido como parte do projeto final do curso estadunidense **CS50**.
-- Criar um APK para permitir que usuários instalem e executem o aplicativo facilmente.
