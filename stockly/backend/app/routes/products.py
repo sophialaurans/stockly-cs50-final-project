@@ -37,7 +37,7 @@ def register_product():
     quantity = data['quantity']
 
     # checks required fields
-    if name is None or price is None or quantity is None:
+    if name is None or price is None or quantity is None or not isinstance(quantity, int):
         return jsonify(message="Product name, price, and quantity are required"), 400
 
     db.session.commit()
@@ -93,7 +93,7 @@ def update_product(product_id):
     product.description = data.get('description', product.description)
     product.quantity = data.get('quantity', product.quantity)
 
-    if product.name is None or product.price is None or product.quantity is None:
+    if product.name is None or product.price is None or product.quantity is None or not isinstance(product.quantity, int):
         return jsonify(message="Product name, price, and quantity are required"), 400
 
     db.session.commit()
