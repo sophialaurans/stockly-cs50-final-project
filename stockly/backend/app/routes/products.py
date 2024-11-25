@@ -41,7 +41,6 @@ def register_product():
         name is None 
         or price is None 
         or quantity is None
-        or not isinstance(quantity, int)
     ):
         return jsonify(message="Product name, price, and quantity are required, and quantity must be an integer"), 400
 
@@ -100,7 +99,6 @@ def update_product(product_id):
         product.name is None 
         or product.price is None 
         or product.quantity is None
-        or not isinstance(product.quantity, int)
     ):
         return jsonify(message="Product name, price, and quantity are required, and quantity must be an integer"), 400
 
