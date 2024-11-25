@@ -37,13 +37,8 @@ def register_product():
     quantity = data['quantity']
 
     # checks required fields
-    if (
-        name is None 
-        or price is None 
-        or quantity is None
-        or not isinstance(quantity, int)
-    ):
-        return jsonify(message="Product name, price, and quantity are required, and quantity must be an integer"), 400
+    if not name or not price or quantity is None or not isinstance(quantity, int): 
+        return jsonify(message="Product name, price, and quantity are required. Quantity must be an integer."), 400
 
     #adds and commits the new product to the database
     new_product = Products(
