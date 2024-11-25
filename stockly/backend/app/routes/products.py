@@ -91,7 +91,7 @@ def update_product(product_id):
     product.description = data.get('description', product.description)
     product.quantity = data.get('quantity', product.quantity)
 
-    if not product.name or not product.price or not product.quantity:
+    if product.name is None or product.price is None or product.quantity is None:
         return jsonify(message="Product name, price, and quantity are required"), 400
 
     db.session.commit()
