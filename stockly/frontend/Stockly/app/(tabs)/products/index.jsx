@@ -37,11 +37,17 @@ const Products = ({ visible, animateFrom, style }) => {
     
 	// Update local products state when new data is fetched and sort data from largest to smallest by `product_id`
 	useEffect(() => {
-		if (data) {
-            const sortedProducts = data.sort((a, b) => b.product_id - a.product_id)
-			setProducts(sortedProducts);
-		}
-	}, [data]);
+        if (data) {
+            const sortedProducts = [...data].sort((a, b) => {
+                const nameComparison = a.name.localeCompare(b.name);
+                if (nameComparison === 0) {
+                    return a.product_id - b.product_id;
+                }
+                return nameComparison;
+            });
+            setProducts(sortedProducts);
+        }
+    }, [data]);
 
 	// Refetch data whenever the screen is focused
 	useEffect(() => {
