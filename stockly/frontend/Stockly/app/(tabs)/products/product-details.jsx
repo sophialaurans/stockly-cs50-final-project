@@ -59,6 +59,7 @@ const ProductDetails = () => {
 					label={intl.formatMessage({ id: "Quantity in Stock"})}
 					value={quantity.toString()}
 					onChangeText={(text) => handleInputChange("quantity", text)}
+                    keyboardType="numeric"
 				/>
 
 				<TouchableOpacity style={globalStyles.submitButton} onPress={() => handleSave(navigation)}>
