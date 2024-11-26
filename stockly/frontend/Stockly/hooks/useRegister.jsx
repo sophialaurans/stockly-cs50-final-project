@@ -19,7 +19,7 @@ export const useRegister = () => {
         } else if (type === "client" && !name) {
             Alert.alert(intl.formatMessage({ id: "Required Fields"}), intl.formatMessage({ id: "Client name is required"}));
             return;
-        } else if (type === "product" && !Number.isInteger(quantity)) {
+        } else if (type === "product" && !Number.isInteger(parseInt(quantity))) {
             Alert.alert(intl.formatMessage({ id: "Error" }), intl.formatMessage({ id: "Quantity must be an integer"}));
             return;
         }
