@@ -160,7 +160,7 @@ const Orders = ({ visible, animateFrom, style }) => {
 							]}>
 							<View style={styles.orderHeaderContainer}>
 								<Text style={styles.orderHeaderName}>{intl.formatMessage({ id: "Order from"})} {item.client_name}</Text>
-								<Text style={styles.orderHeaderPrice}>Total: {intl.formatMessage({ id: "currency.symbol"})} {item.total_price?.toFixed(2)}</Text>
+								<Text style={styles.orderHeaderPrice}>Total: {intl.formatMessage({ id: "currency.symbol"})} {item.total_price?.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Text>
 							</View>
 							<View style={globalStyles.flatlistItemContent}>
 								<View style={globalStyles.flatlistItemData}>
@@ -180,7 +180,7 @@ const Orders = ({ visible, animateFrom, style }) => {
 														{orderItem.product_color ? ` ${orderItem.product_color}` : ""}
 													</Text>
 													<Text style={styles.orderItemsTextPrice}>
-                                                        {intl.formatMessage({ id: "currency.symbol" })} {orderItem.price?.toFixed(2)} {intl.formatMessage({ id: "each"})}
+                                                        {intl.formatMessage({ id: "currency.symbol" })} {orderItem.price?.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} {intl.formatMessage({ id: "each"})}
 													</Text>
 												</View>
 											))}

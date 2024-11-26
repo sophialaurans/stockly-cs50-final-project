@@ -65,7 +65,7 @@ const NewOrder = () => {
 						pickerOptions={products.map((product) => ({
 							label: `${product.name} ${product.size ? "- " + product.size : ""} ${
 								product.color ? "- " + product.color : ""
-							} - ${intl.formatMessage({ id: "currency.symbol" })}${product.price.toFixed(2)}`,
+							} - ${intl.formatMessage({ id: "currency.symbol" })}${product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
 							value: product.product_id,
 						}))}
 					/>
@@ -100,9 +100,9 @@ const NewOrder = () => {
 									{item.product_color ? <Text>{item.product_color}</Text> : null}
 								</View>
 								<Text style={globalStyles.itemData}>
-									{item.quantity} x {intl.formatMessage({ id: "currency.symbol" })}{item.price.toFixed(2)}
+									{item.quantity} x {intl.formatMessage({ id: "currency.symbol" })}{item.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
 								</Text>
-								<Text style={globalStyles.itemData}>{intl.formatMessage({ id: "currency.symbol" })}{item.total.toFixed(2)}</Text>
+								<Text style={globalStyles.itemData}>{intl.formatMessage({ id: "currency.symbol" })}{item.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Text>
 								<TouchableOpacity
 									onPress={() => handleDeleteItem(item.product_id)}
 									style={globalStyles.deleteButton}>
@@ -119,7 +119,7 @@ const NewOrder = () => {
 				{items.length > 0 ? (
 					<View style={globalStyles.totalPrice}>
 						<Text style={globalStyles.totalPriceLabel}>{intl.formatMessage({ id: "Total Price"})}</Text>
-						<Text style={globalStyles.totalPriceValue}>{intl.formatMessage({ id: "currency.symbol" })}{totalPrice.toFixed(2)}</Text>
+						<Text style={globalStyles.totalPriceValue}>{intl.formatMessage({ id: "currency.symbol" })}{totalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Text>
 					</View>
 				) : null}
 

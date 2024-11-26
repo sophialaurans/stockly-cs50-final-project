@@ -117,7 +117,7 @@ const Clients = ({ visible, animateFrom, style }) => {
 					onScroll={onScroll}
 				/>
 			) : (
-				<Text>{intl.formatMessage({ id: "No clients registered yet"})}.</Text>
+				<Text>{intl.formatMessage({ id: "No clients registered yet"})}</Text>
 			)}
 			{/* FAB button to navigate to the client registration screen */}
 			<AnimatedFAB

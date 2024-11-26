@@ -98,7 +98,7 @@ const Products = ({ visible, animateFrom, style }) => {
 										<View style={globalStyles.flatlistItemDetails}>
 											<Text style={globalStyles.flatlistItemDetailsLabel}>{intl.formatMessage({ id: "Price"})} </Text>
 											<Text style={globalStyles.flatlistItemDetailsValue}>
-                                                {intl.formatMessage({ id: "currency.symbol" })} {item.price?.toFixed(2)}
+                                                {intl.formatMessage({ id: "currency.symbol" })} {item.price?.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
 											</Text>
 										</View>
 										<View style={globalStyles.flatlistItemDetails}>

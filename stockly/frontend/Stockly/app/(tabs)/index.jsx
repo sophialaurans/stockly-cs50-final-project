@@ -132,8 +132,8 @@ const Dashboard = () => {
                         <Octicons name="dot-fill" size={24} color={colors.turquoise} />
                         <Text style={styles.dotData}>
                             {selectedMonth !== null
-                                ? `${monthNames[selectedMonth]}: ${intl.formatMessage({ id: "currency.symbol"})} ${selectedData.toFixed(2)}`
-                                : `${intl.formatMessage({ id: "Current month"})}: ${intl.formatMessage({ id: "currency.symbol"})} ${Number(data.currentMonthRevenue).toFixed(2)}`}
+                                ? `${monthNames[selectedMonth]}: ${intl.formatMessage({ id: "currency.symbol"})} ${selectedData.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+                                : `${intl.formatMessage({ id: "Current month"})}: ${intl.formatMessage({ id: "currency.symbol"})} ${Number(data.currentMonthRevenue).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                         </Text>
                     </View>
                     <LineChart

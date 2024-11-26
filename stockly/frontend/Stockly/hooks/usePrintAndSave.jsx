@@ -124,15 +124,15 @@ const usePrintAndSave = () => {
                                         <tr>
                                             <td>${item.product_name} ${item.product_size || ""}</td>
                                             <td>${item.quantity}</td>
-                                            <td>${intl.formatMessage({ id: "currency.symbol" })}${item.price.toFixed(2)}</td>
-                                            <td>${intl.formatMessage({ id: "currency.symbol" })}${(item.price * item.quantity).toFixed(2)}</td>
+                                            <td>${intl.formatMessage({ id: "currency.symbol" })}${item.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                                            <td>${intl.formatMessage({ id: "currency.symbol" })}${(item.price * item.quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
                                         </tr>
                                         `
 											)
 											.join("")}
                                         <tr>
                                             <td colspan="3" class="total">${intl.formatMessage({ id: "TOTAL PRICE"})}</td>
-                                            <td class="total">${intl.formatMessage({ id: "currency.symbol" })}${data.total_price.toFixed(2)}</td>
+                                            <td class="total">${intl.formatMessage({ id: "currency.symbol" })}${data.total_price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -212,17 +212,17 @@ const usePrintAndSave = () => {
                                             <tr>
                                                 <td>${item.product_name} ${item.product_size || ""}</td>
                                                 <td>${item.quantity}</td>
-                                                <td>${intl.formatMessage({ id: "currency.symbol"})}${item.price.toFixed(2)}</td>
+                                                <td>${intl.formatMessage({ id: "currency.symbol"})}${item.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
                                                 <td>${intl.formatMessage({ id: "currency.symbol"})}${(
 														item.price * item.quantity
-													).toFixed(2)}</td>
+													).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
                                             </tr>
                                             `
 												)
 												.join("")}
                                             <tr class="total-row">
                                                 <td colspan="3" class="right-align">TOTAL</td>
-                                                <td>${intl.formatMessage({ id: "currency.symbol"})}${data.total_price.toFixed(2)}</td>
+                                                <td>${intl.formatMessage({ id: "currency.symbol"})}${data.total_price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
                                             </tr>
                                         </tbody>
                                     </table>
