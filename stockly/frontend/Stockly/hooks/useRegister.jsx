@@ -22,9 +22,7 @@ export const useRegister = () => {
         } else if (type === "product" && !Number.isInteger(product)) {
             Alert.alert(intl.formatMessage({ id: "Error" }), intl.formatMessage({ id: "Product must be an integer"}));
             return;
-        } else {
-            Alert.alert(intl.formatMessage({ id: "Error"}), intl.formatMessage({ id: "Unexpected response status"}));
-        };
+        }
 
         // Set loading state and reset error state
         setLoading(true);
