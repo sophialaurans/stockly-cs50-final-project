@@ -93,6 +93,7 @@
     "Processing request": "Processando solicitação...",
     "Product": "Produto",
     "Product Error": "Erro no Produto",
+    "Quantity must be an integer": "A quantidade deve ser um número inteiro",
     "Product name price and quantity are required": "Nome, preço e quantidade do produto são campos obrigatórios.",
     "Products": "Produtos",
     "Profile": "Perfil",

@@ -92,6 +92,7 @@
     "Processing request": "Processing request...",
     "Product": "Product",
     "Product Error": "Product Error",
+    "Quantity must be an integer": "Quantity must be an integer",
     "Product name price and quantity are required": "Product name, price, and quantity are required.",
     "Products": "Products",
     "Profile": "Profile",
