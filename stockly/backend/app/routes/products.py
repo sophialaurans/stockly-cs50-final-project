@@ -39,9 +39,6 @@ def register_product():
     # checks required fields
     if name is None or price is None or quantity is None:
         return jsonify(message="Product name, price, and quantity are required"), 400
-    
-    if not str(quantity).isdigit():
-        return jsonify(message="Quantity must be a whole number without letters or symbols"), 400
 
     db.session.commit()
 
@@ -98,9 +95,6 @@ def update_product(product_id):
 
     if product.name is None or product.price is None or product.quantity is None:
         return jsonify(message="Product name, price, and quantity are required"), 400
-    
-    if not str(product.quantity).isdigit():
-        return jsonify(message="Quantity must be a whole number without letters or symbols"), 400
 
     db.session.commit()
 
