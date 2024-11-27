@@ -5,7 +5,7 @@
 
 #### [EN-US](#english-version) | [PT-BR](#versão-em-português)
 
-[![Download APK](https://img.shields.io/badge/Download-APK-blue)](https://expo.dev/accounts/sophialns/projects/stockly/builds/cc1295f5-bbfd-41f0-8060-bb9783480a49)
+[![Download APK](https://expo.dev/accounts/sophialns/projects/stockly/builds/f71e58b3-3242-4420-b5a4-c7483561ef6a)
 
 </div>
 <br>
@@ -135,7 +135,7 @@ To view and interact with Stockly, there are the following options:
    - Start the emulator before running the frontend (`npm start`), and the application should automatically open.
   
 3. **Download APK**
-   - You can download the APK of the app by clicking the following link: [Download APK](https://expo.dev/accounts/sophialns/projects/stockly/builds/cc1295f5-bbfd-41f0-8060-bb9783480a49)
+   - You can download the APK of the app by clicking the following link: [Download APK](https://expo.dev/accounts/sophialns/projects/stockly/builds/f71e58b3-3242-4420-b5a4-c7483561ef6a)
 
 ## Usage
 
@@ -272,7 +272,7 @@ Para visualizar e interagir com o Stockly, existem as seguintes opções:
   
 3. **Download APK**:
 
-   -Você pode baixar o APK do aplicativo clicando no seguinte link: [Baixar APK](https://expo.dev/accounts/sophialns/projects/stockly/builds/cc1295f5-bbfd-41f0-8060-bb9783480a49)
+   -Você pode baixar o APK do aplicativo clicando no seguinte link: [Baixar APK](https://expo.dev/accounts/sophialns/projects/stockly/builds/f71e58b3-3242-4420-b5a4-c7483561ef6a)
 
 ## Uso
 
