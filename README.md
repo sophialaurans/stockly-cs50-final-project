@@ -5,7 +5,7 @@
 
 #### [EN-US](#english-version) | [PT-BR](#versão-em-português)
 
-[![Download APK](https://expo.dev/accounts/sophialns/projects/stockly/builds/f71e58b3-3242-4420-b5a4-c7483561ef6a)
+[![Download APK](https://img.shields.io/badge/Download-APK-blue)](https://expo.dev/accounts/sophialns/projects/stockly/builds/f71e58b3-3242-4420-b5a4-c7483561ef6a)
 
 </div>
 <br>
